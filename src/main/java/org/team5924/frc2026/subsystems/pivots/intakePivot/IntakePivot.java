@@ -69,7 +69,7 @@ public class IntakePivot extends SubsystemBase {
 
   protected final Alert overheatAlert;
   protected final Notification overheatNotification;
-  protected boolean wasOverheating = true;
+  protected boolean wasOverheating = false;
 
   private double lastStateChange = 0.0;
 
@@ -81,11 +81,11 @@ public class IntakePivot extends SubsystemBase {
     this.intakePivotMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Intake Pivot Motor Disconnected", "");
 
-    overheatAlert = new Alert( " motor overheating!", Alert.AlertType.kWarning);
+    overheatAlert = new Alert( "intake pivot motor overheating!", Alert.AlertType.kWarning);
 
     overheatNotification =
         new Notification(
-            NotificationLevel.WARNING, " Overheat Warning", " motor overheat imminent!");
+            NotificationLevel.WARNING, "Intake Pivot Overheat Warning", "intake pivot motor overheat imminent!");
 
     sysId =
         new SysIdRoutine(

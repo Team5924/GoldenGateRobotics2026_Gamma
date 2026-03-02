@@ -27,6 +27,7 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
+import org.opencv.features2d.FlannBasedMatcher;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
@@ -71,7 +72,7 @@ public class Turret extends SubsystemBase {
   
   protected final Alert overheatAlert;
   protected final Notification overheatNotification;
-  protected boolean wasOverheating = true;
+  protected boolean wasOverheating = false;
 
   private double lastStateChange = 0.0;
 
@@ -91,7 +92,7 @@ public class Turret extends SubsystemBase {
 
     overheatNotification =
         new Notification(
-            NotificationLevel.WARNING, "Turret Overheat Warning", " Turret motor overheat imminent!");
+            NotificationLevel.WARNING, "Turret Overheat Warning", "Turret motor overheat imminent!");
 
 
     sysId =
@@ -125,7 +126,7 @@ public class Turret extends SubsystemBase {
     }
     wasTurretMotorConnected = inputs.turretMotorConnected;
 
-        boolean isOverheating = inputs.turretTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    boolean isOverheating = inputs.turretTempCelsius > Constants.OVERHEAT_THRESHOLD;
     overheatAlert.set(isOverheating);
     if (isOverheating && !wasOverheating) {
       Elastic.sendNotification(overheatNotification);

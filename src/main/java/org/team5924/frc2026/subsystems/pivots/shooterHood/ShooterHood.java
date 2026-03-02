@@ -77,7 +77,7 @@ public class ShooterHood extends SubsystemBase {
 
   protected final Alert overheatAlert;
   protected final Notification overheatNotification;
-  protected boolean wasOverheating = true;
+  protected boolean wasOverheating = false;
 
   private final Alert notImplementedAlert;
   private boolean showNotImplementedAlert;
@@ -98,7 +98,7 @@ public class ShooterHood extends SubsystemBase {
 
     overheatNotification =
         new Notification(
-            NotificationLevel.WARNING, "Shooter Hood Overheat Warning", " motor overheat imminent!");
+            NotificationLevel.WARNING, "Shooter Hood Overheat Warning", "shooter hood motor overheat imminent!");
 
     sysId =
         new SysIdRoutine(

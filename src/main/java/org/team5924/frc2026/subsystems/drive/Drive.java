@@ -134,7 +134,7 @@ public class Drive extends SubsystemBase {
           "Gyro Disconnected",
           "Disconnected gyro, using kinematics as fallback.");
 
-  private final Notification motorOverheatNotification =
+  private final Notification gyroOverheatNotification =
       new Notification(
           NotificationLevel.WARNING, "Motor Overheat", "Motor Overheat Imminent");
 
@@ -320,7 +320,7 @@ public class Drive extends SubsystemBase {
 
     // prevents error spam
     if (isOverheating && !wasOverheating) {
-      Elastic.sendNotification(motorOverheatNotification);
+      Elastic.sendNotification(gyroOverheatNotification);
     }
     wasOverheating = isOverheating;
 

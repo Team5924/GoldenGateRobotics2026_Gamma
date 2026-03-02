@@ -52,7 +52,7 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
 
   protected final Alert overheatAlert;
   protected final Notification overheatNotification;
-  protected boolean wasOverheating = true;
+  protected boolean wasOverheating = false;
 
   protected final Timer stateTimer = new Timer();
 
