@@ -64,6 +64,8 @@ public final class Constants {
 
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
+  public static final double SYS_ID_TIME = 10.0;
+  public static final double JOYSTICK_DEADZONE = 0.05;
   
   public final class Field {
     // origin = rightmost corner of blue alliance wall
@@ -122,8 +124,6 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
 
-    public static final double JOYSTICK_DEADZONE = 0.05;
-
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
 
     public static final double STATE_TIMEOUT = 5.0;
@@ -155,9 +155,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
@@ -189,12 +189,10 @@ public final class Constants {
    */
 
   public final class GeneralShooterHood {
-    public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
   }
 
   public final class GeneralTurret {
-    public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
     public static final double STATE_TIMEOUT = 5.0;
   }
@@ -255,8 +253,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -278,8 +276,8 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true);
 
@@ -388,9 +386,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
@@ -466,8 +464,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -489,8 +487,8 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true);
 
@@ -565,8 +563,6 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
 
-    public static final double JOYSTICK_DEADZONE = 0.05;
-
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
 
     public static final double STATE_TIMEOUT = 5.0;
@@ -604,9 +600,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
