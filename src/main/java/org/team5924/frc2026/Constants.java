@@ -62,8 +62,12 @@ public final class Constants {
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.5;
 
+  public static final double OVERHEAT_THRESHOLD = 85.0;
+
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
+  public static final double SYS_ID_TIME = 10.0;
+  public static final double JOYSTICK_DEADZONE = 0.05;
   
   public final class Field {
     // origin = rightmost corner of blue alliance wall
@@ -103,6 +107,62 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
+  public final class IntakePivot {
+    public static final int CAN_ID = 41; // TODO: update to real can id
+    public static final String BUS = "rio";
+    public static final double MOTOR_TO_MECHANISM = (54.0 / 20.0) * (32.0 / 12.0);
+    public static final double SIM_MOI = 0.001;
+
+    public static final double OFFSET_RADS = 0.0;
+
+    /** how far the intake pivot physically rotates */
+    public static final double MECHANISM_RANGE_PERCENT = 140.0 / 360.0; // TODO: have to update this value ??
+
+    public static final double MIN_POSITION_MULTI = 0; // rotations
+    public static final double MAX_POSITION_MULTI = 0.6; // rotations
+
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
+
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
+
+    public static final double STATE_TIMEOUT = 5.0;
+
+    /* Configs */
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60) // TODO: double check
+            .withStatorCurrentLimit(60) // TODO: double check
+            .withStatorCurrentLimitEnable(true))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
+
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      new SoftwareLimitSwitchConfigs()
+        .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
+          MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true);
+  }
+
   public final class Hopper {
     public static final int CAN_ID = 21; 
     public static final String BUS = "rio";
@@ -124,19 +184,15 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Brake));
   }
 
-
-
   /* 
    * ### Shooters ###
    */
 
   public final class GeneralShooterHood {
-    public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
   }
 
   public final class GeneralTurret {
-    public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
     public static final double STATE_TIMEOUT = 5.0;
   }
@@ -197,8 +253,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -220,8 +276,8 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true);
 
@@ -264,8 +320,10 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
-
-    public static final TalonFXConfiguration CONFIG =
+    public static final int BEAM_BREAK_ID = 0;
+    // public static final boolean BEAM_BREAK = false;
+  
+    public static final TalonFXConfiguration CONFIG = 
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
@@ -328,9 +386,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
@@ -368,7 +426,7 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
@@ -406,8 +464,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -429,8 +487,8 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true);
 
@@ -505,8 +563,6 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
 
-    public static final double JOYSTICK_DEADZONE = 0.05;
-
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
 
     public static final double STATE_TIMEOUT = 5.0;
@@ -544,9 +600,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);

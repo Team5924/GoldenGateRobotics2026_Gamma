@@ -68,6 +68,10 @@ public class Turret extends SubsystemBase {
   private final Alert turretMotorDisconnected;
   private final Notification turretMotorDisconnectedNotification;
   private boolean wasTurretMotorConnected = true;
+  
+  protected final Alert overheatAlert;
+  protected final Notification overheatNotification;
+  protected boolean wasOverheating = false;
 
   private double lastStateChange = 0.0;
 
@@ -83,12 +87,19 @@ public class Turret extends SubsystemBase {
         new Notification(NotificationLevel.WARNING, "Turret Motor Disconnected", "");
     this.isLeft = isLeft;
 
+    overheatAlert = new Alert("Turret motor overheating!", Alert.AlertType.kWarning);
+
+    overheatNotification =
+        new Notification(
+            NotificationLevel.WARNING, "Turret Overheat Warning", "Turret motor overheat imminent!");
+
+
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                Volts.of(.75).per(Seconds),
+                Volts.per(Seconds).of(.75),
                 Volts.of(1),
-                Seconds.of(new LoggedTunableNumber("Turret/SysIdTime", 10.0).getAsDouble()),
+                Seconds.of(Constants.SYS_ID_TIME),
                 (state) -> Logger.recordOutput("Turret/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
   }
@@ -113,10 +124,17 @@ public class Turret extends SubsystemBase {
       Elastic.sendNotification(turretMotorDisconnectedNotification);
     }
     wasTurretMotorConnected = inputs.turretMotorConnected;
+
+    boolean isOverheating = inputs.turretTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    overheatAlert.set(isOverheating);
+    if (isOverheating && !wasOverheating) {
+      Elastic.sendNotification(overheatNotification);
+    }
+    wasOverheating = isOverheating;
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange < Constants.GeneralTurret.STATE_TIMEOUT
+    return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
   }
@@ -139,7 +157,7 @@ public class Turret extends SubsystemBase {
   private void handleManualState() {
     if (!goalState.equals(TurretState.MANUAL)) return;
 
-    if (Math.abs(input) <= Constants.GeneralTurret.JOYSTICK_DEADZONE) {
+    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
       io.runVolts(0);
       return;
     }

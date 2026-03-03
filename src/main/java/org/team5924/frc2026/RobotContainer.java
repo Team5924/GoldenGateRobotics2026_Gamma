@@ -31,6 +31,10 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.commands.intakePivot.IntakePivotCommands;
+import org.team5924.frc2026.commands.shooter.ShooterCommands;
+import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -38,13 +42,47 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
+import org.team5924.frc2026.subsystems.turret.Turret;
+import org.team5924.frc2026.subsystems.turret.TurretIO;
+import org.team5924.frc2026.subsystems.turret.TurretIOSim;
+import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
-  //   private final Hopper hopper;
-  //   private final Intake intake;
+  // private final Intake intake;
+  // private final IntakePivot intakePivot;
+  // private final Hopper hopper;
   // private final Indexer indexer;
 
   //   private final ShooterHood shooterHoodRight;
@@ -81,6 +119,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         // intake = new Intake(new IntakeIOKrakenFOC());
+        // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         // hopper = new Hopper(new HopperKrakenFOC());
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
@@ -115,6 +154,7 @@ public class RobotContainer {
                 driveSimulation::setSimulationWorldPose);
 
         // intake = new Intake(new IntakeIOSim());
+        // intakePivot = new IntakePivot(new IntakePivotIOSim());
         // hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
@@ -140,6 +180,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         // intake = new Intake(new IntakeIO() {});
+        // intakePivot = new IntakePivot(new IntakePivotIO() {});
         // hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
@@ -174,12 +215,12 @@ public class RobotContainer {
             }));
 
     // TODO: Uncomment when intake subsystem is enabled
-    // NamedCommands.registerCommand(
-    //     "Run Intake",
-    //     Commands.runOnce(
-    //         () -> {
-    //           intake.setGoalState(IntakeState.INTAKE);
-    //         }));
+    NamedCommands.registerCommand(
+        "Run Intake",
+        Commands.runOnce(
+            () -> {
+              // intake.setGoalState(IntakeState.INTAKE);
+            }));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -212,7 +253,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-
     // if (Constants.currentMode == Constants.Mode.SIM) {
     //   drive.setDefaultCommand(
     //       DriveCommands.joystickDrive(
@@ -267,8 +307,7 @@ public class RobotContainer {
     //         ? () ->
     //             drive.setPose(
     //                 driveSimulation
-    //                     .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
-    // during
+    //                     .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
     //         // simulation
     //         : () ->
     //             drive.setPose(

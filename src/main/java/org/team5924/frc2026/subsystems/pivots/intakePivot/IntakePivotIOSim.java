@@ -1,5 +1,5 @@
 /*
- * GenericRollerSystemIOSim.java
+ * IntakePivotIOSim.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.generic;
+package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -23,33 +23,40 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
 
-public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
-  protected final DCMotorSim sim;
-  protected final DCMotor gearbox;
+public class IntakePivotIOSim implements IntakePivotIO {
+  private final DCMotorSim sim;
+  private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
 
-  public GenericRollerSystemIOSim(DCMotor motorModel, double reduction, double moi) {
-    gearbox = motorModel;
+  public IntakePivotIOSim() {
     sim =
-        new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                gearbox, Constants.IntakePivot.SIM_MOI, Constants.IntakePivot.MOTOR_TO_MECHANISM),
+            gearbox);
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
+  public void updateInputs(IntakePivotIOInputs inputs) {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.motorConnected = true;
-    inputs.positionRads = sim.getAngularPositionRad();
-    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
-    inputs.appliedVoltage = appliedVoltage;
-    inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.intakePivotMotorConnected = true;
+    inputs.intakePivotPositionRads = sim.getAngularPositionRad();
+    inputs.intakePivotVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.intakePivotAppliedVoltage = appliedVoltage;
+    inputs.intakePivotSupplyCurrentAmps = sim.getCurrentDrawAmps();
   }
 
   @Override
   public void runVolts(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
+  }
+
+  @Override
+  public void setPosition(double rads) {
+    sim.setAngle(rads);
   }
 
   @Override
