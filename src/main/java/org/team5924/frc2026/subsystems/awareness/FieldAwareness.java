@@ -26,7 +26,7 @@ public class FieldAwareness {
     return distance;
   }
 
-  private void tdfyguijoi() { // TOD: name later
+  private void tdfyguijoi() { // TODO: name later
     ChassisSpeeds speeds = RobotState.getInstance().getRobotChassisSpeeds();
     Translation2d velocity = new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
 
