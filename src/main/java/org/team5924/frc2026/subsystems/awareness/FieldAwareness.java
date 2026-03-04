@@ -15,21 +15,23 @@ public class FieldAwareness {
     return instance;
   }
 
-  private double[] getDistanceToTrenches(){
-    double[] distance = new double[4];
+  private Translation2d[] getOffsetsToTrenches(){
+    Translation2d[] offsets = new Translation2d[4];
     Translation2d robotPosition = RobotState.getInstance().getOdometryPose().getTranslation();
 
     for (int i = 0; i < 4; i++) {
-      distance[i] = Constants.Field.TRENCH_TRANSLATIONS[i].getDistance(robotPosition);
+      offsets[i] = Constants.Field.TRENCH_TRANSLATIONS[i].minus(robotPosition);
     }
 
-    return distance;
+    return offsets;
   }
 
   private void tdfyguijoi() { // TODO: name later
     ChassisSpeeds speeds = RobotState.getInstance().getRobotChassisSpeeds();
     Translation2d velocity = new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
 
-
+    for (int i = 0; i < 4; i++) {
+      
+    }
   }
 }
