@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import java.util.ArrayList;
 import java.util.List;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -93,7 +94,8 @@ public class ObjectDetectionUtils {
         -1; // in case if statement doesn't trigger (aka not within distance threshold or a lower
     // target distance), returns a known number
     for (int i = 0; i < groups.size(); i++) {
-      for (Target comparisonFuel : groups.get(i).targets) {
+      List<Target> group = new ArrayList<>(groups.get(i).targets);
+      for (Target comparisonFuel : group) {
         double targetDistance = getTargetToTargetDistanceInches(target.fuel, comparisonFuel.fuel);
 
         // if (timer.get() >= 0.5) {
@@ -133,7 +135,8 @@ public class ObjectDetectionUtils {
 
   public static int getFuelInGroupsAmount(List<TargetGroup> groups) {
     int amount = 0;
-    for (TargetGroup group : groups) {
+    List<TargetGroup> groupsCopy = new ArrayList<>(groups);
+    for (TargetGroup group : groupsCopy) {
       amount += group.targets.size();
     }
     return amount;

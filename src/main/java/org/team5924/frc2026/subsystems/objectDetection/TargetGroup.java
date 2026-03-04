@@ -65,7 +65,8 @@ public class TargetGroup implements Serializable {
   }
 
   public void logGroup(int id) {
-    for (Target target : targets) {
+    List<Target> targetsCopy = new ArrayList<>(targets);
+    for (Target target : targetsCopy) {
       String logPath =
           "Group "
               + groupID

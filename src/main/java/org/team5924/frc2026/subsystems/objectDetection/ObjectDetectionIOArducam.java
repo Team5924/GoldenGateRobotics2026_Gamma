@@ -46,8 +46,6 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     if (results.size() == 0) {
       return;
     }
-
-    try {
       var instance = results.get(results.size() - 1);
       inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
       inputs.latestGroupedTargets = getGroups(instance.getTargets());
@@ -56,10 +54,6 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
       inputs.groupCount = inputs.latestGroupedTargets.groups().size();
       inputs.fuelInGroups =
           ObjectDetectionUtils.getFuelInGroupsAmount(inputs.latestGroupedTargets.groups());
-      logGroups(inputs.latestGroupedTargets.groups());
-    } catch (ConcurrentModificationException e) {
-      System.out.println("ERMM CHAT, WE MIGHT BE BREAKING RN LOWK ONG FRFR TBF");
-    }
   }
 
   private void logGroups(List<TargetGroup> groups) {
@@ -83,7 +77,8 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   private TargetGroups getGroups(List<PhotonTrackedTarget> targets) {
     List<TargetGroup> fuelGroups = new ArrayList<>(); // new group of groups
     int currentID = 0;
-    for (PhotonTrackedTarget target : targets) {
+    List<PhotonTrackedTarget> targetsCopy = new ArrayList<>(targets);
+    for (PhotonTrackedTarget target : targetsCopy) {
       Target fuelTarget =
           new Target(
               currentID,

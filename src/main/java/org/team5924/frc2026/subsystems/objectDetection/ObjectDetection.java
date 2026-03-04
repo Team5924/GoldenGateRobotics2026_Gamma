@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.ArrayList;
+import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.util.Elastic;
@@ -50,12 +52,13 @@ public class ObjectDetection extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Object Detection Inputs", inputs);
-    int groupID = 0;
-    for (TargetGroup group : inputs.latestGroupedTargets.groups()) {
-      group.logGroup(groupID);
+    // int groupID = 0;
+    // List<TargetGroup> groupsCopy = inputs.latestGroupedTargets.groups();
+    // for (TargetGroup group : groupsCopy) {
+    //   group.logGroup(groupID);
 
-      groupID++;
-    }
+    //   groupID++;
+    // }
 
     if (!inputs.isCameraConnected) {
       Elastic.sendNotification(cameraDisconnectedNotification);
@@ -66,7 +69,8 @@ public class ObjectDetection extends SubsystemBase {
 
   public PhotonTrackedTarget getFirstTargetOfLargestGroup() {
     TargetGroup largestGroup = new TargetGroup(0);
-    for (var group : inputs.latestGroupedTargets.groups()) {
+    List<TargetGroup> groups = new ArrayList<>(inputs.latestGroupedTargets.groups());
+    for (var group : groups) {
       if (largestGroup.fuelAmount < group.fuelAmount) {
         largestGroup = group;
       }
