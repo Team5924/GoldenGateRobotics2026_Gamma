@@ -292,32 +292,32 @@ public class ModuleIOTalonFX implements ModuleIO {
         TunerConstants.kVSteer,
         TunerConstants.kASteer);
 
-    // LoggedTunableNumber.ifChanged(
-    //     hashCode(),
-    //     () -> {
-    //       Slot0Configs driveSlot0 = new Slot0Configs();
-    //       driveSlot0.kP = TunerConstants.kPDrive.get();
-    //       driveSlot0.kI = TunerConstants.kIDrive.get();
-    //       driveSlot0.kD = TunerConstants.kDDrive.get();
-    //       driveSlot0.kS = TunerConstants.kSDrive.get();
-    //       driveSlot0.kV = TunerConstants.kVDrive.get();
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () -> {
+          Slot0Configs driveSlot0 = new Slot0Configs();
+          driveSlot0.kP = TunerConstants.kPDrive.get();
+          driveSlot0.kI = TunerConstants.kIDrive.get();
+          driveSlot0.kD = TunerConstants.kDDrive.get();
+          driveSlot0.kS = TunerConstants.kSDrive.get();
+          driveSlot0.kV = TunerConstants.kVDrive.get();
 
-    //       StatusCode statusCode = driveTalon.getConfigurator().apply(driveSlot0);
-    //       if (!statusCode.isOK()) {
-    //         Elastic.sendNotification(
-    //             new Notification(
-    //                 NotificationLevel.WARNING,
-    //                 "Drive Slot 0 Configs",
-    //                 "Error in periodically updating drive slot 0 configs!"));
+          StatusCode statusCode = driveTalon.getConfigurator().apply(driveSlot0);
+          if (!statusCode.isOK()) {
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "Drive Slot 0 Configs",
+                    "Error in periodically updating drive slot 0 configs!"));
 
-    //         Logger.recordOutput("Drive/UpdateDriveSlot0Report", statusCode);
-    //       }
-    //     },
-    //     TunerConstants.kPDrive,
-    //     TunerConstants.kIDrive,
-    //     TunerConstants.kDDrive,
-    //     TunerConstants.kSDrive,
-    //     TunerConstants.kVDrive);
+            Logger.recordOutput("Drive/UpdateDriveSlot0Report", statusCode);
+          }
+        },
+        TunerConstants.kPDrive,
+        TunerConstants.kIDrive,
+        TunerConstants.kDDrive,
+        TunerConstants.kSDrive,
+        TunerConstants.kVDrive);
 }
 
   @Override

@@ -40,9 +40,9 @@ public class TunerConstants {
 
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPSteer = new LoggedTunableNumber("SteerGains/kP", 1.0);
+  public static final LoggedTunableNumber kPSteer = new LoggedTunableNumber("SteerGains/kP", 2000.0);
   public static final LoggedTunableNumber kISteer = new LoggedTunableNumber("SteerGains/kI", 0.0);
-  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 0.1);
+  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 5.0);
   public static final LoggedTunableNumber kSSteer = new LoggedTunableNumber("SteerGains/kS", 0.1);
   public static final LoggedTunableNumber kVSteer = new LoggedTunableNumber("SteerGains/kV", 1.91);
   public static final LoggedTunableNumber kASteer = new LoggedTunableNumber("SteerGains/kA", 0.0);
@@ -58,20 +58,20 @@ public class TunerConstants {
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-  // public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 0.1);
-  // public static final LoggedTunableNumber kIDrive = new LoggedTunableNumber("DriveGains/kI", 0.0);
-  // public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 0.0);
-  // public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 0.0);
-  // public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.124);
-  private static final Slot0Configs driveGains = // TODO: tune
-      new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124);
+  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 0.1);
+  public static final LoggedTunableNumber kIDrive = new LoggedTunableNumber("DriveGains/kI", 0.0);
+  public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 0.0);
+  public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 0.0);
+  public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.124);
   // private static final Slot0Configs driveGains = // TODO: tune
-  //     new Slot0Configs()
-  //         .withKP(kPDrive.getAsDouble())
-  //         .withKI(kIDrive.getAsDouble())
-  //         .withKD(kDDrive.getAsDouble())
-  //         .withKS(kSDrive.getAsDouble())
-  //         .withKV(kVDrive.getAsDouble());
+  //     new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124);
+  private static final Slot0Configs driveGains = // TODO: tune
+      new Slot0Configs()
+          .withKP(kPDrive.getAsDouble())
+          .withKI(kIDrive.getAsDouble())
+          .withKD(kDDrive.getAsDouble())
+          .withKS(kSDrive.getAsDouble())
+          .withKV(kVDrive.getAsDouble());
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
