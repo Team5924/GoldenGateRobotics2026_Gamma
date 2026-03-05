@@ -83,7 +83,7 @@ public class RobotContainer {
   private final Intake intake;
   private final IntakePivot intakePivot;
   private final Hopper hopper;
-  // private final Indexer indexer;
+  private final Indexer indexer;
 
   private final ShooterHood shooterHoodRight;
   private final ShooterRoller shooterRollerRight;
@@ -121,6 +121,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOKrakenFOC());
         intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         hopper = new Hopper(new HopperKrakenFOC());
+        indexer = new Indexer(new IndexerIOTalonFX());
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
         shooterRollerRight =
@@ -156,6 +157,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
+        indexer = new Indexer(new IndexerIO() {});
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
         shooterRollerRight =
@@ -182,6 +184,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+        indexer = new Indexer(new IndexerIO() {});
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
         shooterRollerRight =
