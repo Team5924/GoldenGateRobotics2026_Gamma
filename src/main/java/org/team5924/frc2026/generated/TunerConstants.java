@@ -47,7 +47,7 @@ public class TunerConstants {
   public static final LoggedTunableNumber kVSteer = new LoggedTunableNumber("SteerGains/kV", 1.91);
   public static final LoggedTunableNumber kASteer = new LoggedTunableNumber("SteerGains/kA", 0.0);
 
-  private static final Slot0Configs steerGains = // TODO: tune
+  private static final Slot0Configs steerGains =
       new Slot0Configs()
           .withKP(kPSteer.getAsDouble())
           .withKI(kISteer.getAsDouble())
@@ -63,9 +63,8 @@ public class TunerConstants {
   public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 1.0);
   public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 2.0);
   public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.0);
-  // private static final Slot0Configs driveGains = // TODO: tune
-  //     new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124);
-  private static final Slot0Configs driveGains = // TODO: tune
+
+  private static final Slot0Configs driveGains =
       new Slot0Configs()
           .withKP(kPDrive.getAsDouble())
           .withKI(kIDrive.getAsDouble())
@@ -110,6 +109,7 @@ public class TunerConstants {
                   .withStatorCurrentLimit(Amps.of(60))
                   .withStatorCurrentLimitEnable(true));
   private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
+
   // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
   private static final Pigeon2Configuration pigeonConfigs =
     new Pigeon2Configuration()
@@ -129,7 +129,7 @@ public class TunerConstants {
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
-  private static final double kCoupleRatio = 5.4; // TODO: double check this
+  private static final double kCoupleRatio = 5.4;
 
   private static final double kDriveGearRatio = 6.821052631578947;
   private static final double kSteerGearRatio = 12.1;
@@ -143,8 +143,8 @@ public class TunerConstants {
   // These are only used for simulation
   private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.004);
   private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.025);
+
   // Simulated voltage necessary to overcome friction
-  // TODO: tune these
   private static final Voltage kSteerFrictionVoltage = Volts.of(0.2);
   private static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
 
