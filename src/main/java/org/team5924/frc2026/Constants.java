@@ -131,8 +131,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60) // TODO: double check
-            .withStatorCurrentLimit(60) // TODO: double check
+            .withSupplyCurrentLimit(120)
+            .withStatorCurrentLimit(120)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
@@ -160,8 +160,9 @@ public final class Constants {
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
-        .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withSensorToMechanismRatio(115.2)
+        .withRotorToSensorRatio(1.0);
   }
 
   public final class Hopper {

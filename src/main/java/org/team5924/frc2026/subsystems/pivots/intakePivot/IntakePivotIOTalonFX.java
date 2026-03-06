@@ -58,12 +58,12 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 14.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 100.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.0);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.0);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 1.5);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.0);
-  private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 4.5);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 2.8);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
@@ -102,6 +102,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
+    slot0Configs.kG = kG.get();
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
 
     motionMagicConfigs = new MotionMagicConfigs();
@@ -180,12 +181,11 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     inputs.intakePivotTorqueCurrentAmps = intakePivotTorqueCurrent.getValueAsDouble();
     inputs.intakePivotTempCelsius = intakePivotTempCelsius.getValueAsDouble();
 
-    inputs.motionMagicVelocityTarget =
-        positionToRads(intakePivotTalon.getClosedLoopReferenceSlope().getValueAsDouble());
-    inputs.motionMagicPositionTarget =
-        positionToRads(intakePivotTalon.getClosedLoopReference().getValueAsDouble());
+    inputs.motionMagicVelocityTarget = intakePivotTalon.getClosedLoopReferenceSlope().getValueAsDouble();
+    inputs.motionMagicPositionTarget = intakePivotTalon.getClosedLoopReference().getValueAsDouble();
 
     inputs.setpointRads = setpointRads;
+    inputs.setpointPosition = Units.radiansToRotations(setpointRads);
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
     double timeDiff = currentTime - prevReferenceSlopeTimestamp;
@@ -204,7 +204,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
 
   private void updateLoggedTunableNumbers() {
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode(),
         () -> {
           slot0Configs.kP = kP.get();
           slot0Configs.kI = kI.get();
@@ -234,7 +234,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         kA);
 
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode() + 1,
         () -> {
           motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
           motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();

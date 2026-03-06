@@ -96,6 +96,7 @@ public class IntakePivot extends SubsystemBase {
     Logger.recordOutput(
         "IntakePivot/CurrentState", RobotState.getInstance().getIntakePivotState().toString());
     Logger.recordOutput("IntakePivot/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("IntakePivot/CurrentRads", inputs.intakePivotPositionRads);
     Logger.recordOutput("IntakePivot/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
     Logger.recordOutput("IntakePivot/TimeSinceLastStateChange", timeSinceLastStateChange = RobotState.getTime() - lastStateChange);
 
@@ -118,9 +119,10 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return timeSinceLastStateChange > Constants.IntakePivot.STATE_TIMEOUT
-        || EqualsUtil.epsilonEquals(
-          inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
+    // return timeSinceLastStateChange > Constants.IntakePivot.STATE_TIMEOUT
+    //     || EqualsUtil.epsilonEquals(
+    //       inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
+    return EqualsUtil.epsilonEquals(inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
   }
 
   private void handleCurrentState() {
