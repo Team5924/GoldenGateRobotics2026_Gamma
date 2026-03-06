@@ -57,12 +57,5 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
   public void periodic() {
     super.periodic();
     Logger.processInputs("Hopper/BeamBreak", beamBreakInputs);
-
-    if (RobotState.getInstance().getIntakePivotState() == IntakePivotState.DOWN) {
-      setGoalState(HopperState.ON);
-    }
-    else{
-      setGoalState(HopperState.OFF);
-    }
   }
 }

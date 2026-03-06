@@ -50,12 +50,5 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
   @Override
   public void periodic() {
     super.periodic();
-
-    if (RobotState.getInstance().getIntakePivotState() == IntakePivotState.DOWN) {
-      setGoalState(IndexerState.INDEXING);
-    }
-    else{
-      setGoalState(IndexerState.OFF);
-    }
   }
 }

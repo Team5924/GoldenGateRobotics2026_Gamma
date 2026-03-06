@@ -262,16 +262,16 @@ public class RobotContainer {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
-              () -> 0 * -driveController.getRawAxis(0),
-              () -> 0 * -driveController.getLeftY(),
-              () -> 0 * -driveController.getRawAxis(2)));
+              () -> -driveController.getRawAxis(0),
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getRawAxis(2)));
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
-              () -> 0 * -driveController.getLeftY(),
-              () -> 0 * -driveController.getLeftX(),
-              () -> 0 * -driveController.getRightX()));
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getLeftX(),
+              () -> -driveController.getRightX()));
     }
     // [driver] SLOW MODE YIPE
     driveController
@@ -338,13 +338,21 @@ public class RobotContainer {
         .leftBumper()
         .toggleOnTrue(
             Commands.runOnce(
-                () -> intakePivot.setGoalState(IntakePivotState.DOWN)
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  hopper.setGoalState(Hopper.HopperState.ON);
+                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                }, intakePivot, hopper, indexer
         ));
     driveController
         .leftBumper()
         .toggleOnFalse(
             Commands.runOnce(
-                () -> intakePivot.setGoalState(IntakePivotState.STOW)
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  hopper.setGoalState(Hopper.HopperState.OFF);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                }, intakePivot, hopper, indexer
         ));
 
     driveController
