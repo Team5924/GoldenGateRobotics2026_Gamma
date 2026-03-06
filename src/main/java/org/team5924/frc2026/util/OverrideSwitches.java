@@ -10,7 +10,7 @@ package org.team5924.frc2026.util;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-/** Interface for physical override switches on operator console. */
+/** Wrapper for physical override switches on operator console. */
 public class OverrideSwitches {
   private final GenericHID joystick;
 
