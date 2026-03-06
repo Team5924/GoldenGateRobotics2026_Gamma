@@ -26,12 +26,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
-import org.team5924.frc2026.commands.intakePivot.IntakePivotCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.commands.shooter.ShooterCommands;
 import org.team5924.frc2026.subsystems.SuperShooter;
@@ -62,6 +62,7 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
@@ -76,6 +77,7 @@ import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
 import org.team5924.frc2026.subsystems.turret.TurretIOSim;
 import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
+
 
 public class RobotContainer {
   // Subsystems
@@ -318,21 +320,54 @@ public class RobotContainer {
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    operatorController
-        .rightBumper()
-        .onTrue(
+    // [operator] press a -> deploy example subystem up
+    driveController
+        .leftTrigger()
+        .whileTrue(
             Commands.runOnce(
-                () -> {
-                  shooterRollerRight.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
-                }));
+                () -> intake.setGoalState(IntakeState.INTAKE)
+        ));
 
-    operatorController
-        .rightBumper()
-        .onFalse(
+    driveController
+        .leftTrigger()
+        .whileFalse(
+            Commands.runOnce(
+                () -> intake.setGoalState(IntakeState.OFF)
+        ));
+
+    driveController
+        .leftBumper()
+        .toggleOnTrue(
             Commands.runOnce(
                 () -> {
-                  shooterRollerRight.setGoalState(ShooterRollerState.OFF);
-                }));
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  hopper.setGoalState(Hopper.HopperState.ON);
+                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                }, intakePivot, hopper, indexer
+        ));
+    driveController
+        .leftBumper()
+        .toggleOnFalse(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  hopper.setGoalState(Hopper.HopperState.OFF);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                }, intakePivot, hopper, indexer
+        ));
+
+    driveController
+        .rightTrigger()
+        .whileTrue(
+          Commands.runOnce(() -> {
+              shooterHoodLeft.setGoalState(ShooterHoodState.OFF);
+              shooterHoodRight.setGoalState(ShooterHoodState.OFF);
+              turretLeft.setGoalState(Turret.TurretState.OFF);
+              turretRight.setGoalState(Turret.TurretState.OFF);
+              shooterRollerLeft.setGoalState(ShooterRollerState.OFF);
+              shooterRollerRight.setGoalState(ShooterRollerState.OFF);
+          }, shooterHoodLeft, shooterHoodRight, turretLeft, turretRight, shooterRollerLeft, shooterRollerRight)
+        );
 
     operatorController
         .leftBumper()
@@ -367,6 +402,24 @@ public class RobotContainer {
         ShooterCommands.manualTurret(turretRight, () -> operatorController.getLeftX()));
     turretLeft.setDefaultCommand(
         ShooterCommands.manualTurret(turretLeft, () -> operatorController.getLeftX()));
+    // shooterHoodLeft.setDefaultCommand(getAutonomousCommand()); // todo
+    // shooterHoodRight.setDefaultCommand(getAutonomousCommand()); // todo
+    // turretLeft.setDefaultCommand(getAutonomousCommand()); // todo
+    // turretRight.setDefaultCommand(getAutonomousCommand()); // todo
+    // shooterRollerLeft.setDefaultCommand(getAutonomousCommand()); // todo
+    // shooterRollerRight.setDefaultCommand(getAutonomousCommand()); // todo
+
+    // // Climber
+    // // Dpad Down
+    // driveController
+    //     .pov(180)
+    //     .onTrue(Commands.runOnce(() -> climber.setGoalState(Climber.ClimberState.CLIMB)));
+
+    // // Dpad Up
+    // driveController
+    //     .pov(0)
+    //     .onTrue(Commands.runOnce(() -> climber.setGoalState(Climber.ClimberState.REVERSE_CLIMB)));
+
   }
 
   /**
