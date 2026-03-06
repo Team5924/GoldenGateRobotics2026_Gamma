@@ -21,6 +21,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -334,6 +335,13 @@ public class RobotContainer {
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+    intakePivot.setDefaultCommand(
+            Commands.run(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.MANUAL);
+                  intakePivot.setInput(operatorController.getLeftY());
+                }, intakePivot));
 
     // // [operator] press a -> deploy example subystem up
     // driveController

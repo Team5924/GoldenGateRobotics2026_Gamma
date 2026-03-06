@@ -49,8 +49,8 @@ public class IntakePivot extends SubsystemBase {
     DOWN(new LoggedTunableNumber("IntakePivot/DownRads", Units.degreesToRadians(95.0))),
     STOW(new LoggedTunableNumber("IntakePivot/StowRads", 0.0)),
 
-    // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 4.0));
+    // current at which the example subsystem motor moves when controlled by the operator
+    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorCurrent", 100.0));
 
     /** rads are measured from stow position (+ is down) */
     private final DoubleSupplier rads;
@@ -157,6 +157,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public void setGoalState(IntakePivotState goalState) {
+    if (goalState.equals(IntakePivotState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
     this.goalState = goalState;
     switch (goalState) {
       case MANUAL:

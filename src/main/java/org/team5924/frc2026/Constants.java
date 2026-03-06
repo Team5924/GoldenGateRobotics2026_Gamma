@@ -110,16 +110,14 @@ public final class Constants {
   public final class IntakePivot {
     public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_MECHANISM = (54.0 / 20.0) * (32.0 / 12.0);
+    public static final double MOTOR_TO_MECHANISM = (4.0 / 1.0) * (4.0 / 1.0) * (54.0 / 20.0) * (32.0 / 12.0);
     public static final double SIM_MOI = 0.001;
 
     public static final double OFFSET_RADS = 0.0;
 
     /** how far the intake pivot physically rotates */
-    public static final double MECHANISM_RANGE_PERCENT = 140.0 / 360.0; // TODO: have to update this value ??
-
     public static final double MIN_POSITION_MULTI = 0; // rotations
-    public static final double MAX_POSITION_MULTI = 0.6; // rotations
+    public static final double MAX_POSITION_MULTI = 120.0 / 360.0;  // TODO: have to update this value ??
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -155,12 +153,16 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withReverseSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
-        .withForwardSoftLimitThreshold(
-          MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true);
+        .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
+        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI)
+        .withForwardSoftLimitEnable(false)
+        .withReverseSoftLimitEnable(false);
+
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
+        .withRotorToSensorRatio(1.0)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
   }
 
   public final class Hopper {
