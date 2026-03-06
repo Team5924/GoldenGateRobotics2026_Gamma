@@ -39,6 +39,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -57,20 +58,20 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 10.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 14.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.07);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0);
-  private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 6.2);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.0);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.0);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.0);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 4.5);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 900.0);
+      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 100.0);
   private final LoggedTunableNumber motionJerk =
-      new LoggedTunableNumber("IntakePivot/MotionJerk", 900.0);
+      new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> intakePivotPosition;
@@ -153,8 +154,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
 
-    // assuming intake pivot starts stowed -> uncomment line below
-    intakePivotTalon.setPosition(-0.39);
+    // assuming intake pivot starts stowed
+    intakePivotTalon.setPosition(IntakePivotState.STOW.getRads().getAsDouble());
   }
 
   @Override
@@ -194,7 +195,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     }
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
-
   }
 
   @Override
@@ -269,6 +269,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     }
 
     // setpointRads = clampRads(rads);
+    setpointRads = rads;
     intakePivotTalon.setControl(motionMagicCurrent.withPosition(radsToPosition(setpointRads)));
   }
 

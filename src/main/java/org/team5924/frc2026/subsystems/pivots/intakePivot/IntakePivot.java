@@ -47,10 +47,10 @@ public class IntakePivot extends SubsystemBase {
     MOVING(() -> 0.0),
 
     DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0)),
-    STOW(new LoggedTunableNumber("IntakePivot/StowRads", -0.39)),
+    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 0.39)),
 
     // current at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorCurrent", 100.0));
+    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorCurrent", 12.5));
 
     /** rads are measured from stow position (+ is down) */
     private final DoubleSupplier rads;
@@ -61,12 +61,15 @@ public class IntakePivot extends SubsystemBase {
   private final Alert intakePivotMotorDisconnected;
   private final Notification intakePivotMotorDisconnectedNotification;
   private boolean wasIntakePivotMotorConnected = true;
+  
+  private boolean isAtSetpoint = false;
 
   protected final Alert overheatAlert;
   protected final Notification overheatNotification;
   protected boolean wasOverheating = false;
 
   private double lastStateChange = 0.0;
+  private double timeSinceLastStateChange = 0.0;
 
   public IntakePivot(IntakePivotIO io) {
     this.io = io;
@@ -93,6 +96,8 @@ public class IntakePivot extends SubsystemBase {
     Logger.recordOutput(
         "IntakePivot/CurrentState", RobotState.getInstance().getIntakePivotState().toString());
     Logger.recordOutput("IntakePivot/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("IntakePivot/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
+    Logger.recordOutput("IntakePivot/TimeSinceLastStateChange", timeSinceLastStateChange = RobotState.getTime() - lastStateChange);
 
     intakePivotMotorDisconnected.set(!inputs.intakePivotMotorConnected);
 
@@ -113,7 +118,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange > Constants.IntakePivot.STATE_TIMEOUT
+    return timeSinceLastStateChange > Constants.IntakePivot.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
           inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
   }
@@ -121,7 +126,7 @@ public class IntakePivot extends SubsystemBase {
   private void handleCurrentState() {
     switch (RobotState.getInstance().getIntakePivotState()) {
       case MOVING -> {
-        if (isAtSetpoint()) RobotState.getInstance().setIntakePivotState(goalState);
+        if (isAtSetpoint) RobotState.getInstance().setIntakePivotState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
