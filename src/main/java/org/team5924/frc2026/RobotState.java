@@ -28,7 +28,7 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoo
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 @Getter
@@ -102,6 +102,6 @@ public class RobotState {
   @Getter @Setter private ShooterHoodState rightShooterHoodState = ShooterHoodState.OFF;
 
   /*### Shooter Roller ### */
-  @Getter @Setter private ShooterRollerState leftShooterRollerState = ShooterRollerState.OFF;
-  @Getter @Setter private ShooterRollerState rightShooterRollerState = ShooterRollerState.OFF;
+  @Getter @Setter private ShooterFlywheelState leftShooterFlywheelState = ShooterFlywheelState.OFF;
+  @Getter @Setter private ShooterFlywheelState rightShooterFlywheelState = ShooterFlywheelState.OFF;
 }

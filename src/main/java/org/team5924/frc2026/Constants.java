@@ -300,7 +300,7 @@ public final class Constants {
         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
   }
 
-  public final class ShooterRollerLeaderLeft {
+  public final class ShooterFlywheelLeaderLeft {
     public static final int CAN_ID = 23; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
@@ -331,7 +331,7 @@ public final class Constants {
         .withVoltageClosedLoopRampPeriod(0.02);
   }
 
-  public final class ShooterRollerFollowerLeft {
+  public final class ShooterFlywheelFollowerLeft {
     public static final int CAN_ID = 24; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
@@ -535,7 +535,7 @@ public final class Constants {
         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
   }
 
-  public final class ShooterRollerLeaderRight {
+  public final class ShooterFlywheelLeaderRight {
     public static final int CAN_ID = 23; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
@@ -566,7 +566,7 @@ public final class Constants {
         .withVoltageClosedLoopRampPeriod(0.02);
   }
 
-  public final class ShooterRollerFollowerRight {
+  public final class ShooterFlywheelFollowerRight {
     public static final int CAN_ID = 24; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;

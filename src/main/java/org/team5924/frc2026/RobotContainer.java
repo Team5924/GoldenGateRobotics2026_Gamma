@@ -52,11 +52,11 @@ import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheelIO;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheelKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheelIOSim;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
@@ -86,12 +86,12 @@ public class RobotContainer {
   // private final Indexer indexer;
 
   private final ShooterHood shooterHoodRight;
-  private final ShooterRoller shooterRollerRight;
+  private final ShooterFlywheel shooterFlywheelRight;
   private final Turret turretRight;
   private final SuperShooter superShooterRight;
 
   private final ShooterHood shooterHoodLeft;
-  private final ShooterRoller shooterRollerLeft;
+  private final ShooterFlywheel shooterFlywheelLeft;
   private final Turret turretLeft;
   private final SuperShooter superShooterLeft;
   // private final ExampleSystem exampleSystem;
@@ -123,18 +123,18 @@ public class RobotContainer {
         hopper = new Hopper(new HopperKrakenFOC());
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
-        shooterRollerRight =
-            new ShooterRoller(
-                new ShooterRollerIOKrakenFOC(true),
-                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+        shooterFlywheelRight =
+            new ShooterFlywheel(
+                new ShooterFlywheelKrakenFOC(true),
+                new BeamBreakIOHardware(Constants.ShooterFlywheelLeaderLeft.BEAM_BREAK_PORT),
                 true);
         turretRight = new Turret(new TurretIOTalonFX(true), true);
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        shooterRollerLeft =
-            new ShooterRoller(
-                new ShooterRollerIOKrakenFOC(false),
-                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+        shooterFlywheelLeft =
+            new ShooterFlywheel(
+                new ShooterFlywheelKrakenFOC(false),
+                new BeamBreakIOHardware(Constants.ShooterFlywheelLeaderLeft.BEAM_BREAK_PORT),
                 false);
         turretLeft = new Turret(new TurretIOTalonFX(false), false);
         break;
@@ -158,13 +158,13 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
-        shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIOSim(true), new BeamBreakIO() {}, true);
+        shooterFlywheelRight =
+            new ShooterFlywheel(new ShooterFlywheelIOSim(true), new BeamBreakIO() {}, true);
         turretRight = new Turret(new TurretIOSim(true), true);
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(false), false);
-        shooterRollerLeft =
-            new ShooterRoller(new ShooterRollerIOSim(false), new BeamBreakIO() {}, false);
+        shooterFlywheelLeft =
+            new ShooterFlywheel(new ShooterFlywheelIOSim(false), new BeamBreakIO() {}, false);
         turretLeft = new Turret(new TurretIOSim(false), false);
         break;
 
@@ -184,19 +184,19 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
-        shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
+        shooterFlywheelRight =
+            new ShooterFlywheel(new ShooterFlywheelIO() {}, new BeamBreakIO() {}, true);
         turretRight = new Turret(new TurretIO() {}, true);
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
-        shooterRollerLeft =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
+        shooterFlywheelLeft =
+            new ShooterFlywheel(new ShooterFlywheelIO() {}, new BeamBreakIO() {}, false);
         turretLeft = new Turret(new TurretIO() {}, false);
         break;
     }
 
-    superShooterRight = new SuperShooter(shooterRollerRight, shooterHoodRight, turretRight);
-    superShooterLeft = new SuperShooter(shooterRollerLeft, shooterHoodLeft, turretLeft);
+    superShooterRight = new SuperShooter(shooterFlywheelRight, shooterHoodRight, turretRight);
+    superShooterLeft = new SuperShooter(shooterFlywheelLeft, shooterHoodLeft, turretLeft);
 
     // Auto commands
     NamedCommands.registerCommand(
@@ -350,7 +350,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  shooterRollerRight.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
+                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.BUMPER_SHOOTING);
                 }));
 
     operatorController
@@ -358,7 +358,7 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(
                 () -> {
-                  shooterRollerRight.setGoalState(ShooterRollerState.OFF);
+                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.OFF);
                 }));
 
     // operatorController.leftBumper().onTrue(Commands.runOnce(() ->

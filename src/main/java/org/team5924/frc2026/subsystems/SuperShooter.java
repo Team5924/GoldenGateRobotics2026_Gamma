@@ -19,11 +19,11 @@ package org.team5924.frc2026.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel;
 import org.team5924.frc2026.subsystems.turret.Turret;
 
 public class SuperShooter extends SubsystemBase {
-  @Getter private final ShooterRoller roller;
+  @Getter private final ShooterFlywheel roller;
   @Getter private final ShooterHood hood;
   @Getter private final Turret turret;
 
@@ -68,7 +68,7 @@ public class SuperShooter extends SubsystemBase {
     this.goalState = goalState;
   }
 
-  public SuperShooter(ShooterRoller roller, ShooterHood hood, Turret turret) {
+  public SuperShooter(ShooterFlywheel roller, ShooterHood hood, Turret turret) {
     this.roller = roller;
     this.hood = hood;
     this.turret = turret;
