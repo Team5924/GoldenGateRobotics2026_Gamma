@@ -148,8 +148,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
 
-    // assuming intake pivot starts at bottom -> uncomment line below
-    // intakePivotTalon.setPosition(0.0);
+    // assuming intake pivot starts stowed -> uncomment line below
+    intakePivotTalon.setPosition(0.0);
   }
 
   @Override

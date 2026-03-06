@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,7 +46,7 @@ public class IntakePivot extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
-    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 1)), // TODO: tune this, will be higher
+    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", Units.degreesToRadians(95.0))),
     STOW(new LoggedTunableNumber("IntakePivot/StowRads", 0.0)),
 
     // voltage at which the example subsystem motor moves when controlled by the operator

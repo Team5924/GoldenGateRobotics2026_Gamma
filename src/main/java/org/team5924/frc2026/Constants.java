@@ -90,7 +90,7 @@ public final class Constants {
   }
 
   public final class Intake {
-    public static final int CAN_ID = 20; // TODO: Set CAN ID
+    public static final int CAN_ID = 41; // TODO: Set CAN ID
     public static final String BUS = "rio";
     public static final double REDUCTION = 32.0 / 16.0;
     public static final double SIM_MOI = 0.001;
@@ -108,7 +108,7 @@ public final class Constants {
   }
 
   public final class IntakePivot {
-    public static final int CAN_ID = 41; // TODO: update to real can id
+    public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
     public static final double MOTOR_TO_MECHANISM = (54.0 / 20.0) * (32.0 / 12.0);
     public static final double SIM_MOI = 0.001;
@@ -164,7 +164,7 @@ public final class Constants {
   }
 
   public final class Hopper {
-    public static final int CAN_ID = 21; 
+    public static final int CAN_ID = 50; 
     public static final String BUS = "rio";
     public static final double REDUCTION = (24.0 / 12.0) * (24.0 / 12.0); //TODO: If reduction is needed, update
 
@@ -189,7 +189,7 @@ public final class Constants {
    */
 
   public final class Indexer { //TODO: update these later
-    public final static int CAN_ID = 31;
+    public final static int CAN_ID = 51;
     public final static int CAN_ID_INVERSE = 25;
     public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
@@ -336,7 +336,7 @@ public final class Constants {
   }
 
   public final class TurretLeft {
-    public static final int CAN_ID = 40; // TODO: update to real can id
+    public static final int CAN_ID = 20; // TODO: update to real can id
     public static final String BUS = "rio";
 
     public static final Translation3d ROBOT_TO_TURRET = new Translation3d(0.0, 0.0, 0.0); // TODO: update
@@ -525,7 +525,7 @@ public final class Constants {
 
   public final class TurretRight {
     /* Turret */
-    public static final int CAN_ID = 40; // TODO: update to real can id
+    public static final int CAN_ID = 21; // TODO: update to real can id
     public static final String BUS = "rio";
 
     public static final Translation3d ROBOT_TO_TURRET = new Translation3d(0.0, 0.0, 0.0); // TODO: update
