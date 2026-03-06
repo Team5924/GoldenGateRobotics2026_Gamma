@@ -40,6 +40,22 @@ public class RobotState {
     return instance;
   }
 
+  @Getter @Setter private ChassisSpeeds robotVelocity = new ChassisSpeeds();
+  @Getter @Setter private ChassisSpeeds robotSetpointVelocity = new ChassisSpeeds();
+
+  /** Get the rotation of the estimated pose. */
+  public Rotation2d getRotation() {
+    return estimatedPose.getRotation();
+  }
+
+  public ChassisSpeeds getFieldVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(robotVelocity, getRotation());
+  }
+
+  public ChassisSpeeds getFieldSetpointVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(robotSetpointVelocity, getRotation());
+  }
+
   Rotation2d gyroOffset = Rotation2d.kZero;
 
   // Pose Estimation Members

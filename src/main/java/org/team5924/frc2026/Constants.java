@@ -16,6 +16,8 @@
 
 package org.team5924.frc2026;
 
+import org.team5924.frc2026.generated.TunerConstants;
+
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -57,6 +59,8 @@ public final class Constants {
     REPLAY
   }
 
+
+  public static final double trackwidthYMeters = Units.inchesToMeters(18.5); // use tunerconstants here later
   
   public static final boolean TUNING_MODE = false;
   public static final boolean ALLOW_ASSERTS = false;
@@ -313,6 +317,18 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
   }
 
   public final class ShooterRollerFollowerLeft {
@@ -333,6 +349,18 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
   }
 
   public final class TurretLeft {
@@ -347,8 +375,8 @@ public final class Constants {
   
     public static final double SIM_MOI = 0.001;
 
-    public static final double MIN_POSITION_MULTI = -0.4; // rotations
-    public static final double MAX_POSITION_MULTI = 0.4; // rotations
+    public static final double MIN_POSITION_MULTI = 0.0; // rotations
+    public static final double MAX_POSITION_MULTI = 150.0 / 180.0; // rotations
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -524,6 +552,18 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
   }
 
   public final class ShooterRollerFollowerRight {
@@ -542,6 +582,18 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
   }
 
   public final class TurretRight {
@@ -557,8 +609,8 @@ public final class Constants {
   
     public static final double SIM_MOI = 0.001;
 
-    public static final double MIN_POSITION_MULTI = -0.4; // rotations
-    public static final double MAX_POSITION_MULTI = 0.4; // rotations
+    public static final double MIN_POSITION_MULTI = -150.0 / 180.0; // rotations
+    public static final double MAX_POSITION_MULTI = 0.0; // rotations
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);

@@ -46,13 +46,15 @@ public class FieldState {
 
   @Getter private MatchShift currentMatchShift = MatchShift.NONE;
 
+  private Alliance autoWinner;
+  private boolean hasAutoWinner;
+
   private MatchShift calculateCurrentMatchShift() {
     double time = getTime();
 
     if (DriverStation.isAutonomousEnabled()) {
       return MatchShift.AUTO;
     }
-
 
     return MatchShift.INVALID;
   }
@@ -68,8 +70,10 @@ public class FieldState {
     
 
     switch (currentMatchShift) {
-      case AUTO, TRANSITION, END_GAME -> {return true;}
-      default -> {return false;}
+      case AUTO, TRANSITION, END_GAME -> { return true; }
+      case NONE, INVALID -> { return true; } // allow shooting on error?
+      case SHIFT_ONE, SHIFT_TWO -> { return (false); }
+      default -> { return false; }
     }
   }
 }
