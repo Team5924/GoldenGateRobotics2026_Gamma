@@ -139,7 +139,7 @@ public class IntakePivot extends SubsystemBase {
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
-      default -> {}
+      default -> io.setPosition(goalState.getRads().getAsDouble());
     }
   }
 
