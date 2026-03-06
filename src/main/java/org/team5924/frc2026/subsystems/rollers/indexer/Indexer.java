@@ -20,7 +20,6 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
