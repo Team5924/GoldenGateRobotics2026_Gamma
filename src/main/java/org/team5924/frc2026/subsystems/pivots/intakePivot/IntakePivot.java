@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,9 +26,6 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -59,7 +55,7 @@ public class IntakePivot extends SubsystemBase {
   @Getter private IntakePivotState goalState = IntakePivotState.OFF;
 
   private final Alert intakePivotMotorDisconnected;
-  
+
   private boolean isAtSetpoint = false;
 
   protected final Alert overheatAlert;
@@ -89,7 +85,9 @@ public class IntakePivot extends SubsystemBase {
     Logger.recordOutput("IntakePivot/TargetRads", goalState.rads.getAsDouble());
     Logger.recordOutput("IntakePivot/CurrentRads", inputs.intakePivotPositionRads);
     Logger.recordOutput("IntakePivot/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
-    Logger.recordOutput("IntakePivot/TimeSinceLastStateChange", timeSinceLastStateChange = RobotState.getTime() - lastStateChange);
+    Logger.recordOutput(
+        "IntakePivot/TimeSinceLastStateChange",
+        timeSinceLastStateChange = RobotState.getTime() - lastStateChange);
 
     intakePivotMotorDisconnected.set(!inputs.intakePivotMotorConnected);
 
@@ -102,8 +100,10 @@ public class IntakePivot extends SubsystemBase {
   public boolean isAtSetpoint() {
     // return timeSinceLastStateChange > Constants.IntakePivot.STATE_TIMEOUT
     //     || EqualsUtil.epsilonEquals(
-    //       inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
-    return EqualsUtil.epsilonEquals(inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
+    //       inputs.setpointRads, inputs.intakePivotPositionRads,
+    // Constants.IntakePivot.EPSILON_RADS);
+    return EqualsUtil.epsilonEquals(
+        inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
   }
 
   private void handleCurrentState() {
@@ -146,8 +146,9 @@ public class IntakePivot extends SubsystemBase {
 
   public void setGoalState(IntakePivotState goalState) {
     if (this.goalState.equals(goalState)) return;
-    if (goalState.equals(IntakePivotState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
-    
+    if (goalState.equals(IntakePivotState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
+      return;
+
     this.goalState = goalState;
     switch (goalState) {
       case MANUAL:

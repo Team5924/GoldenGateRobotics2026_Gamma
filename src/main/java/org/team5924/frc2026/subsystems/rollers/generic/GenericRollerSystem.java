@@ -70,7 +70,9 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
 
     overheatNotification =
         new Notification(
-            NotificationLevel.WARNING, name + " Overheat Warning", name + " motor overheat imminent!");
+            NotificationLevel.WARNING,
+            name + " Overheat Warning",
+            name + " motor overheat imminent!");
 
     stateTimer.start();
   }

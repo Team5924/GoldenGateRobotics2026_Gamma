@@ -24,9 +24,10 @@ public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC implements 
   private class IndexerInverseTalonFX extends GenericRollerSystemIOKrakenFOC {
     public IndexerInverseTalonFX() {
       super(
-        Constants.Indexer.CAN_ID_INVERSE,
-        Constants.Indexer.BUS,
-        Constants.Indexer.CONFIG,Constants.Indexer.REDUCTION_INVERSE);
+          Constants.Indexer.CAN_ID_INVERSE,
+          Constants.Indexer.BUS,
+          Constants.Indexer.CONFIG,
+          Constants.Indexer.REDUCTION_INVERSE);
     }
   }
 
@@ -35,10 +36,10 @@ public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC implements 
 
   public IndexerIOTalonFX() {
     super(
-      Constants.Indexer.CAN_ID,
-      Constants.Indexer.BUS,
-      Constants.Indexer.CONFIG,
-      Constants.Indexer.REDUCTION);
+        Constants.Indexer.CAN_ID,
+        Constants.Indexer.BUS,
+        Constants.Indexer.CONFIG,
+        Constants.Indexer.REDUCTION);
     indexerInverse = new IndexerInverseTalonFX();
   }
 

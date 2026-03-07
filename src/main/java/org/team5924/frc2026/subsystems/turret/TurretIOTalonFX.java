@@ -24,7 +24,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -39,9 +38,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class TurretIOTalonFX implements TurretIO {
@@ -69,8 +65,7 @@ public class TurretIOTalonFX implements TurretIO {
       new LoggedTunableNumber("Turret/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerk = 
-      new LoggedTunableNumber("Turret/MotionJerk", 0.0);
+  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> turretPosition;

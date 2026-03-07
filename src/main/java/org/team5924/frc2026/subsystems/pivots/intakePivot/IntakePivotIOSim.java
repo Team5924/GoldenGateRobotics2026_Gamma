@@ -58,7 +58,9 @@ public class IntakePivotIOSim implements IntakePivotIO {
 
   @Override
   public void setPosition(double rads) {
-    rads = MathUtil.clamp(rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
+    rads =
+        MathUtil.clamp(
+            rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
     setpoint = rads;
     sim.setAngle(rads);
   }

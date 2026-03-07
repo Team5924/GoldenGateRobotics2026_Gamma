@@ -112,19 +112,23 @@ public final class Constants {
   public final class IntakePivot {
     public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_MECHANISM = (4.0 / 1.0) * (4.0 / 1.0) * (54.0 / 20.0) * (32.0 / 12.0);
     public static final double SIM_MOI = 0.001;
 
+    public static final double MOTOR_TO_MECHANISM =
+      (4.0 / 1.0) * (4.0 / 1.0) * (54.0 / 20.0) * (32.0 / 12.0);
+
     public static final double EPSILON_RADS = Units.degreesToRadians(5.0); // 0.035 rads
+    public static final double STATE_TIMEOUT = 5.0;
+    public static final boolean ENABLE_TIMEOUT = false;
 
     /** how far the intake pivot physically rotates */
-    public static final double MIN_POSITION_MULTI = IntakePivotState.DOWN.getRads().getAsDouble() - EPSILON_RADS; // rotations
-    public static final double MAX_POSITION_MULTI = IntakePivotState.STOW.getRads().getAsDouble() + EPSILON_RADS;  // TODO: have to update this value ??
+    public static final double MIN_POSITION_MULTI =
+      IntakePivotState.DOWN.getRads().getAsDouble() - Units.radiansToRotations(EPSILON_RADS);
+    public static final double MAX_POSITION_MULTI =
+      IntakePivotState.STOW.getRads().getAsDouble() + Units.radiansToRotations(EPSILON_RADS);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
-
-    public static final double STATE_TIMEOUT = 5.0;
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -213,39 +217,27 @@ public final class Constants {
   }
 
   public final class GeneralShooterHood {
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
-  }
-
-  public final class GeneralTurret {
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
-    public static final double STATE_TIMEOUT = 5.0;
-  }
-
-  /* Left */
-  public final class ShooterHoodLeft {
-    public static final int CAN_ID = 34;
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
 
+    // spur = hood driving gear, mechanism = shooter hood gear
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 17.0);
     public static final double CANCODER_TO_SPUR = 1.0;
-    public static final double SPUR_TO_MECHANISM = (23.0 / 18.0); // TODO: double check this
+    public static final double SPUR_TO_MECHANISM = (222.0 / 18.0);
 
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
+    public static final double CANCODER_TO_MECHANISM = CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
-    public static final double CANCODER_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
 
-    public static final double MIN_POSITION_MULTI = 0.0; // TODO: make sure these are both set to the right values (rotations)
-    public static final double MAX_POSITION_MULTI = 30.0 / 360.0;
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
+    public static final double STATE_TIMEOUT = 5.0;
+    public static final boolean ENABLE_TIMEOUT = false;
+
+    public static final double MIN_POSITION_MULTI = 0.0 - Units.radiansToRotations(EPSILON_RADS);
+    public static final double MAX_POSITION_MULTI = 33.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
-
-    public static final double STATE_TIMEOUT = 5.0;
-
-    /* CANCoder */
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
-    public static final int CANCODER_ID = 36; // TODO: update id
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -258,7 +250,7 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
@@ -275,24 +267,44 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withReverseSoftLimitThreshold(MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitThreshold(MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
+            .withForwardSoftLimitThreshold(MAX_POSITION_MULTI)
             .withForwardSoftLimitEnable(false)
             .withReverseSoftLimitEnable(false);
 
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+    public static final FeedbackConfigs GENERAL_FEEDBACK_CONFIGS =
       new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(CANCODER_TO_SPUR * SPUR_TO_MECHANISM)
+        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
         .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
-    public static final MagnetSensorConfigs CANCODER_CONFIG =
+    public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIG =
       new MagnetSensorConfigs()
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-        .withAbsoluteSensorDiscontinuityPoint(1.0) // TODO: update???
+        .withAbsoluteSensorDiscontinuityPoint(1.0)
         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
+  }
+
+  public final class GeneralTurret {
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+    public static final double STATE_TIMEOUT = 5.0;
+  }
+
+  /* Left */
+  public final class ShooterHoodLeft {
+    public static final int CAN_ID = 34;
+
+    /* CANCoder */
+    public static final int CANCODER_ID = 36;
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
+
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      GeneralShooterHood.GENERAL_FEEDBACK_CONFIGS
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
+
+    public static final MagnetSensorConfigs CANCODER_CONFIG =
+      GeneralShooterHood.GENERAL_CANCODER_CONFIG
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
   public final class ShooterRollerLeaderLeft {
@@ -410,78 +422,19 @@ public final class Constants {
   /* Right */
   public final class ShooterHoodRight {
     public static final int CAN_ID = 35;
-    public static final String BUS = "rio";
-    public static final double SIM_MOI = 0.001;
-
-    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 17.0);
-    public static final double CANCODER_TO_SPUR = 1.0;
-    public static final double SPUR_TO_MECHANISM = (23.0 / 18.0); // TODO: double check this
-    public static final double CANCODER_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
-
-    /** how far the hood physically rotates */
-    public static final double MECHANISM_RANGE_PERCENT = 30.0 / 360.0;
-
-    public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
-    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
-
-    public static final double MIN_POSITION_MULTI = 0;// TODO: make sure these are both set to the right values (rotations)
-    public static final double MAX_POSITION_MULTI = 30.0 / 360.0;
-
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
-
-    public static final double STATE_TIMEOUT = 5.0;
 
     /* CANCoder */
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
-    public static final int CANCODER_ID = 37; // TODO: update id
-
-    /* Configs */
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(20)
-            .withStatorCurrentLimit(20)
-            .withSupplyCurrentLimitEnable(true)
-            .withStatorCurrentLimitEnable(true))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
-            .withNeutralMode(NeutralModeValue.Brake));
-
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
-
-    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
-      new SoftwareLimitSwitchConfigs()
-            .withReverseSoftLimitThreshold(MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitThreshold(MAX_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitEnable(false)
-            .withReverseSoftLimitEnable(false);
+    public static final int CANCODER_ID = 37;
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      new FeedbackConfigs()
+      GeneralShooterHood.GENERAL_FEEDBACK_CONFIGS
         .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(CANCODER_TO_SPUR * SPUR_TO_MECHANISM)
-        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
     public static final MagnetSensorConfigs CANCODER_CONFIG =
-      new MagnetSensorConfigs()
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-        .withAbsoluteSensorDiscontinuityPoint(1.0) // TODO: update???
-        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
+      GeneralShooterHood.GENERAL_CANCODER_CONFIG
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
   public final class ShooterRollerLeaderRight {

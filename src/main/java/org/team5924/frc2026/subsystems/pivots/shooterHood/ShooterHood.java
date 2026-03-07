@@ -44,7 +44,6 @@ public class ShooterHood extends SubsystemBase {
     OFF(() -> 0.0),
     ZERO(() -> 0.0),
 
-
     // voltage speed at which to rotate the hood
     MANUAL((new LoggedTunableNumber("ShooterHood/Manual", 1))),
 
@@ -66,8 +65,6 @@ public class ShooterHood extends SubsystemBase {
 
   @Setter private double input;
 
-  public final SysIdRoutine sysId;
-
   private final Alert shooterHoodMotorDisconnected;
 
   protected final Alert overheatAlert;
@@ -86,15 +83,6 @@ public class ShooterHood extends SubsystemBase {
     notImplementedAlert = new Alert("Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
 
     overheatAlert = new Alert("Shooter Hood motor overheating!", Alert.AlertType.kWarning);
-
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.per(Seconds).of(.75),
-                Volts.of(1),
-                Seconds.of(Constants.SYS_ID_TIME),
-                (state) -> Logger.recordOutput("ShooterHood/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
   }
 
   @Override
@@ -161,7 +149,8 @@ public class ShooterHood extends SubsystemBase {
 
   public void setGoalState(ShooterHoodState goalState) {
     if (this.goalState.equals(goalState)) return;
-    if (goalState.equals(ShooterHoodState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
+    if (goalState.equals(ShooterHoodState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
+      return;
 
     this.goalState = goalState;
     switch (goalState) {

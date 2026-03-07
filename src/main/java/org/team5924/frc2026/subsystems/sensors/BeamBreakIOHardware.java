@@ -22,7 +22,7 @@ public class BeamBreakIOHardware implements BeamBreakIO {
   private final DigitalInput beamBreak;
 
   public BeamBreakIOHardware(int id) {
-    beamBreak = null;//new DigitalInput(id);
+    beamBreak = null; // new DigitalInput(id);
   }
 
   @Override

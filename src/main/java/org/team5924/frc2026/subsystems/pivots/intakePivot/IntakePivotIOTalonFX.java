@@ -28,7 +28,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -120,7 +119,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     statusArray[4] = intakePivotTalonConfig.apply(Constants.IntakePivot.CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.SOFTWARE_LIMIT_CONFIGS);
     statusArray[6] = intakePivotTalonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
-    
+
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
 
@@ -156,7 +155,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
 
     // assuming intake pivot starts stowed
-    intakePivotTalon.setPosition(Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble()));
+    intakePivotTalon.setPosition(
+        Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble()));
   }
 
   @Override
@@ -172,16 +172,20 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.intakePivotPosition = BaseStatusSignal.getLatencyCompensatedValueAsDouble(intakePivotPosition, intakePivotVelocity);
+    inputs.intakePivotPosition =
+        BaseStatusSignal.getLatencyCompensatedValueAsDouble(
+            intakePivotPosition, intakePivotVelocity);
     inputs.intakePivotPositionRads = Units.rotationsToRadians(inputs.intakePivotPosition);
 
-    inputs.intakePivotVelocityRadsPerSec = Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble());
+    inputs.intakePivotVelocityRadsPerSec =
+        Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble());
     inputs.intakePivotAppliedVoltage = intakePivotAppliedVoltage.getValueAsDouble();
     inputs.intakePivotSupplyCurrentAmps = intakePivotSupplyCurrent.getValueAsDouble();
     inputs.intakePivotTorqueCurrentAmps = intakePivotTorqueCurrent.getValueAsDouble();
     inputs.intakePivotTempCelsius = intakePivotTempCelsius.getValueAsDouble();
 
-    inputs.motionMagicVelocityTarget = intakePivotTalon.getClosedLoopReferenceSlope().getValueAsDouble();
+    inputs.motionMagicVelocityTarget =
+        intakePivotTalon.getClosedLoopReferenceSlope().getValueAsDouble();
     inputs.motionMagicPositionTarget = intakePivotTalon.getClosedLoopReference().getValueAsDouble();
 
     inputs.setpointRads = setpointRads;
@@ -289,7 +293,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
+    return MathUtil.clamp(
+        rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
   }
 
   private double radsToPosition(double rads) {

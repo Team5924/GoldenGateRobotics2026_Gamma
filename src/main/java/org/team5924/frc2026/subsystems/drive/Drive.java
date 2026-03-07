@@ -135,8 +135,7 @@ public class Drive extends SubsystemBase {
           "Disconnected gyro, using kinematics as fallback.");
 
   private final Notification gyroOverheatNotification =
-      new Notification(
-          NotificationLevel.WARNING, "Motor Overheat", "Motor Overheat Imminent");
+      new Notification(NotificationLevel.WARNING, "Motor Overheat", "Motor Overheat Imminent");
 
   private boolean wasGyroConnected = true;
   private boolean wasOverheating = false;

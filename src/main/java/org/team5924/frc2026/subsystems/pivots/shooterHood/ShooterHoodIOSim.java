@@ -28,20 +28,14 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
   private double setpoint = 0.0;
-  private final double minPositionRads;
-  private final double maxPositionRads;
 
   public ShooterHoodIOSim(boolean isLeft) {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                isLeft ? Constants.ShooterHoodLeft.MOTOR_TO_MECHANISM : Constants.ShooterHoodRight.MOTOR_TO_MECHANISM,
-                isLeft ? Constants.ShooterHoodLeft.SIM_MOI : Constants.ShooterHoodRight.SIM_MOI),
+                Constants.GeneralShooterHood.MOTOR_TO_MECHANISM,
+                Constants.GeneralShooterHood.SIM_MOI),
             gearbox);
-    minPositionRads =
-        isLeft ? Constants.ShooterHoodLeft.MIN_POSITION_RADS : Constants.ShooterHoodRight.MIN_POSITION_RADS;
-    maxPositionRads =
-        isLeft ? Constants.ShooterHoodLeft.MAX_POSITION_RADS : Constants.ShooterHoodRight.MAX_POSITION_RADS;
   }
 
   @Override
@@ -65,7 +59,11 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
 
   @Override
   public void setPosition(double rads) {
-    rads = MathUtil.clamp(rads, minPositionRads, maxPositionRads);
+    rads =
+        MathUtil.clamp(
+            rads,
+            Constants.GeneralShooterHood.MIN_POSITION_RADS,
+            Constants.GeneralShooterHood.MAX_POSITION_RADS);
     setpoint = rads;
     sim.setAngle(rads);
   }
