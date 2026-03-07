@@ -35,7 +35,7 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                isLeft ? Constants.ShooterHoodLeft.REDUCTION : Constants.ShooterHoodRight.REDUCTION,
+                isLeft ? Constants.ShooterHoodLeft.MOTOR_TO_MECHANISM : Constants.ShooterHoodRight.MOTOR_TO_MECHANISM,
                 isLeft ? Constants.ShooterHoodLeft.SIM_MOI : Constants.ShooterHoodRight.SIM_MOI),
             gearbox);
     minPositionRads =

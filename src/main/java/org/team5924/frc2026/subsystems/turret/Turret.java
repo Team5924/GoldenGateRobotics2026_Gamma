@@ -25,6 +25,7 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -174,6 +175,9 @@ public class Turret extends SubsystemBase {
   }
 
   public void setGoalState(TurretState goalState) {
+    if (this.goalState.equals(goalState)) return;
+    if (goalState.equals(TurretState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
+
     if (goalState != TurretState.MOVING) this.goalState = goalState;
     switch (goalState) {
       case MANUAL:

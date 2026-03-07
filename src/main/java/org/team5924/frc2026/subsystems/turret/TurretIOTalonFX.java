@@ -168,14 +168,6 @@ public class TurretIOTalonFX implements TurretIO {
                     ? Constants.TurretLeft.CANCODER_CONFIG
                     : Constants.TurretRight.CANCODER_CONFIG);
 
-    boolean isErrorPresent = false;
-    for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
-
-    if (isErrorPresent)
-      Elastic.sendNotification(
-          new Notification(
-              NotificationLevel.WARNING, "Turret Configs", "Error in turret configs!"));
-
     Logger.recordOutput("Turret/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
@@ -212,8 +204,13 @@ public class TurretIOTalonFX implements TurretIO {
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
-    turretCANCoder.setPosition(0.0);
-    turretTalon.setPosition(0.0);
+    if (isLeft) {
+      turretCANCoder.setPosition(0.25);
+      turretTalon.setPosition(0.25);
+    } else {
+      turretCANCoder.setPosition(-0.25);
+      turretTalon.setPosition(-0.25);
+    }
   }
 
   @Override
@@ -289,12 +286,6 @@ public class TurretIOTalonFX implements TurretIO {
 
           StatusCode statusCode = turretTalon.getConfigurator().apply(slot0Configs);
           if (!statusCode.isOK()) {
-            Elastic.sendNotification(
-                new Notification(
-                    NotificationLevel.WARNING,
-                    "Turret Slot 0 Configs",
-                    "Error in periodically updating turret Slot0 configs!"));
-
             Logger.recordOutput("Turret/UpdateSlot0Report", statusCode);
           }
         },
@@ -314,12 +305,6 @@ public class TurretIOTalonFX implements TurretIO {
 
           StatusCode statusCode = turretTalon.getConfigurator().apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
-            Elastic.sendNotification(
-                new Notification(
-                    NotificationLevel.WARNING,
-                    "Turret Motion Magic Configs",
-                    "Error in periodically updating turret MotionMagic configs!"));
-
             Logger.recordOutput("Turret/UpdateStatusCodeReport", statusCode);
           }
         },
@@ -359,10 +344,10 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads * motorToMechanism);
+    return Units.radiansToRotations(rads);
   }
 
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition / motorToMechanism);
+    return Units.rotationsToRadians(motorPosition);
   }
 }

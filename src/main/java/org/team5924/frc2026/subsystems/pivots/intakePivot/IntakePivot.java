@@ -59,13 +59,10 @@ public class IntakePivot extends SubsystemBase {
   @Getter private IntakePivotState goalState = IntakePivotState.OFF;
 
   private final Alert intakePivotMotorDisconnected;
-  private final Notification intakePivotMotorDisconnectedNotification;
-  private boolean wasIntakePivotMotorConnected = true;
   
   private boolean isAtSetpoint = false;
 
   protected final Alert overheatAlert;
-  protected final Notification overheatNotification;
   protected boolean wasOverheating = false;
 
   private double lastStateChange = 0.0;
@@ -76,14 +73,8 @@ public class IntakePivot extends SubsystemBase {
     this.goalState = IntakePivotState.OFF;
     this.intakePivotMotorDisconnected =
         new Alert("Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
-    this.intakePivotMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "Intake Pivot Motor Disconnected", "");
 
-    overheatAlert = new Alert( "intake pivot motor overheating!", Alert.AlertType.kWarning);
-
-    overheatNotification =
-        new Notification(
-            NotificationLevel.WARNING, "Intake Pivot Overheat Warning", "intake pivot motor overheat imminent!");
+    overheatAlert = new Alert("intake pivot motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
@@ -104,18 +95,8 @@ public class IntakePivot extends SubsystemBase {
 
     handleCurrentState();
 
-    // prevents error spam
-    if (!inputs.intakePivotMotorConnected && wasIntakePivotMotorConnected) {
-      Elastic.sendNotification(intakePivotMotorDisconnectedNotification);
-    }
-    wasIntakePivotMotorConnected = inputs.intakePivotMotorConnected;
-
     boolean isOverheating = inputs.intakePivotTempCelsius > Constants.OVERHEAT_THRESHOLD;
     overheatAlert.set(isOverheating);
-    if (isOverheating && !wasOverheating) {
-      Elastic.sendNotification(overheatNotification);
-    }
-    wasOverheating = isOverheating;
   }
 
   public boolean isAtSetpoint() {
@@ -164,7 +145,9 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public void setGoalState(IntakePivotState goalState) {
+    if (this.goalState.equals(goalState)) return;
     if (goalState.equals(IntakePivotState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
+    
     this.goalState = goalState;
     switch (goalState) {
       case MANUAL:

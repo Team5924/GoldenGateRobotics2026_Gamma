@@ -93,21 +93,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
-  private final double cancoderToMechanism;
-  private final double motorToMechanism;
   private final double minPositionRads;
   private final double maxPositionRads;
-  private final double mechanismRangePercent;
 
   public ShooterHoodIOTalonFX(boolean isLeft) {
-    cancoderToMechanism =
-        isLeft
-            ? Constants.ShooterHoodLeft.CANCODER_TO_MECHANISM
-            : Constants.ShooterHoodRight.CANCODER_TO_MECHANISM;
-    motorToMechanism =
-        isLeft
-            ? Constants.ShooterHoodLeft.MOTOR_TO_MECHANISM
-            : Constants.ShooterHoodRight.MOTOR_TO_MECHANISM;
     minPositionRads =
         isLeft
             ? Constants.ShooterHoodLeft.MIN_POSITION_RADS
@@ -116,10 +105,6 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         isLeft
             ? Constants.ShooterHoodLeft.MAX_POSITION_RADS
             : Constants.ShooterHoodRight.MAX_POSITION_RADS;
-    mechanismRangePercent =
-        isLeft
-            ? Constants.ShooterHoodLeft.MECHANISM_RANGE_PERCENT
-            : Constants.ShooterHoodRight.MECHANISM_RANGE_PERCENT;
 
     shooterHoodTalon =
         new TalonFX(
@@ -285,7 +270,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.shooterHoodPositionCancoder = inputs.cancoderPositionRotations / cancoderToMechanism;
+    inputs.shooterHoodPositionCancoder = inputs.cancoderPositionRotations;
   }
 
   @Override
@@ -306,11 +291,6 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
           StatusCode statusCode = shooterHoodTalon.getConfigurator().apply(slot0Configs);
           if (!statusCode.isOK()) {
-            Elastic.sendNotification(
-                new Notification(
-                    NotificationLevel.WARNING,
-                    "Shooter Hood Slot 0 Configs",
-                    "Error in periodically updating shooter hood Slot0 configs!"));
             Logger.recordOutput("ShooterHood/UpdateSlot0Report", statusCode);
           }
         },
@@ -322,7 +302,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         kA);
 
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode() + 1,
         () -> {
           motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
           motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
@@ -330,12 +310,6 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
           StatusCode statusCode = shooterHoodTalon.getConfigurator().apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
-            Elastic.sendNotification(
-                new Notification(
-                    NotificationLevel.WARNING,
-                    "Shooter Hood Motion Magic Configs",
-                    "Error in periodically updating shooter hood MotionMagic configs!"));
-
             Logger.recordOutput("ShooterHood/UpdateStatusCodeReport", statusCode);
           }
         },
@@ -376,10 +350,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads) * motorToMechanism * mechanismRangePercent;
+    return Units.radiansToRotations(rads);
   }
 
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition) / motorToMechanism / mechanismRangePercent;
+    return Units.rotationsToRadians(motorPosition);
   }
 }

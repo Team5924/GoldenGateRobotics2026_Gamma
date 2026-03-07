@@ -30,6 +30,7 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -39,8 +40,6 @@ public class ShooterHood extends SubsystemBase {
   private final ShooterHoodIO io;
   private final boolean isLeft;
 
-  public LoggedTunableNumber ShooterHoodPivotTolerance =
-      new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
   private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
 
   @RequiredArgsConstructor
@@ -72,12 +71,8 @@ public class ShooterHood extends SubsystemBase {
   public final SysIdRoutine sysId;
 
   private final Alert shooterHoodMotorDisconnected;
-  private final Notification shooterHoodMotorDisconnectedNotification;
-  private boolean wasShooterHoodMotorConnected = true;
 
   protected final Alert overheatAlert;
-  protected final Notification overheatNotification;
-  protected boolean wasOverheating = false;
 
   private final Alert notImplementedAlert;
   private boolean showNotImplementedAlert;
@@ -89,16 +84,10 @@ public class ShooterHood extends SubsystemBase {
     goalState = ShooterHoodState.OFF;
     shooterHoodMotorDisconnected =
         new Alert("Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
-    shooterHoodMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "Shooter Hood Motor Disconnected", "");
 
     notImplementedAlert = new Alert("Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
 
     overheatAlert = new Alert("Shooter Hood motor overheating!", Alert.AlertType.kWarning);
-
-    overheatNotification =
-        new Notification(
-            NotificationLevel.WARNING, "Shooter Hood Overheat Warning", "shooter hood motor overheat imminent!");
 
     sysId =
         new SysIdRoutine(
@@ -123,18 +112,8 @@ public class ShooterHood extends SubsystemBase {
 
     handleCurrentState();
 
-    // prevents error spam
-    if (!inputs.shooterHoodMotorConnected && wasShooterHoodMotorConnected) {
-      Elastic.sendNotification(shooterHoodMotorDisconnectedNotification);
-    }
-    wasShooterHoodMotorConnected = inputs.shooterHoodMotorConnected;
-
     boolean isOverheating = inputs.shooterHoodTempCelsius > Constants.OVERHEAT_THRESHOLD;
     overheatAlert.set(isOverheating);
-    if (isOverheating && !wasOverheating) {
-      Elastic.sendNotification(overheatNotification);
-    }
-    wasOverheating = isOverheating;
   }
 
   private void handleCurrentState() {
@@ -171,7 +150,7 @@ public class ShooterHood extends SubsystemBase {
 
   public boolean isAtSetpoint() {
     return Math.abs(getShooterHoodPositionRads() - this.goalState.rads.getAsDouble())
-        <= ShooterHoodPivotTolerance.getAsDouble();
+        <= Constants.GeneralShooterHood.EPSILON_RADS;
   }
 
   public void runVolts(double volts) {
@@ -184,6 +163,7 @@ public class ShooterHood extends SubsystemBase {
 
   public void setGoalState(ShooterHoodState goalState) {
     if (this.goalState.equals(goalState)) return;
+    if (goalState.equals(ShooterHoodState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
 
     this.goalState = goalState;
     switch (goalState) {

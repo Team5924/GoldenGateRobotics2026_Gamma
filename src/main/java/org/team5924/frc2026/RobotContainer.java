@@ -369,8 +369,8 @@ public class RobotContainer {
                 }, intakePivot, hopper, indexer
         ));
     driveController
-        .leftBumper()
-        .onFalse(
+        .rightBumper()
+        .onTrue(
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.STOW);

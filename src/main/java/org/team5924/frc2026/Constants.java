@@ -16,6 +16,8 @@
 
 package org.team5924.frc2026;
 
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
+
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -110,19 +112,17 @@ public final class Constants {
   public final class IntakePivot {
     public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_MECHANISM = 115.2;
+    public static final double MOTOR_TO_MECHANISM = (4.0 / 1.0) * (4.0 / 1.0) * (54.0 / 20.0) * (32.0 / 12.0);
     public static final double SIM_MOI = 0.001;
 
-    public static final double OFFSET_RADS = 0.0;
+    public static final double EPSILON_RADS = Units.degreesToRadians(5.0); // 0.035 rads
 
     /** how far the intake pivot physically rotates */
-    public static final double MIN_POSITION_MULTI = 0; // rotations
-    public static final double MAX_POSITION_MULTI = 120.0 / 360.0;  // TODO: have to update this value ??
+    public static final double MIN_POSITION_MULTI = IntakePivotState.DOWN.getRads().getAsDouble() - EPSILON_RADS; // rotations
+    public static final double MAX_POSITION_MULTI = IntakePivotState.STOW.getRads().getAsDouble() + EPSILON_RADS;  // TODO: have to update this value ??
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
-
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
 
     public static final double STATE_TIMEOUT = 5.0;
 
@@ -133,6 +133,7 @@ public final class Constants {
           new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(120)
             .withStatorCurrentLimit(120)
+            .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
@@ -161,9 +162,9 @@ public final class Constants {
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(115.2)
+        .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
         .withRotorToSensorRatio(1.0);
-  }
+    }
 
   public final class Hopper {
     public static final int CAN_ID = 50; 
@@ -212,7 +213,7 @@ public final class Constants {
   }
 
   public final class GeneralShooterHood {
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
   }
 
   public final class GeneralTurret {
@@ -224,22 +225,18 @@ public final class Constants {
   public final class ShooterHoodLeft {
     public static final int CAN_ID = 34;
     public static final String BUS = "rio";
-    public static final double REDUCTION = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double SIM_MOI = 0.001;
 
-    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 15.0);
+    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 17.0);
     public static final double CANCODER_TO_SPUR = 1.0;
     public static final double SPUR_TO_MECHANISM = (23.0 / 18.0); // TODO: double check this
-
-    /** how far the hood physically rotates */
-    public static final double MECHANISM_RANGE_PERCENT = 30.0 / 360.0;
 
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
     public static final double CANCODER_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
 
     public static final double MIN_POSITION_MULTI = 0.0; // TODO: make sure these are both set to the right values (rotations)
-    public static final double MAX_POSITION_MULTI = 1.0;
+    public static final double MAX_POSITION_MULTI = 30.0 / 360.0;
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -278,17 +275,17 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(false)
             .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(Constants.ShooterHoodLeft.CANCODER_ID)
-        .withFeedbackRotorOffset(-Constants.ShooterHoodLeft.CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(Constants.ShooterHoodLeft.CANCODER_TO_SPUR)
-        .withRotorToSensorRatio(Constants.ShooterHoodLeft.MOTOR_TO_CANCODER)
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET)
+        .withSensorToMechanismRatio(CANCODER_TO_SPUR * SPUR_TO_MECHANISM)
+        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
     public static final MagnetSensorConfigs CANCODER_CONFIG =
@@ -349,8 +346,8 @@ public final class Constants {
   
     public static final double SIM_MOI = 0.001;
 
-    public static final double MIN_POSITION_MULTI = -0.4; // rotations
-    public static final double MAX_POSITION_MULTI = 0.4; // rotations
+    public static final double MIN_POSITION_MULTI = 0; // rotations
+    public static final double MAX_POSITION_MULTI = 150.0 / 180.0; // rotations
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -392,8 +389,8 @@ public final class Constants {
           MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true);
+        .withForwardSoftLimitEnable(false)
+        .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
@@ -428,8 +425,8 @@ public final class Constants {
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
 
-    public static final double MIN_POSITION_MULTI = 0.0; // TODO: make sure these are both set to the right values (rotations)
-    public static final double MAX_POSITION_MULTI = 1.0;
+    public static final double MIN_POSITION_MULTI = 0;// TODO: make sure these are both set to the right values (rotations)
+    public static final double MAX_POSITION_MULTI = 30.0 / 360.0;
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -468,17 +465,17 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(false)
             .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(Constants.ShooterHoodRight.CANCODER_ID)
-        .withFeedbackRotorOffset(-Constants.ShooterHoodRight.CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(Constants.ShooterHoodRight.CANCODER_TO_SPUR)
-        .withRotorToSensorRatio(Constants.ShooterHoodRight.MOTOR_TO_CANCODER)
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET)
+        .withSensorToMechanismRatio(CANCODER_TO_SPUR * SPUR_TO_MECHANISM)
+        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
     public static final MagnetSensorConfigs CANCODER_CONFIG =
@@ -538,8 +535,8 @@ public final class Constants {
   
     public static final double SIM_MOI = 0.001;
 
-    public static final double MIN_POSITION_MULTI = -0.4; // rotations
-    public static final double MAX_POSITION_MULTI = 0.4; // rotations
+    public static final double MIN_POSITION_MULTI = -150.0 / 180.0 ; // rotations
+    public static final double MAX_POSITION_MULTI = 0.0 ; // rotations
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -585,8 +582,8 @@ public final class Constants {
           MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true);
+        .withForwardSoftLimitEnable(false)
+        .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
