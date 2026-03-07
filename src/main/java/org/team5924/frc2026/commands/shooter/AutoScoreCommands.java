@@ -17,8 +17,13 @@
 package org.team5924.frc2026.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
+import java.util.function.DoubleSupplier;
+
 import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.drive.Drive;
+import org.team5924.frc2026.util.LaunchCalculator;
 
 public class AutoScoreCommands {
   // TODO Make and auto score program
@@ -40,4 +45,22 @@ public class AutoScoreCommands {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'autoScore'");
   }
+
+
+  // public Command runTrackTargetCommand(SuperShooter shooter) {
+
+  //   return Commands.run(
+  //       () -> {
+  //         shooter.setRollerInput(hoodSupplier.getAsDouble());
+  //       },
+  //       shooter);    
+        
+        
+        
+        
+  //       return runEnd(
+  //       () -> runVelocity(LaunchCalculator.getInstance().getParameters().flywheelSpeed()),
+  //       this::stop);
+  // }
+
 }

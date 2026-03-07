@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -100,7 +101,8 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
+    return FieldState.getInstance().getTime() - lastStateChange
+            < Constants.GeneralTurret.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
   }
@@ -183,7 +185,7 @@ public class Turret extends SubsystemBase {
         break;
     }
 
-    lastStateChange = RobotState.getTime();
+    lastStateChange = FieldState.getInstance().getTime();
   }
 
   private void setRespectiveTurretState(TurretState state) {

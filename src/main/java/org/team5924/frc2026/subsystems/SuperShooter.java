@@ -20,13 +20,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 public class SuperShooter extends SubsystemBase {
-  @Getter private final ShooterRoller roller;
+  @Getter private final ShooterFlywheel roller;
   @Getter private final ShooterHood hood;
   @Getter private final Turret turret;
 
@@ -71,24 +71,24 @@ public class SuperShooter extends SubsystemBase {
     this.goalState = goalState;
     switch (goalState) { // intentionally left out MANUAL
       case OFF:
-        roller.setGoalState(ShooterRollerState.OFF);
+        roller.setGoalState(ShooterFlywheelState.OFF);
         hood.setGoalState(ShooterHoodState.OFF);
         turret.setGoalState(TurretState.OFF);
         break;
       case BUMPER_SHOOTING:
-        roller.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
+        roller.setGoalState(ShooterFlywheelState.LAUNCH);
         hood.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
         break;
       case AUTO_SHOOTING:
-        roller.setGoalState(ShooterRollerState.AUTO_SHOOTING);
+        roller.setGoalState(ShooterFlywheelState.LAUNCH);
         hood.setGoalState(ShooterHoodState.AUTO_SHOOTING);
         break;
       case NEUTRAL_SHUFFLING:
-        roller.setGoalState(ShooterRollerState.NEUTRAL_SHUFFLING);
+        roller.setGoalState(ShooterFlywheelState.LAUNCH);
         hood.setGoalState(ShooterHoodState.NEUTRAL_SHUFFLING);
         break;
       case OPPONENT_SHUFFLING:
-        roller.setGoalState(ShooterRollerState.OPPONENT_SHUFFLING);
+        roller.setGoalState(ShooterFlywheelState.LAUNCH);
         hood.setGoalState(ShooterHoodState.OPPONENT_SHUFFLING);
         break;
       default:
@@ -96,7 +96,7 @@ public class SuperShooter extends SubsystemBase {
     }
   }
 
-  public SuperShooter(ShooterRoller roller, ShooterHood hood, Turret turret) {
+  public SuperShooter(ShooterFlywheel roller, ShooterHood hood, Turret turret) {
     this.roller = roller;
     this.hood = hood;
     this.turret = turret;

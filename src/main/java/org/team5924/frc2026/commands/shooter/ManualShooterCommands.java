@@ -25,9 +25,9 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoo
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
-public class ShooterCommands {
+public class ManualShooterCommands {
 
-  private ShooterCommands() {}
+  private ManualShooterCommands() {}
 
   public static Command manualShooter(SuperShooter shooter, DoubleSupplier hoodSupplier) {
     return Commands.run(

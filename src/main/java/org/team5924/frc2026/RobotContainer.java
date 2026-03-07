@@ -58,10 +58,10 @@ import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheelIO;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheelKrakenFOC;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
@@ -78,12 +78,12 @@ public class RobotContainer {
   private final Indexer indexer;
 
   private final ShooterHood shooterHoodRight;
-  private final ShooterRoller shooterRollerRight;
+  private final ShooterFlywheel shooterFlywheelRight;
   private final Turret turretRight;
   private final SuperShooter superShooterRight;
 
   private final ShooterHood shooterHoodLeft;
-  private final ShooterRoller shooterRollerLeft;
+  private final ShooterFlywheel shooterFlywheelLeft;
   private final Turret turretLeft;
   private final SuperShooter superShooterLeft;
   // private final ExampleSystem exampleSystem;
@@ -115,36 +115,17 @@ public class RobotContainer {
         // hopper = new Hopper(new HopperKrakenFOC());
         // indexer = new Indexer(new IndexerIOTalonFX());
 
-        // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        // shooterRollerRight =
-        //     new ShooterRoller(
-        //         new ShooterRollerIOKrakenFOC(false),
-        //         new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-        //         false);
-        // turretRight = new Turret(new TurretIOTalonFX(false), false);
-
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
-        // shooterRollerLeft =
-        //     new ShooterRoller(
-        //         new ShooterRollerIOKrakenFOC(true),
-        //         new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-        //         true);
+        shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(true), true);
         turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
         intake = new Intake(new IntakeIO() {});
-        // intakePivot = new IntakePivot(new IntakePivotIO() {});
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         indexer = new Indexer(new IndexerIO() {});
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
-        shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIO() {}, true);
-
-        // shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
-        shooterRollerLeft =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
-        // turretLeft = new Turret(new TurretIO() {}, false);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+        shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(false), false);
+        turretRight = new Turret(new TurretIOTalonFX(false), false);
         break;
 
       case SIM:
@@ -166,15 +147,16 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         indexer = new Indexer(new IndexerIO() {});
 
+        shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(true), true);
+        shooterFlywheelLeft = null;
+        // new ShooterFlywheel(new ShooterFlywheelIOSim(true), true);
+        turretLeft = new Turret(new TurretIOSim(true), true);
+
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(false), false);
-        shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIOSim(false), new BeamBreakIO() {}, false);
+        shooterFlywheelRight = null;
+        // new ShooterFlywheel(new ShooterFlywheelIOSim(false), false);
         turretRight = new Turret(new TurretIOSim(false), false);
 
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(true), true);
-        shooterRollerLeft =
-            new ShooterRoller(new ShooterRollerIOSim(true), new BeamBreakIO() {}, true);
-        turretLeft = new Turret(new TurretIOSim(true), true);
         break;
 
       default:
@@ -193,19 +175,18 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         indexer = new Indexer(new IndexerIO() {});
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
-        shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
-        turretRight = new Turret(new TurretIO() {}, false);
-
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
-        shooterRollerLeft = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
+        shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelIO() {}, true);
         turretLeft = new Turret(new TurretIO() {}, true);
+
+        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
+        shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelIO() {}, false);
+        turretRight = new Turret(new TurretIO() {}, false);
         break;
     }
 
-    superShooterRight = new SuperShooter(shooterRollerRight, shooterHoodRight, turretRight);
-    superShooterLeft = new SuperShooter(shooterRollerLeft, shooterHoodLeft, turretLeft);
+    superShooterRight = new SuperShooter(shooterFlywheelRight, shooterHoodRight, turretRight);
+    superShooterLeft = new SuperShooter(shooterFlywheelLeft, shooterHoodLeft, turretLeft);
 
     // Auto commands
     NamedCommands.registerCommand(
@@ -469,6 +450,21 @@ public class RobotContainer {
     //     .leftTrigger()
     //     .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
 
+    operatorController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.MANUAL);
+                }));
+
+    operatorController
+        .rightBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.OFF);
+                }));
     // shooterHoodRight.setDefaultCommand(
     //     ShooterCommands.manualShooterHood(shooterHoodRight, () ->
     // operatorController.getRightY()));
@@ -486,18 +482,6 @@ public class RobotContainer {
     // turretRight.setDefaultCommand(getAutonomousCommand()); // todo
     // shooterRollerLeft.setDefaultCommand(getAutonomousCommand()); // todo
     // shooterRollerRight.setDefaultCommand(getAutonomousCommand()); // todo
-
-    // // Climber
-    // // Dpad Down
-    // driveController
-    //     .pov(180)
-    //     .onTrue(Commands.runOnce(() -> climber.setGoalState(Climber.ClimberState.CLIMB)));
-
-    // // Dpad Up
-    // driveController
-    //     .pov(0)
-    //     .onTrue(Commands.runOnce(() ->
-    // climber.setGoalState(Climber.ClimberState.REVERSE_CLIMB)));
 
   }
 
