@@ -19,8 +19,10 @@ package org.team5924.frc2026.subsystems.drive;
 import static org.team5924.frc2026.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -42,10 +44,17 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
 import lombok.Getter;
+
+import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.Elastic.Notification;
+import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
+import org.team5924.frc2026.util.LoggedTunableNumber;
 
 /**
  * Module IO implementation for Talon FX drive motor controller, Talon FX turn motor controller, and
@@ -94,6 +103,10 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<AngularVelocity> turnVelocity;
   private final StatusSignal<Voltage> turnAppliedVolts;
   private final StatusSignal<Current> turnCurrent;
+
+  // Temperature inputs
+  private final StatusSignal<Temperature> driveTemperature;
+  private final StatusSignal<Temperature> turnTemperature;
 
   // Connection debouncers
   private final Debouncer driveConnectedDebounce =
@@ -181,6 +194,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnAppliedVolts = turnTalon.getMotorVoltage();
     turnCurrent = turnTalon.getStatorCurrent();
 
+    // Create temperature status signals
+    driveTemperature = driveTalon.getDeviceTemp();
+    turnTemperature = turnTalon.getDeviceTemp();
+
     // Configure periodic frames
     BaseStatusSignal.setUpdateFrequencyForAll(
         Drive.ODOMETRY_FREQUENCY, drivePosition, turnPosition);
@@ -189,10 +206,12 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveVelocity,
         driveAppliedVolts,
         driveCurrent,
+        driveTemperature,
         turnAbsolutePosition,
         turnVelocity,
         turnAppliedVolts,
-        turnCurrent);
+        turnCurrent,
+        turnTemperature);
     ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
   }
 
@@ -200,9 +219,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   public void updateInputs(ModuleIOInputs inputs) {
     // Refresh all signals
     var driveStatus =
-        BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
+        BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, driveTemperature);
     var turnStatus =
-        BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
+        BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent, turnTemperature);
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     // Update drive inputs
@@ -221,6 +240,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = turnCurrent.getValueAsDouble();
 
+    // Update temp
+    inputs.driveTempCelsius = driveTemperature.getValueAsDouble();
+    inputs.turnTempCelsius = turnTemperature.getValueAsDouble();
+
     // Update odometry inputs
     inputs.odometryTimestamps =
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
@@ -235,7 +258,67 @@ public class ModuleIOTalonFX implements ModuleIO {
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+
+    updateLoggedTunableNumbers();
   }
+
+  private void updateLoggedTunableNumbers() {
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () -> {
+          Slot0Configs turnSlot0 = new Slot0Configs();
+          turnSlot0.kP = TunerConstants.kPSteer.get();
+          turnSlot0.kI = TunerConstants.kISteer.get();
+          turnSlot0.kD = TunerConstants.kDSteer.get();
+          turnSlot0.kS = TunerConstants.kSSteer.get();
+          turnSlot0.kV = TunerConstants.kVSteer.get();
+          turnSlot0.kA = TunerConstants.kASteer.get();
+
+          StatusCode statusCode = turnTalon.getConfigurator().apply(turnSlot0);
+          if (!statusCode.isOK()) {
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "Drive Turn Slot 0 Configs",
+                    "Error in periodically updating drive slot 0 turn configs!"));
+
+            Logger.recordOutput("Drive/UpdateTurnSlot0Report", statusCode);
+          }
+        },
+        TunerConstants.kPSteer,
+        TunerConstants.kISteer,
+        TunerConstants.kDSteer,
+        TunerConstants.kSSteer,
+        TunerConstants.kVSteer,
+        TunerConstants.kASteer);
+
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () -> {
+          Slot0Configs driveSlot0 = new Slot0Configs();
+          driveSlot0.kP = TunerConstants.kPDrive.get();
+          driveSlot0.kI = TunerConstants.kIDrive.get();
+          driveSlot0.kD = TunerConstants.kDDrive.get();
+          driveSlot0.kS = TunerConstants.kSDrive.get();
+          driveSlot0.kV = TunerConstants.kVDrive.get();
+
+          StatusCode statusCode = driveTalon.getConfigurator().apply(driveSlot0);
+          if (!statusCode.isOK()) {
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "Drive Slot 0 Configs",
+                    "Error in periodically updating drive slot 0 configs!"));
+
+            Logger.recordOutput("Drive/UpdateDriveSlot0Report", statusCode);
+          }
+        },
+        TunerConstants.kPDrive,
+        TunerConstants.kIDrive,
+        TunerConstants.kDDrive,
+        TunerConstants.kSDrive,
+        TunerConstants.kVDrive);
+}
 
   @Override
   public void setDriveOpenLoop(double output) {
