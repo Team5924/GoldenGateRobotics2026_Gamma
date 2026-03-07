@@ -17,7 +17,7 @@ public class FieldState {
   }
 
   /** returns the current match time in seconds */
-  public double getTime() {
+  public static double getTime() {
     return ((double) Logger.getTimestamp() * 1.0E-6);
   }
 

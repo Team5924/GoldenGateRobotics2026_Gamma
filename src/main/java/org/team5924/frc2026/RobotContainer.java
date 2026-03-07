@@ -126,7 +126,6 @@ public class RobotContainer {
         shooterFlywheelRight =
             new ShooterFlywheel(
                 new ShooterFlywheelKrakenFOC(true),
-                new BeamBreakIOHardware(Constants.ShooterFlywheelLeft.BEAM_BREAK_PORT),
                 true);
         turretRight = new Turret(new TurretIOTalonFX(true), true);
 
@@ -134,7 +133,6 @@ public class RobotContainer {
         shooterFlywheelLeft =
             new ShooterFlywheel(
                 new ShooterFlywheelKrakenFOC(false),
-                new BeamBreakIOHardware(Constants.ShooterFlywheelLeft.BEAM_BREAK_PORT),
                 false);
         turretLeft = new Turret(new TurretIOTalonFX(false), false);
         break;
@@ -158,13 +156,13 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
-        shooterFlywheelRight =
-            new ShooterFlywheel(new ShooterFlywheelIOSim(true), new BeamBreakIO() {}, true);
+        shooterFlywheelRight = null;
+            // new ShooterFlywheel(new ShooterFlywheelIOSim(true), true);
         turretRight = new Turret(new TurretIOSim(true), true);
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(false), false);
-        shooterFlywheelLeft =
-            new ShooterFlywheel(new ShooterFlywheelIOSim(false), new BeamBreakIO() {}, false);
+        shooterFlywheelLeft = null;
+            // new ShooterFlywheel(new ShooterFlywheelIOSim(false), false);
         turretLeft = new Turret(new TurretIOSim(false), false);
         break;
 
@@ -185,12 +183,12 @@ public class RobotContainer {
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
         shooterFlywheelRight =
-            new ShooterFlywheel(new ShooterFlywheelIO() {}, new BeamBreakIO() {}, true);
+            new ShooterFlywheel(new ShooterFlywheelIO() {}, true);
         turretRight = new Turret(new TurretIO() {}, true);
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
         shooterFlywheelLeft =
-            new ShooterFlywheel(new ShooterFlywheelIO() {}, new BeamBreakIO() {}, false);
+            new ShooterFlywheel(new ShooterFlywheelIO() {}, false);
         turretLeft = new Turret(new TurretIO() {}, false);
         break;
     }
@@ -350,7 +348,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.BUMPER_SHOOTING);
+                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.MANUAL);
                 }));
 
     operatorController

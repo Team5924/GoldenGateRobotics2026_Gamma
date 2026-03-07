@@ -100,7 +100,7 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
 
   public ShooterFlywheelKrakenFOC(boolean isLeft) {
     sideName = isLeft ? "Left" : "Right";
-    reduction = isLeft ?Constants.ShooterFlywheelLeft.REDUCTION : Constants.ShooterFlywheelRight.REDUCTION;
+    reduction = isLeft ? Constants.ShooterFlywheelLeft.REDUCTION : Constants.ShooterFlywheelRight.REDUCTION;
 
     shooterFlywheelLeaderTalon =
         new TalonFX(
@@ -260,7 +260,7 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
         kA);
 
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode() + 1,
         () -> {
           motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
           motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
@@ -288,7 +288,7 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
   }
 
   @Override
-  public void runVelocity(double velocity) {
+  public void setVelocity(double velocity) {
     shooterFlywheelLeaderTalon.setControl(motionMagicVelocity.withVelocity(velocity));
   }
 

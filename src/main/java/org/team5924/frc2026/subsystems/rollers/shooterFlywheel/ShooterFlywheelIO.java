@@ -17,6 +17,8 @@ public interface ShooterFlywheelIO {
     public double followerSupplyCurrentAmps;
     public double followerTempCelsius;
 
+    public double setpointVelocity;
+
     public double motionMagicVelocityTarget = 0.0;
     public double acceleration = 0.0;
   }
@@ -43,7 +45,7 @@ public interface ShooterFlywheelIO {
    *
    * @param velocity velocity in rads/sec
    */
-  public default void runVelocity(double velocity) {}
+  public default void setVelocity(double velocity) {}
 
   /** stops the motor */
   default void stop() {}

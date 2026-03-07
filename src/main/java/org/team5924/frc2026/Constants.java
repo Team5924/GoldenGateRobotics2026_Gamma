@@ -205,6 +205,11 @@ public final class Constants {
     public static final double STATE_TIMEOUT = 5.0;
   }
 
+  public final class GeneralShooterFlywheel {
+    public static final double EPSILON_Velocity = 10;
+  }
+
+
   /* Left */
   public final class IndexerLeft { //TODO: update these later
     public final static int CAN_ID = 31;
