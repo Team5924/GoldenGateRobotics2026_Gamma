@@ -22,7 +22,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
@@ -88,10 +87,6 @@ public class RobotState {
 
   /* ### Indexer ### */
   @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
-
-  /*### Shooter ### */
-  @Getter @Setter private ShooterState leftShooterState = ShooterState.OFF;
-  @Getter @Setter private ShooterState rightShooterState = ShooterState.OFF;
 
   // Turret
   @Getter @Setter private TurretState leftTurretState = TurretState.OFF;

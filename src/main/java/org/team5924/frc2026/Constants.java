@@ -420,7 +420,7 @@ public final class Constants {
     public static final int CAN_ID = 20;
     
     // +x -> forward; +y -> left
-    public static final Translation3d ROBOT_TO_TURRET = new Translation3d(4., 7.505, 15.340);
+    public static final Translation3d ROBOT_TO_TURRET = new Translation3d(4.5, 7.505, 15.340);
 
     /* CANCoder */
     public static final int CANCODER_ID = 22;
@@ -524,7 +524,7 @@ public final class Constants {
     public static final int CAN_ID = 21;
     
     // +x -> forward; +y -> left
-    public static final Translation3d ROBOT_TO_TURRET = new Translation3d(4., 7.505, 15.340);
+    public static final Translation3d ROBOT_TO_TURRET = new Translation3d(4.5, 7.505, 15.340);
 
     /* CANCoder */
     public static final int CANCODER_ID = 23;

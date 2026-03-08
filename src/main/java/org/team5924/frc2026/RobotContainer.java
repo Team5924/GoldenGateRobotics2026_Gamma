@@ -31,9 +31,8 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
+import org.team5924.frc2026.commands.shooter.AutoScoreCommands;
 import org.team5924.frc2026.generated.TunerConstants;
-import org.team5924.frc2026.subsystems.SuperShooter;
-import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -85,12 +84,10 @@ public class RobotContainer {
   private final ShooterHood shooterHoodRight;
   private final ShooterFlywheel shooterFlywheelRight;
   private final Turret turretRight;
-  private final SuperShooter superShooterRight;
 
   private final ShooterHood shooterHoodLeft;
   private final ShooterFlywheel shooterFlywheelLeft;
   private final Turret turretLeft;
-  private final SuperShooter superShooterLeft;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -198,15 +195,11 @@ public class RobotContainer {
         break;
     }
 
-    superShooterRight = new SuperShooter(shooterFlywheelRight, shooterHoodRight, turretRight);
-    superShooterLeft = new SuperShooter(shooterFlywheelLeft, shooterHoodLeft, turretLeft);
-
     // Auto commands
     NamedCommands.registerCommand(
         "Run Shooter",
         Commands.runOnce(
             () -> {
-              superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING);
               // AutoScoreCommands.autoScore(drive, shooter);
             }));
 
@@ -442,6 +435,13 @@ public class RobotContainer {
                 shooterFlywheelLeft,
                 shooterFlywheelRight,
                 indexer));
+    
+    operatorController
+        .leftTrigger()
+        .whileTrue(AutoScoreCommands.runTrackTargetCommand(turretLeft, shooterHoodLeft, shooterFlywheelLeft, true));
+    operatorController
+        .leftTrigger()
+        .whileTrue(AutoScoreCommands.runTrackTargetCommand(turretRight, shooterHoodRight, shooterFlywheelRight, false));
 
     // ---------------------------------------------------------
 

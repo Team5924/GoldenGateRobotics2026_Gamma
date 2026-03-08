@@ -16,20 +16,21 @@
 
 package org.team5924.frc2026.subsystems.rollers.shooterFlywheel;
 
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.Constants.ShooterRollerFollowerLeft;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
+
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 public class ShooterFlywheel extends SubsystemBase {
   private final ShooterFlywheelIO io;
@@ -48,6 +49,7 @@ public class ShooterFlywheel extends SubsystemBase {
 
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("ShooterFlywheel/OperatorCurrent", 200)),
+    AUTO(() -> 0.0),
 
     B4(() -> 4.0),
     B6(() -> 6.0),
@@ -66,31 +68,36 @@ public class ShooterFlywheel extends SubsystemBase {
 
   protected final Alert overheatAlert;
 
+  private final String side;
+
+  @Setter private double autoInput = 0.0;
+
   // private double lastStateChange = 0.0;
   // private double timeSinceLastStateChange = 0.0;
 
   public ShooterFlywheel(ShooterFlywheelIO io, boolean isLeft) {
+    side = isLeft ? "Left" : "Right";
     this.isLeft = isLeft;
     this.io = io;
     this.goalState = ShooterFlywheelState.OFF;
     this.shooterFlywheelMotorDisconnected =
-        new Alert("Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
+        new Alert(side + " Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
 
-    overheatAlert = new Alert("intake pivot motor overheating!", Alert.AlertType.kWarning);
+    overheatAlert = new Alert(side + " intake pivot motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     io.periodicUpdates();
     io.updateInputs(inputs);
-    Logger.processInputs("ShooterFlywheel", inputs);
+    Logger.processInputs("ShooterFlywheel/" + side, inputs);
 
-    Logger.recordOutput("ShooterFlywheel/GoalState", goalState.toString());
+    Logger.recordOutput("ShooterFlywheel/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput(
-        "ShooterFlywheel/CurrentState", getRespectiveShooterFlywheelState().toString());
-    Logger.recordOutput("ShooterFlywheel/TargetRads", goalState.velocity.getAsDouble());
-    Logger.recordOutput("ShooterFlywheel/CurrentRads", inputs.shooterFlywheelPositionRads);
-    Logger.recordOutput("ShooterFlywheel/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
+        "ShooterFlywheel/" + side + "/CurrentState", getRespectiveShooterFlywheelState().toString());
+    Logger.recordOutput("ShooterFlywheel/" + side + "/TargetRads", goalState.velocity.getAsDouble());
+    Logger.recordOutput("ShooterFlywheel/" + side + "/CurrentRads", inputs.shooterFlywheelPositionRads);
+    Logger.recordOutput("ShooterFlywheel/" + side + "/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
     // Logger.recordOutput(
     //     "ShooterFlywheel/TimeSinceLastStateChange",
     //     timeSinceLastStateChange = FieldState.getTime() - lastStateChange);
@@ -116,7 +123,7 @@ public class ShooterFlywheel extends SubsystemBase {
   private void handleCurrentState() {
     switch (getRespectiveShooterFlywheelState()) {
       case MOVING -> {
-        if (isAtSetpoint) setRespectiveShooterFlywheelState(goalState);
+        if (isAtSetpoint() && goalState != ShooterFlywheelState.AUTO) setRespectiveShooterFlywheelState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
@@ -162,6 +169,10 @@ public class ShooterFlywheel extends SubsystemBase {
         break;
       case B4, B6, B8, B12:
         setRespectiveShooterFlywheelState(goalState);
+        break;
+      case AUTO:
+        setRespectiveShooterFlywheelState(ShooterFlywheelState.MOVING);
+        io.setVelocity(autoInput);
         break;
       default:
         setRespectiveShooterFlywheelState(ShooterFlywheelState.MOVING);

@@ -64,6 +64,7 @@ public class LaunchCalculator {
       double hoodAngle,
       double hoodVelocity,
       double flywheelSpeed,
+      double turretRadians,
       double distance,
       double distanceNoLookahead,
       double timeOfFlight,
@@ -329,6 +330,8 @@ public class LaunchCalculator {
       lookaheadLauncherToTargetDistance = target.getDistance(lookaheadPose.getTranslation());
     }
 
+    double turretRads = getTurretAngle(lookaheadPose, target, isLeft).getRadians();
+
     // Account for launcher being off center
     Pose2d lookaheadRobotPose =
         lookaheadPose.transformBy(robotToLauncher.toTransform2d().inverse());
@@ -373,6 +376,7 @@ public class LaunchCalculator {
             hoodAngle + Units.degreesToRadians(hoodAngleOffsetDeg),
             hoodVelocity,
             flywheelVelocity,
+            turretRads,
             lookaheadLauncherToTargetDistance,
             launcherToTargetDistance,
             timeOfFlight,
@@ -385,6 +389,14 @@ public class LaunchCalculator {
         "LaunchCalculator/LauncherToTargetDistance", lookaheadLauncherToTargetDistance);
 
     return latestParameters;
+  }
+
+  private static Rotation2d getTurretAngle(
+      Pose2d turretPose, Translation2d target, boolean isLeft) {
+
+    Rotation2d turretToHub = target.minus(turretPose.getTranslation()).getAngle();
+    Rotation2d turretRads = turretPose.getRotation().minus(turretToHub);
+    return turretRads;
   }
 
   private static Rotation2d getDriveAngleWithLauncherOffset(

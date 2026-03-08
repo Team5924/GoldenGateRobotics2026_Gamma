@@ -47,7 +47,9 @@ public class Turret extends SubsystemBase {
 
     NINETY(new LoggedTunableNumber("Turret/Ninety", Math.PI / 2)),
 
-    ZERO(() -> 0.0);
+    ZERO(() -> 0.0),
+
+    AUTO(() -> 0.0);
 
     @Getter private final DoubleSupplier rads;
 
@@ -68,6 +70,8 @@ public class Turret extends SubsystemBase {
   private boolean shouldContinue;
 
   private final String side;
+
+  @Setter private double autoInput = 0.0;
 
   public Turret(TurretIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
@@ -114,7 +118,7 @@ public class Turret extends SubsystemBase {
             : RobotState.getInstance().getRightTurretState();
     switch (currentState) {
       case MOVING -> {
-        if (isAtSetpoint()) setRespectiveTurretState(goalState);
+        if (isAtSetpoint() && goalState != TurretState.AUTO) setRespectiveTurretState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
@@ -178,6 +182,10 @@ public class Turret extends SubsystemBase {
       case OFF:
         setRespectiveTurretState(TurretState.OFF);
         io.stop();
+        break;
+      case AUTO:
+        setRespectiveTurretState(TurretState.MOVING);
+        io.setPosition(autoInput);
         break;
       default:
         setRespectiveTurretState(TurretState.MOVING);
