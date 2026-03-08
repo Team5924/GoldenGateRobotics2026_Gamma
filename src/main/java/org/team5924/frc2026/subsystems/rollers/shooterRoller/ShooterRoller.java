@@ -20,7 +20,6 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -115,6 +114,7 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
   public void periodic() {
     super.periodic();
     // beamBreakIO.updateInputs(beamBreakInputs);
-    // Logger.processInputs((isLeft ? "Left" : "Right") + "ShooterRoller/BeamBreak", beamBreakInputs);
+    // Logger.processInputs((isLeft ? "Left" : "Right") + "ShooterRoller/BeamBreak",
+    // beamBreakInputs);
   }
 }

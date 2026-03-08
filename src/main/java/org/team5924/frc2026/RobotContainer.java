@@ -140,7 +140,7 @@ public class RobotContainer {
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
         // shooterRollerRight =
         //     new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIO() {}, true);
+        turretRight = new Turret(new TurretIO() {}, false);
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
         // shooterRollerLeft =
@@ -371,6 +371,31 @@ public class RobotContainer {
                 intakePivot,
                 hopper,
                 intake));
+
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  hopper.setGoalState(Hopper.HopperState.SPIT);
+                  intake.setGoalState(IntakeState.SPITOUT);
+                },
+                intakePivot,
+                hopper,
+                intake));
+    driveController
+        .leftTrigger()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  hopper.setGoalState(Hopper.HopperState.OFF);
+                  intake.setGoalState(IntakeState.OFF);
+                },
+                intakePivot,
+                hopper,
+                intake));
     // driveController
     //     .rightTrigger()
     //     .whileTrue(
@@ -465,18 +490,18 @@ public class RobotContainer {
     //     .onTrue(
     //         Commands.runOnce(
     //             () -> {
-    //               turretRight.setGoalState(TurretState.NINETY);
+    //               turretLeft.setGoalState(TurretState.NINETY);
     //             },
-    //             turretRight));
+    //             turretLeft));
 
     // driveController
     //     .rightTrigger()
     //     .onTrue(
     //         Commands.runOnce(
     //             () -> {
-    //               turretRight.setGoalState(TurretState.ZERO);
+    //               turretLeft.setGoalState(TurretState.ZERO);
     //             },
-    //             turretRight));
+    //             turretLeft));
 
     // ---------------------------------------------------------
 

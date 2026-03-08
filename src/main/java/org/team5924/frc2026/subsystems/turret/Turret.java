@@ -42,9 +42,9 @@ public class Turret extends SubsystemBase {
     MOVING(() -> 0.0),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0)),
+    MANUAL(new LoggedTunableNumber("Turret/Volts/OperatorVoltage", 1.0)),
 
-    NINETY(new LoggedTunableNumber("Turret/Ninety", Math.PI / 2)),
+    NINETY(new LoggedTunableNumber("Turret/Volts/Ninety", Math.PI / 2)),
 
     ZERO(() -> 0.0);
 
@@ -117,7 +117,7 @@ public class Turret extends SubsystemBase {
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
       case NINETY -> {
-        io.setPosition(goalState.rads.getAsDouble() * (isLeft ? 1 : -1));
+        io.setPosition(goalState.rads.getAsDouble() * (isLeft ? 1 : 1));
       }
       default -> io.setPosition(goalState.rads.getAsDouble());
     }

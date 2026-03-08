@@ -58,22 +58,22 @@ public class TurretIOTalonFX implements TurretIO {
   /* Gains Left */
   private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("Turret/Left/kP", 25.0);
   private final LoggedTunableNumber kILeft = new LoggedTunableNumber("Turret/Left/kI", 0.0);
-  private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("Turret/Left/kD", 0.00);
+  private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("Turret/Left/kD", 1.00);
   private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("Turret/Left/kS", 0.0);
   private final LoggedTunableNumber kVLeft = new LoggedTunableNumber("Turret/Left/kV", 0.0);
   private final LoggedTunableNumber kALeft = new LoggedTunableNumber("Turret/Left/kA", 0.00);
 
   private final LoggedTunableNumber motionCruiseVelocityLeft =
-      new LoggedTunableNumber("Turret/Left/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("Turret/Left/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAccelerationLeft =
-      new LoggedTunableNumber("Turret/Left/MotionAcceleration", 900.0);
+      new LoggedTunableNumber("Turret/Left/MotionAcceleration", 20.0);
   private final LoggedTunableNumber motionJerkLeft =
       new LoggedTunableNumber("Turret/Left/MotionJerk", 0.0);
 
   /* Gains Right */
-  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Turret/Right/kP", 10.0);
+  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Turret/Right/kP", 25.0);
   private final LoggedTunableNumber kIRight = new LoggedTunableNumber("Turret/Right/kI", 0.0);
-  private final LoggedTunableNumber kDRight = new LoggedTunableNumber("Turret/Right/kD", 0.00);
+  private final LoggedTunableNumber kDRight = new LoggedTunableNumber("Turret/Right/kD", 1.00);
   private final LoggedTunableNumber kSRight = new LoggedTunableNumber("Turret/Right/kS", 0.0);
   private final LoggedTunableNumber kVRight = new LoggedTunableNumber("Turret/Right/kV", 0.0);
   private final LoggedTunableNumber kARight = new LoggedTunableNumber("Turret/Right/kA", 0.00);
