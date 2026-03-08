@@ -60,7 +60,7 @@ public final class Constants {
   }
 
   
-  public static final boolean TUNING_MODE = false;
+  public static final boolean TUNING_MODE = true;
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.33;
 
@@ -333,8 +333,8 @@ public final class Constants {
 
     public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIG =
       new MagnetSensorConfigs()
-        .withAbsoluteSensorDiscontinuityPoint(0.5)
-        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+        .withAbsoluteSensorDiscontinuityPoint(1)
+        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
   }
 
   /* Left */
@@ -405,7 +405,7 @@ public final class Constants {
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     public static final double MIN_POSITION_MULTI = 0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-    public static final double MAX_POSITION_MULTI = 150.0 / 180.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
+    public static final double MAX_POSITION_MULTI = 0.5 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);

@@ -100,9 +100,9 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
-        || EqualsUtil.epsilonEquals(
-            inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
+    // return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
+    return EqualsUtil.epsilonEquals(
+        inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
   }
 
   private void handleCurrentState() {
@@ -117,7 +117,7 @@ public class Turret extends SubsystemBase {
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
       case NINETY -> {
-        io.setPosition(goalState.rads.getAsDouble() * (isLeft ? 1 : 1));
+        io.setPosition(goalState.rads.getAsDouble() * (isLeft ? 1 : -1));
       }
       default -> io.setPosition(goalState.rads.getAsDouble());
     }

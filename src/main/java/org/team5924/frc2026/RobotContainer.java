@@ -45,21 +45,18 @@ import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
-import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
-import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
-import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
-import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
@@ -69,8 +66,10 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
 import org.team5924.frc2026.subsystems.turret.Turret;
+import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
 import org.team5924.frc2026.subsystems.turret.TurretIOSim;
+import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
 
 public class RobotContainer {
   // Subsystems
@@ -114,10 +113,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
 
-        intake = new Intake(new IntakeIOKrakenFOC());
-        intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
-        hopper = new Hopper(new HopperKrakenFOC());
-        indexer = new Indexer(new IndexerIOTalonFX());
+        // intake = new Intake(new IntakeIOKrakenFOC());
+        // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
+        // hopper = new Hopper(new HopperKrakenFOC());
+        // indexer = new Indexer(new IndexerIOTalonFX());
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
         shooterRollerRight =
@@ -133,10 +132,10 @@ public class RobotContainer {
                 new ShooterRollerIOKrakenFOC(true),
                 new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
                 true);
-        // turretLeft = new Turret(new TurretIOTalonFX(true), true);
+        turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
-        // intakePivot = new IntakePivot(new IntakePivotIO() {});
-        // intake = new Intake(new IntakeIO() {});
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
+        intake = new Intake(new IntakeIO() {});
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
         // shooterRollerRight =
         //     new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
@@ -145,7 +144,9 @@ public class RobotContainer {
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
         // shooterRollerLeft =
         //     new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
-        turretLeft = new Turret(new TurretIO() {}, false);
+        // turretLeft = new Turret(new TurretIO() {}, false);
+        hopper = new Hopper(new HopperIO() {});
+        indexer = new Indexer(new IndexerIO() {});
         break;
 
       case SIM:
@@ -485,50 +486,53 @@ public class RobotContainer {
     //         },
     //         turretLeft));
 
-    // driveController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               turretLeft.setGoalState(TurretState.NINETY);
-    //             },
-    //             turretLeft));
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  turretLeft.setGoalState(TurretState.ZERO);
+                },
+                turretLeft));
 
-    // driveController
-    //     .rightTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               turretLeft.setGoalState(TurretState.ZERO);
-    //             },
-    //             turretLeft));
+    driveController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  turretLeft.setGoalState(TurretState.NINETY);
+                },
+                turretLeft));
 
     // ---------------------------------------------------------
 
-    // shooterHoodLeft.setDefaultCommand(
-    //     Commands.run(
-    //         () -> {
-    //           shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);
-    //           shooterHoodLeft.setInput(operatorController.getRightY());
-    //         },
-    //         shooterHoodLeft));
-    // operatorController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               shooterHoodLeft.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
-    //             },
-    //             shooterHoodLeft));
+    shooterHoodLeft.setDefaultCommand(
+        Commands.run(
+            () -> {
+              shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);
+              shooterHoodLeft.setInput(operatorController.getRightY());
+              shooterHoodRight.setGoalState(ShooterHoodState.MANUAL);
+              shooterHoodRight.setInput(operatorController.getRightY());
+            },
+            shooterHoodLeft,
+            shooterHoodRight));
+    operatorController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  shooterHoodLeft.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
+                },
+                shooterHoodLeft));
 
-    // operatorController
-    //     .rightTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               shooterHoodLeft.setGoalState(ShooterHoodState.ZERO);
-    //             },
-    //             shooterHoodLeft));
+    operatorController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  shooterHoodLeft.setGoalState(ShooterHoodState.ZERO);
+                },
+                shooterHoodLeft));
 
     // driveController
     //     .rightTrigger()

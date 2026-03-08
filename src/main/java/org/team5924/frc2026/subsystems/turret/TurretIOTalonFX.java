@@ -230,13 +230,9 @@ public class TurretIOTalonFX implements TurretIO {
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
-    if (isLeft) {
-      turretCANCoder.setPosition(0.25);
-      turretTalon.setPosition(0.25);
-    } else {
-      turretCANCoder.setPosition(-0.25);
-      turretTalon.setPosition(-0.25);
-    }
+
+    turretCANCoder.setPosition(0.0);
+    turretTalon.setPosition(0.0);
   }
 
   @Override
