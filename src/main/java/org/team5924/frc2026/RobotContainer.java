@@ -52,7 +52,6 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
-import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
@@ -340,13 +339,14 @@ public class RobotContainer {
     //             () -> intake.setGoalState(IntakeState.OFF)
     //     ));
 
-    // intakePivot.setDefaultCommand(
-    //     Commands.run(
-    //         () -> {
-    //           intakePivot.setGoalState(IntakePivotState.MANUAL);
-    //           intakePivot.setInput(driveController.getLeftY());
-    //         },
-    //         intakePivot));
+    hopper.setDefaultCommand(
+        Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
+    shooterRollerLeft.setDefaultCommand(
+        Commands.runOnce(
+            () -> shooterRollerLeft.setGoalState(ShooterRollerState.OFF), shooterRollerLeft));
+    shooterRollerRight.setDefaultCommand(
+        Commands.runOnce(
+            () -> shooterRollerRight.setGoalState(ShooterRollerState.OFF), shooterRollerRight));
 
     driveController
         .leftBumper()
@@ -354,7 +354,6 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.DOWN);
-                  hopper.setGoalState(Hopper.HopperState.ON);
                   intake.setGoalState(IntakeState.INTAKE);
                 },
                 intakePivot,
@@ -366,7 +365,6 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.STOW);
-                  hopper.setGoalState(Hopper.HopperState.OFF);
                   intake.setGoalState(IntakeState.OFF);
                 },
                 intakePivot,
@@ -391,90 +389,79 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.STOW);
-                  hopper.setGoalState(Hopper.HopperState.OFF);
+                  hopper.setGoalState(Hopper.HopperState.ON);
                   intake.setGoalState(IntakeState.OFF);
                 },
                 intakePivot,
                 hopper,
                 intake));
-    // driveController
-    //     .rightTrigger()
-    //     .whileTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               shooterRollerLeft.setGoalState(ShooterRollerState.B4);
-    //               shooterRollerRight.setGoalState(ShooterRollerState.B4);
-    //               indexer.setGoalState(Indexer.IndexerState.INDEXING);
-    //             },
-    //             intakePivot,
-    //             hopper,
-    //             indexer,
-    //             intake));
+    driveController
+        .rightTrigger()
+        .whileTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.SHOOTING);
+                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                },
+                intakePivot,
+                shooterRollerLeft,
+                shooterRollerRight,
+                indexer));
 
     operatorController
         .a()
-        .onTrue(
+        .whileTrue(
             Commands.runOnce(
                 () -> {
                   shooterRollerRight.setGoalState(ShooterRollerState.B4);
                   shooterRollerLeft.setGoalState(ShooterRollerState.B4);
-                  indexer.setGoalState(IndexerState.INDEXING);
                 },
                 shooterRollerLeft,
-                shooterRollerRight,
-                indexer));
+                shooterRollerRight));
 
     operatorController
         .b()
-        .onTrue(
+        .whileTrue(
             Commands.runOnce(
                 () -> {
                   shooterRollerRight.setGoalState(ShooterRollerState.B6);
                   shooterRollerLeft.setGoalState(ShooterRollerState.B6);
-                  indexer.setGoalState(IndexerState.INDEXING);
                 },
                 shooterRollerLeft,
-                shooterRollerRight,
-                indexer));
+                shooterRollerRight));
 
     operatorController
         .x()
-        .onTrue(
+        .whileTrue(
             Commands.runOnce(
                 () -> {
                   shooterRollerRight.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
                   shooterRollerLeft.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
-                  indexer.setGoalState(IndexerState.INDEXING);
                 },
                 shooterRollerLeft,
-                shooterRollerRight,
-                indexer));
+                shooterRollerRight));
 
     operatorController
         .y()
-        .onTrue(
+        .whileTrue(
             Commands.runOnce(
                 () -> {
                   shooterRollerRight.setGoalState(ShooterRollerState.B12);
                   shooterRollerLeft.setGoalState(ShooterRollerState.B12);
-                  indexer.setGoalState(IndexerState.INDEXING);
                 },
                 shooterRollerLeft,
-                shooterRollerRight,
-                indexer));
+                shooterRollerRight));
 
-    operatorController
-        .rightTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  shooterRollerRight.setGoalState(ShooterRollerState.OFF);
-                  shooterRollerLeft.setGoalState(ShooterRollerState.OFF);
-                  indexer.setGoalState(IndexerState.OFF);
-                },
-                shooterRollerLeft,
-                shooterRollerRight,
-                indexer));
+    // operatorController
+    //     .rightTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               shooterRollerRight.setGoalState(ShooterRollerState.OFF);
+    //               shooterRollerLeft.setGoalState(ShooterRollerState.OFF);
+    //             },
+    //             shooterRollerLeft,
+    //             shooterRollerRight));
 
     // ---------------------------------------------------------
 
