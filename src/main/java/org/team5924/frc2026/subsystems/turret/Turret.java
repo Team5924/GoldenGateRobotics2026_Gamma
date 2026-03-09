@@ -93,6 +93,7 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput("Turret/" + side + "/CurrentState", getRespectiveTurretState());
     Logger.recordOutput("Turret/" + side + "/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("Turret/" + side + "/CurrentRads", inputs.turretPositionRads);
     Logger.recordOutput("Turret/" + side + "/ExceedBoundsDirection", exceedBoundsDirection);
     Logger.recordOutput("Turret/" + side + "/ShouldContinue", shouldContinue);
 
