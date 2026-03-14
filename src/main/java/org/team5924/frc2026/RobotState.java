@@ -93,13 +93,13 @@ public class RobotState {
   @Getter @Setter private TurretState leftTurretState = TurretState.OFF;
   @Getter @Setter private TurretState rightTurretState = TurretState.OFF;
 
+  /*### Flywheel ### */
+  @Getter @Setter private FlywheelState leftFlywheelState = FlywheelState.OFF;
+  @Getter @Setter private FlywheelState rightFlywheelState = FlywheelState.OFF;
+
   /*### Shooter Hood ### */
   @Getter @Setter private ShooterHoodState leftShooterHoodState = ShooterHoodState.OFF;
   @Getter @Setter private ShooterHoodState rightShooterHoodState = ShooterHoodState.OFF;
-
-  /*### Shooter Roller ### */
-  @Getter @Setter private FlywheelState leftFlywheelState = FlywheelState.OFF;
-  @Getter @Setter private FlywheelState rightFlywheelState = FlywheelState.OFF;
 
   /*### Shooter Roller ### */
   @Getter @Setter private ShooterRollerState leftShooterRollerState = ShooterRollerState.OFF;

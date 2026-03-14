@@ -27,6 +27,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHood extends SubsystemBase {
@@ -96,14 +97,14 @@ public class ShooterHood extends SubsystemBase {
     overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
 
     handleCurrentState();
-    Logger.recordOutput("ShooterHood/" + side + "GoalState", goalState.toString());
+    Logger.recordOutput("ShooterHood/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput(
         "ShooterHood/" + side + "CurrentState", getRespectiveShooterHoodState().toString());
-    Logger.recordOutput("ShooterHood/" + side + "TargetRads", goalState.rads.getAsDouble());
-    Logger.recordOutput("ShooterHood/" + side + "CurrentRads", inputs.positionRads);
-    Logger.recordOutput("ShooterHood/" + side + "IsAtSetpoint", isAtSetpoint);
+    Logger.recordOutput("ShooterHood/" + side + "/TargetRads", getTargetRads());
+    Logger.recordOutput("ShooterHood/" + side + "/CurrentRads", inputs.positionRads);
+    Logger.recordOutput("ShooterHood/" + side + "/IsAtSetpoint", isAtSetpoint);
     Logger.recordOutput(
-        "ShooterHood/" + side + "TimeSinceLastStateChange", timeSinceLastStateChange);
+        "ShooterHood/" + side + "/TimeSinceLastStateChange", timeSinceLastStateChange);
   }
 
   public void runVolts(double volts) {
@@ -142,8 +143,12 @@ public class ShooterHood extends SubsystemBase {
   public boolean isAtSetpoint() {
     return (!Constants.GeneralShooterHood.ENABLE_TIMEOUT
             || timeSinceLastStateChange > Constants.GeneralShooterHood.STATE_TIMEOUT)
-        && Math.abs(inputs.positionRads - this.goalState.rads.getAsDouble())
-            <= Constants.GeneralShooterHood.EPSILON_RADS;
+        && EqualsUtil.epsilonEquals(
+            inputs.positionRads, getTargetRads(), Constants.GeneralShooterHood.EPSILON_RADS);
+  }
+
+  private double getTargetRads() {
+    return goalState == ShooterHoodState.AUTO ? autoInput : goalState.rads.getAsDouble();
   }
 
   private void handleCurrentState() {

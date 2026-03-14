@@ -1,5 +1,5 @@
 /*
- * FlywheelTalonFX.java
+ * FlywheelIOTalonFX.java
  */
 
 /* 
@@ -46,7 +46,7 @@ import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
-public class FlywheelTalonFX implements FlywheelIO {
+public class FlywheelIOTalonFX implements FlywheelIO {
   /* Hardware */
   private final TalonFX leaderTalon;
   private final TalonFX followerTalon;
@@ -91,7 +91,7 @@ public class FlywheelTalonFX implements FlywheelIO {
 
   private final String sideName;
 
-  public FlywheelTalonFX(boolean isLeft) {
+  public FlywheelIOTalonFX(boolean isLeft) {
     sideName = isLeft ? "Left" : "Right";
 
     leaderTalon =
@@ -148,8 +148,8 @@ public class FlywheelTalonFX implements FlywheelIO {
 
     followerTalon.setControl(
         isLeft
-            ? new Follower(FlywheelFollowerLeft.CAN_ID, MotorAlignmentValue.Opposed)
-            : new Follower(FlywheelFollowerRight.CAN_ID, MotorAlignmentValue.Opposed));
+            ? new Follower(FlywheelLeaderLeft.CAN_ID, MotorAlignmentValue.Opposed)
+            : new Follower(FlywheelLeaderRight.CAN_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
     position = leaderTalon.getPosition();

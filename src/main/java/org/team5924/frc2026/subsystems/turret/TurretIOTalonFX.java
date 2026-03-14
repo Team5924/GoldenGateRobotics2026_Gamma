@@ -37,6 +37,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.Constants.GeneralShooterHood;
 import org.team5924.frc2026.Constants.GeneralTurret;
 import org.team5924.frc2026.Constants.TurretLeft;
 import org.team5924.frc2026.Constants.TurretRight;
@@ -126,7 +127,10 @@ public class TurretIOTalonFX implements TurretIO {
 
     turretTalon =
         new TalonFX(isLeft ? TurretLeft.CAN_ID : TurretRight.CAN_ID, new CANBus(GeneralTurret.BUS));
-    turretCANCoder = new CANcoder(isLeft ? TurretLeft.CANCODER_ID : TurretRight.CANCODER_ID);
+    turretCANCoder =
+        new CANcoder(
+            isLeft ? TurretLeft.CANCODER_ID : TurretRight.CANCODER_ID,
+            new CANBus(GeneralShooterHood.BUS));
 
     turretTalonConfig = turretTalon.getConfigurator();
 

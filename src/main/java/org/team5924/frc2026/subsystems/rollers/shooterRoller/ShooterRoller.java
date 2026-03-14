@@ -107,8 +107,5 @@ public class ShooterRoller extends GenericRoller<ShooterRoller.ShooterRollerStat
   @Override
   public void periodic() {
     super.periodic();
-    // beamBreakIO.updateInputs(beamBreakInputs);
-    // Logger.processInputs((isLeft ? "Left" : "Right") + "ShooterRoller/BeamBreak",
-    // beamBreakInputs);
   }
 }

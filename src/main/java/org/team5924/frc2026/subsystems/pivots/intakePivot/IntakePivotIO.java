@@ -49,9 +49,9 @@ public interface IntakePivotIO {
   public default void periodicUpdates() {}
 
   /**
-   * Sets the intakePivot motor to the specified voltage
+   * Sets the intakePivot motor to the specified current
    *
-   * @param amps number of volts
+   * @param amps number of amps
    */
   public default void runCurrent(double amps) {}
 

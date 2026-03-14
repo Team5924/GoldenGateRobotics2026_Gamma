@@ -62,6 +62,7 @@ import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOTalonFX;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
@@ -158,13 +159,11 @@ public class RobotContainer {
         indexer = new Indexer(new IndexerIO() {});
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(true), true);
-        shooterRollerLeft = null;
-        // new ShooterRoller(new ShooterRollerIOSim(true), true);
+        shooterRollerLeft = new ShooterRoller(new ShooterRollerIOSim(true), true);
         turretLeft = new Turret(new TurretIOSim(true), true);
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(false), false);
-        shooterRollerRight = null;
-        // new ShooterRoller(new ShooterRollerIOSim(false), false);
+        shooterRollerRight = new ShooterRoller(new ShooterRollerIOSim(false), false);
         turretRight = new Turret(new TurretIOSim(false), false);
 
         break;
@@ -248,41 +247,41 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // // Default command, normal field-relative drive
-    // if (Constants.currentMode == Constants.Mode.SIM) {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> -driveController.getRawAxis(0),
-    //           () -> -driveController.getLeftY(),
-    //           () -> -driveController.getRawAxis(2)));
-    // } else {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> -driveController.getLeftY(),
-    //           () -> -driveController.getLeftX(),
-    //           () -> -driveController.getRightX()));
-    // }
-    // // [driver] SLOW MODE YIPE
-    // driveController
-    //     .y()
-    //     .onTrue(
-    //         DriveCommands.joystickDrive(
-    //             drive,
-    //             () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+    // Default command, normal field-relative drive
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getRawAxis(0),
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getRawAxis(2)));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getLeftX(),
+              () -> -driveController.getRightX()));
+    }
+    // [driver] SLOW MODE YIPE
+    driveController
+        .y()
+        .onTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // // [driver] 0-DEGREE MODE
-    // driveController
-    //     .a()
-    //     .onTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -driveController.getLeftY(),
-    //             () -> -driveController.getLeftX(),
-    //             () -> Rotation2d.kZero));
+    // [driver] 0-DEGREE MODE
+    driveController
+        .a()
+        .onTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -335,7 +334,6 @@ public class RobotContainer {
                   intake.setGoalState(IntakeState.INTAKE);
                 },
                 intakePivot,
-                hopper,
                 intake));
     driveController
         .rightBumper()
@@ -346,7 +344,6 @@ public class RobotContainer {
                   intake.setGoalState(IntakeState.OFF);
                 },
                 intakePivot,
-                hopper,
                 intake));
 
     // // ### intake pivot spit

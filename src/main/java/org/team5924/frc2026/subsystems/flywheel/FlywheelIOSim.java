@@ -16,4 +16,47 @@
 
 package org.team5924.frc2026.subsystems.flywheel;
 
-public class FlywheelIOSim {}
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import org.team5924.frc2026.Constants;
+
+public class FlywheelIOSim implements FlywheelIO {
+  private final DCMotorSim sim;
+  private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
+  private double appliedVoltage = 0.0;
+  private double setpoint = 0.0;
+
+  public FlywheelIOSim(boolean isLeft) {
+    sim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                Constants.GeneralFlywheel.MOTOR_TO_MECHANISM, Constants.GeneralFlywheel.SIM_MOI),
+            gearbox);
+  }
+
+  @Override
+  public void updateInputs(FlywheelIOInputs inputs) {
+    if (DriverStation.isDisabled()) runVolts(0.0);
+
+    sim.update(Constants.LOOP_PERIODIC_SECONDS);
+    inputs.motorConnected = true;
+    inputs.positionRads = sim.getAngularPositionRad();
+    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.appliedVoltage = appliedVoltage;
+    inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+  }
+
+  @Override
+  public void runVolts(double volts) {
+    appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
+    sim.setInputVoltage(appliedVoltage);
+  }
+
+  @Override
+  public void stop() {
+    runVolts(0.0);
+  }
+}

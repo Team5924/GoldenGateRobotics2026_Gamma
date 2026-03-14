@@ -124,7 +124,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         new TalonFX(
             isLeft ? ShooterHoodLeft.CAN_ID : ShooterHoodRight.CAN_ID,
             new CANBus(GeneralShooterHood.BUS));
-    cancoder = new CANcoder(isLeft ? ShooterHoodLeft.CANCODER_ID : ShooterHoodRight.CANCODER_ID);
+    cancoder =
+        new CANcoder(
+            isLeft ? ShooterHoodLeft.CANCODER_ID : ShooterHoodRight.CANCODER_ID,
+            new CANBus(GeneralShooterHood.BUS));
 
     talonConfig = talon.getConfigurator();
 

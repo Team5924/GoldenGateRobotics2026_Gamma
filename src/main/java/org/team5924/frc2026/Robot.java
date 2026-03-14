@@ -167,7 +167,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.resetSimulationField();
-    updateMatchShift.close();
+    updateMatchShift.stop();
   }
 
   /** This function is called periodically when disabled. */
@@ -201,6 +201,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    updateMatchShift.startPeriodic(0.2);
 
     Elastic.selectTab("Teleoperated");
   }

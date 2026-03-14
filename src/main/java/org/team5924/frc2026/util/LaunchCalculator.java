@@ -116,7 +116,7 @@ public class LaunchCalculator {
       new LaunchPreset(
           new LoggedTunableNumber(
               "LaunchCalculator/Presets/HoodMax/HoodAngle",
-              Units.radiansToDegrees(Constants.GeneralShooterHood.MIN_POSITION_RADS)),
+              Units.radiansToDegrees(Constants.GeneralShooterHood.MAX_POSITION_RADS)),
           new LoggedTunableNumber("LaunchCalculator/Presets/HoodMax/FlywheelSpeed", 50));
 
   public static final LoggedTunableNumber passingIdleSpeed =
@@ -226,10 +226,10 @@ public class LaunchCalculator {
         new LaunchPreset(
             new LoggedTunableNumber(
                 "LaunchCalculator/Presets/Passing/HoodAngle",
-                hoodAngleMap.get(passingPresetDistance).getDegrees()),
+                passingHoodAngleMap.get(passingPresetDistance).getDegrees()),
             new LoggedTunableNumber(
                 "LaunchCalculator/Presets/Passing/FlywheelSpeed",
-                flywheelSpeedMap.get(passingPresetDistance)));
+                passingFlywheelSpeedMap.get(passingPresetDistance)));
     hubPreset =
         new LaunchPreset(
             new LoggedTunableNumber(

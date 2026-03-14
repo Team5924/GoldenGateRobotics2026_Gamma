@@ -125,7 +125,7 @@ public class IntakePivot extends SubsystemBase {
   public boolean isAtSetpoint() {
     return (!Constants.IntakePivot.ENABLE_TIMEOUT
             || timeSinceLastStateChange > Constants.IntakePivot.STATE_TIMEOUT)
-        || EqualsUtil.epsilonEquals(
+        && EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.positionRads, Constants.IntakePivot.EPSILON_RADS);
   }
 

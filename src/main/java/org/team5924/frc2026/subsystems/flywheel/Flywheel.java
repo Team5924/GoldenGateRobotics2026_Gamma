@@ -73,9 +73,9 @@ public class Flywheel extends SubsystemBase {
     this.io = io;
     this.goalState = FlywheelState.OFF;
     this.flywheelMotorDisconnected =
-        new Alert(side + " Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
+        new Alert(side + " Flywheel Motor Disconnected!", Alert.AlertType.kWarning);
 
-    overheatAlert = new Alert(side + " intake pivot motor overheating!", Alert.AlertType.kWarning);
+    overheatAlert = new Alert(side + " Flywheel motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
@@ -142,6 +142,7 @@ public class Flywheel extends SubsystemBase {
 
     switch (getRespectiveFlywheelState()) {
       case MOVING -> {
+        setVelocity(goalState.getVelocity().getAsDouble());
         if (isAtSetpoint() && goalState != FlywheelState.AUTO)
           setRespectiveFlywheelState(goalState);
       }

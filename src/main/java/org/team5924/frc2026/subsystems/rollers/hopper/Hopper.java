@@ -19,11 +19,9 @@ package org.team5924.frc2026.subsystems.rollers.hopper;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
@@ -39,8 +37,6 @@ public class Hopper extends GenericRoller<Hopper.HopperState> {
     private final DoubleSupplier voltageSupplier;
   }
 
-  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
-
   private HopperState goalState = HopperState.OFF;
 
   public Hopper(HopperIO io) {
@@ -55,6 +51,5 @@ public class Hopper extends GenericRoller<Hopper.HopperState> {
   @Override
   public void periodic() {
     super.periodic();
-    Logger.processInputs("Hopper/BeamBreak", beamBreakInputs);
   }
 }

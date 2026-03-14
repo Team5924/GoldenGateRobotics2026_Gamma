@@ -60,7 +60,7 @@ public final class Constants {
     REPLAY
   }
 
-  public static final double TRACK_WIDTH_Y_METERS = 19.5;
+  public static final double TRACK_WIDTH_Y_METERS = Units.inchesToMeters(19.5);
   public static final boolean TUNING_MODE = false; // TODO: tuning mode off
 
   public static final boolean ALLOW_ASSERTS = false;
@@ -144,9 +144,9 @@ public final class Constants {
 
     /** how far the intake pivot physically rotates */
     public static final double MIN_POSITION_MULTI =
-      IntakePivotState.DOWN.getRads().getAsDouble() - Units.radiansToRotations(EPSILON_RADS);
+      Units.radiansToRotations(IntakePivotState.DOWN.getRads().getAsDouble() - EPSILON_RADS);
     public static final double MAX_POSITION_MULTI =
-      IntakePivotState.STOW.getRads().getAsDouble() + Units.radiansToRotations(EPSILON_RADS);
+      Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble() + EPSILON_RADS);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -371,14 +371,18 @@ public final class Constants {
     public static final int CAN_ID = 20;
     
     // +x -> forward; +y -> left
-    public static final Translation3d ROBOT_TO_TURRET = new Translation3d(4.5, 7.505, 15.340);
+    public static final Translation3d ROBOT_TO_TURRET =
+      new Translation3d(
+        Units.inchesToMeters(4.5), 
+        Units.inchesToMeters(7.505), 
+        Units.inchesToMeters(15.340));
 
     /* CANCoder */
     public static final int CANCODER_ID = 22;
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     public static final double MIN_POSITION_MULTI = 0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-    public static final double MAX_POSITION_MULTI = 0.5 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
+    public static final double MAX_POSITION_MULTI = 150.0 / 360.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -437,13 +441,17 @@ public final class Constants {
     public static final int CAN_ID = 21;
     
     // +x -> forward; +y -> left
-    public static final Translation3d ROBOT_TO_TURRET = new Translation3d(4.5, 7.505, 15.340);
+    public static final Translation3d ROBOT_TO_TURRET =
+      new Translation3d(
+        Units.inchesToMeters(4.5), 
+        Units.inchesToMeters(-7.505), 
+        Units.inchesToMeters(15.340));
 
     /* CANCoder */
     public static final int CANCODER_ID = 23;
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
-    public static final double MIN_POSITION_MULTI = -150.0 / 180.0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
+    public static final double MIN_POSITION_MULTI = -150.0 / 360.0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
     public static final double MAX_POSITION_MULTI = 0.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
