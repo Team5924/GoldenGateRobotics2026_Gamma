@@ -1,5 +1,5 @@
 /*
- * HopperKrakenFOC.java
+ * HopperIOTalonFX.java
  */
 
 /* 
@@ -18,15 +18,15 @@ package org.team5924.frc2026.subsystems.rollers.hopper;
 
 // import edu.wpi.first.wpilibj.DigitalInput;
 import org.team5924.frc2026.Constants.Hopper;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
 
-public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC implements HopperIO {
+public class HopperIOTalonFX extends GenericRollerIOTalonFX implements HopperIO {
   /* Still undecided whether add a beambreak for if hopper is full*/
 
   // private static final DigitalInput fullBeamBreakSensor;
 
-  public HopperKrakenFOC() {
-    super(Hopper.CAN_ID, Hopper.BUS, Hopper.CONFIG, Hopper.REDUCTION);
+  public HopperIOTalonFX() {
+    super(Hopper.CAN_ID, Hopper.BUS, Hopper.CONFIG, Hopper.MOTOR_TO_MECHANISM);
 
     // fullBeamBreakSensor = Constants.HOPPER_BEAM_BREAK_ID
   }

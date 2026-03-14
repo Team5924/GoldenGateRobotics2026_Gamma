@@ -21,19 +21,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
+public class Hopper extends GenericRoller<Hopper.HopperState> {
 
   @RequiredArgsConstructor
   @Getter
   public enum HopperState implements VoltageState {
-    ON(new LoggedTunableNumber("HopperAgitator/OnVoltage", 4.0)),
-    SPIT(new LoggedTunableNumber("HopperAgitator/SpitVoltage", -4.0)),
+    ON(new LoggedTunableNumber("Hopper/OnVoltage", 4.0)),
+    SPIT(new LoggedTunableNumber("Hopper/SpitVoltage", -4.0)),
     OFF(() -> 0.0);
 
     private final DoubleSupplier voltageSupplier;

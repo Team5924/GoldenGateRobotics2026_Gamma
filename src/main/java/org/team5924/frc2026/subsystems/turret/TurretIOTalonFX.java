@@ -37,6 +37,9 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.Constants.GeneralTurret;
+import org.team5924.frc2026.Constants.TurretLeft;
+import org.team5924.frc2026.Constants.TurretRight;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -118,17 +121,12 @@ public class TurretIOTalonFX implements TurretIO {
   public TurretIOTalonFX(boolean isLeft) {
     this.isLeft = isLeft;
     side = isLeft ? "Left" : "Right";
-    minPositionRads =
-        isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;
-    maxPositionRads =
-        isLeft ? Constants.TurretLeft.MAX_POSITION_RADS : Constants.TurretRight.MAX_POSITION_RADS;
+    minPositionRads = isLeft ? TurretLeft.MIN_POSITION_RADS : TurretRight.MIN_POSITION_RADS;
+    maxPositionRads = isLeft ? TurretLeft.MAX_POSITION_RADS : TurretRight.MAX_POSITION_RADS;
 
     turretTalon =
-        new TalonFX(
-            isLeft ? Constants.TurretLeft.CAN_ID : Constants.TurretRight.CAN_ID,
-            new CANBus(Constants.GeneralTurret.BUS));
-    turretCANCoder =
-        new CANcoder(isLeft ? Constants.TurretLeft.CANCODER_ID : Constants.TurretRight.CANCODER_ID);
+        new TalonFX(isLeft ? TurretLeft.CAN_ID : TurretRight.CAN_ID, new CANBus(GeneralTurret.BUS));
+    turretCANCoder = new CANcoder(isLeft ? TurretLeft.CANCODER_ID : TurretRight.CANCODER_ID);
 
     turretTalonConfig = turretTalon.getConfigurator();
 
@@ -142,7 +140,7 @@ public class TurretIOTalonFX implements TurretIO {
         () -> {
           updateSlot0Configs();
 
-          StatusCode statusCode = turretTalon.getConfigurator().apply(slot0Configs);
+          StatusCode statusCode = turretTalonConfig.apply(slot0Configs);
           if (!statusCode.isOK()) {
             Logger.recordOutput("Turret/" + side + "/UpdateSlot0Report", statusCode);
           }
@@ -152,25 +150,30 @@ public class TurretIOTalonFX implements TurretIO {
         () -> {
           updateMotionMagicConfigs();
 
-          StatusCode statusCode = turretTalon.getConfigurator().apply(motionMagicConfigs);
+          StatusCode statusCode = turretTalonConfig.apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
-            Logger.recordOutput("Turret/" + side + "UpdateStatusCodeReport", statusCode);
+            Logger.recordOutput("Turret/" + side + "/UpdateStatusCodeReport", statusCode);
           }
         };
 
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[8];
 
-    statusArray[0] = turretTalonConfig.apply(Constants.GeneralTurret.CONFIG);
-    statusArray[1] = turretTalonConfig.apply(Constants.GeneralTurret.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[2] = turretTalonConfig.apply(Constants.GeneralTurret.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[0] = turretTalonConfig.apply(GeneralTurret.GENERAL_CONFIG);
+    statusArray[1] = turretTalonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[2] = turretTalonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[3] =
-        turretTalonConfig.apply(Constants.GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS);
-    statusArray[4] = turretTalonConfig.apply(Constants.GeneralTurret.GENERAL_FEEDBACK_CONFIGS);
+        turretTalonConfig.apply(
+            isLeft ? TurretLeft.SOFTWARE_LIMIT_CONFIGS : TurretRight.SOFTWARE_LIMIT_CONFIGS);
+    statusArray[4] =
+        turretTalonConfig.apply(
+            isLeft ? TurretLeft.FEEDBACK_CONFIGS : TurretRight.FEEDBACK_CONFIGS);
     statusArray[5] = turretTalonConfig.apply(motionMagicConfigs);
     statusArray[6] = turretTalonConfig.apply(slot0Configs);
     statusArray[7] =
-        turretCANCoder.getConfigurator().apply(Constants.GeneralTurret.GENERAL_CANCODER_CONFIG);
+        turretCANCoder
+            .getConfigurator()
+            .apply(isLeft ? TurretLeft.CANCODER_CONFIGS : TurretRight.CANCODER_CONFIGS);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -217,10 +220,10 @@ public class TurretIOTalonFX implements TurretIO {
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
 
-    BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
+    BaseStatusSignal.waitForAll(0.5, turretPosition, cancoderAbsolutePosition);
 
-    turretCANCoder.setPosition(0.0);
     turretTalon.setPosition(0.0);
+    turretCANCoder.setPosition(0.0);
   }
 
   @Override

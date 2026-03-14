@@ -18,10 +18,10 @@ package org.team5924.frc2026.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.rollers.flywheel.Flywheel;
-import org.team5924.frc2026.subsystems.rollers.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.util.LaunchCalculator;

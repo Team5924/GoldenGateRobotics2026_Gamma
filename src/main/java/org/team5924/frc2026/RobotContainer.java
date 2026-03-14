@@ -43,20 +43,26 @@ import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOTalonFX;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
@@ -103,33 +109,33 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
 
-        // intake = new Intake(new IntakeIOKrakenFOC());
-        // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
-        // hopper = new Hopper(new HopperKrakenFOC());
-        // indexer = new Indexer(new IndexerIOTalonFX());
+        // -------------------------- real --------------------------
+        intake = new Intake(new IntakeIOTalonFX());
+        intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
+        hopper = new Hopper(new HopperIOTalonFX());
+        indexer = new Indexer(new IndexerIOTalonFX());
 
-        // shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
-        // shooterRollerLeft = new ShooterRoller(new ShooterRollerIOKrakenFOC(true), true);
+        shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
+        shooterRollerLeft = new ShooterRoller(new ShooterRollerIOTalonFX(true), true);
         turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
-        // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        // shooterRollerRight = new ShooterRoller(new ShooterRollerIOKrakenFOC(false), false);
-        // turretRight = new Turret(new TurretIOTalonFX(false), false);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+        shooterRollerRight = new ShooterRoller(new ShooterRollerIOTalonFX(false), false);
+        turretRight = new Turret(new TurretIOTalonFX(false), false);
 
-        // --------------------------------------- WEOOOOOWEEWWEEWEWEWEEEE
-        // -----------------------------------------
-        intake = new Intake(new IntakeIO() {});
-        intakePivot = new IntakePivot(new IntakePivotIO() {});
-        hopper = new Hopper(new HopperIO() {});
-        indexer = new Indexer(new IndexerIO() {});
+        // ---------------------------- IO ----------------------------
+        // intake = new Intake(new IntakeIO() {});
+        // intakePivot = new IntakePivot(new IntakePivotIO() {});
+        // hopper = new Hopper(new HopperIO() {});
+        // indexer = new Indexer(new IndexerIO() {});
 
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
-        shooterRollerLeft = new ShooterRoller(new ShooterRollerIO() {}, true);
+        // shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
+        // shooterRollerLeft = new ShooterRoller(new ShooterRollerIO() {}, true);
         // turretLeft = new Turret(new TurretIO() {}, true);
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
-        shooterRollerRight = new ShooterRoller(new ShooterRollerIO() {}, false);
-        turretRight = new Turret(new TurretIO() {}, false);
+        // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
+        // shooterRollerRight = new ShooterRoller(new ShooterRollerIO() {}, false);
+        // turretRight = new Turret(new TurretIO() {}, false);
         break;
 
       case SIM:

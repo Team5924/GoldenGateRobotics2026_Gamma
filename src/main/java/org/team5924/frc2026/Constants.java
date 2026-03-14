@@ -16,8 +16,6 @@
 
 package org.team5924.frc2026;
 
-import org.team5924.frc2026.generated.TunerConstants;
-
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
@@ -28,11 +26,8 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
@@ -42,7 +37,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -67,18 +61,18 @@ public final class Constants {
   }
 
   public static final double TRACK_WIDTH_Y_METERS = 19.5;
-  public static final boolean TUNING_MODE = true; // TODO: tuning mode off
+  public static final boolean TUNING_MODE = false; // TODO: tuning mode off
 
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.33;
 
   public static final double OVERHEAT_THRESHOLD = 85.0;
 
-  /* General */
+  /* General Robot */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
   public static final double SYS_ID_TIME = 10.0;
   public static final double JOYSTICK_DEADZONE = 0.05;
-  
+
   public final class Field {
     // origin = rightmost corner of blue alliance wall
     // +x -> towards red alliance wall
@@ -94,17 +88,22 @@ public final class Constants {
     public static final double HUB_X = CENTER_X - 143.50;
   }
 
-  public final class GenericRollerSystem {
-    public static final double REDUCTION = 1.0;
-    public static final double SIM_MOI = 0.001;
-  }
+  /* ### Subystems ### */
 
-  public final class Intake {
-    public static final int CAN_ID = 41; // TODO: Set CAN ID
-    public static final String BUS = "rio";
-    public static final double REDUCTION = 32.0 / 16.0;
-    public static final double SIM_MOI = 0.001;
+  /* Subsystem Configs */
+  public static final OpenLoopRampsConfigs GENERIC_OPEN_LOOP_RAMPS_CONFIGS =
+    new OpenLoopRampsConfigs()
+      .withDutyCycleOpenLoopRampPeriod(0.02)
+      .withTorqueOpenLoopRampPeriod(0.02)
+      .withVoltageOpenLoopRampPeriod(0.02);
 
+  public static final ClosedLoopRampsConfigs GENERIC_CLOSED_LOOP_RAMPS_CONFIGS =
+    new ClosedLoopRampsConfigs()
+      .withDutyCycleClosedLoopRampPeriod(0.02)
+      .withTorqueClosedLoopRampPeriod(0.02)
+      .withVoltageClosedLoopRampPeriod(0.02);
+
+  public final class GenericRoller {
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
@@ -115,10 +114,24 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withRotorToSensorRatio(1.0);
+  }
+
+  public final class Intake {
+    public static final int CAN_ID = 41;
+    public static final String BUS = "rio";
+    public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
+    public static final double SIM_MOI = 0.001;
+
+    public static final TalonFXConfiguration CONFIG = GenericRoller.CONFIG;
   }
 
   public final class IntakePivot {
-    public static final int CAN_ID = 40; // TODO: update to real can id
+    public static final int CAN_ID = 40;
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
 
@@ -152,18 +165,6 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
-
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
         .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
@@ -181,72 +182,34 @@ public final class Constants {
   public final class Hopper {
     public static final int CAN_ID = 50; 
     public static final String BUS = "rio";
-    public static final double REDUCTION = (24.0 / 12.0) * (24.0 / 12.0); //TODO: If reduction is needed, update
+    public static final double MOTOR_TO_MECHANISM = (16.0 / 12.0) * (24.0 / 16.0);
 
     public static final int BEAM_BREAK_ID = 0;
-    // public static final boolean BEAM_BREAK = false;
-  
-    // Hopper Motor Config
-    public static final TalonFXConfiguration CONFIG = 
-      new TalonFXConfiguration()
-            .withCurrentLimits(
-              new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(60)
-                .withStatorCurrentLimit(60))
-            .withMotorOutput(
-              new MotorOutputConfigs()
-                .withInverted(InvertedValue.CounterClockwise_Positive)
-                .withNeutralMode(NeutralModeValue.Brake));
-  }
 
-  public final class GeneralFlywheel {
-    public static final double EPSILON_Velocity = 10;
-    public static final double MOTOR_TO_MECHANISM = 15.0 / 26.0;
-    public static final String BUS = "rio";
-
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
-
-  public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      new FeedbackConfigs()
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
-        .withRotorToSensorRatio(1.0);
+    public static final TalonFXConfiguration CONFIG = GenericRoller.CONFIG;
   }
 
   public final class Indexer {
     public final static int CAN_ID = 51;
-    public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
-    public static final double REDUCTION_INVERSE = 1.0;
+    // controls two rollers, so reduction is weird
+    public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
 
+    public final static int BEAM_BREAK_ID = 0;
+
     public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
+      GenericRoller.CONFIG
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withInverted(InvertedValue.Clockwise_Positive));
   }
 
+
+  /* General Subsystems */
   public final class GeneralShooterHood {
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
-    public static final double JOYSTICK_DEADZONE = 0.05;
 
     // spur = hood driving gear, mechanism = shooter hood gear
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 17.0);
@@ -281,17 +244,6 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
@@ -306,15 +258,38 @@ public final class Constants {
         .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
-    public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIG =
+    public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIGS =
       new MagnetSensorConfigs()
         .withAbsoluteSensorDiscontinuityPoint(1.0)
         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
   }
 
+  public final class GeneralFlywheel {
+    public static final double EPSILON_VELOCITY = 10;
+    public static final double MOTOR_TO_MECHANISM = 15.0 / 26.0;
+    public static final String BUS = "rio";
+    public static final double SIM_MOI = 0.001;
+
+    public static final TalonFXConfiguration GENERAL_CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Coast));
+
+  public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
+        .withRotorToSensorRatio(1.0);
+  }
+
   public final class GeneralTurret {
     public static final String BUS = "rio";
-    public static final double JOYSTICK_DEADZONE = 0.05;
 
     public static final double SIM_MOI = 0.001;
 
@@ -326,7 +301,7 @@ public final class Constants {
     public static final double STATE_TIMEOUT = 1.0;
 
     /* Configs */
-    public static final TalonFXConfiguration CONFIG =
+    public static final TalonFXConfiguration GENERAL_CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
@@ -337,18 +312,6 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
-
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
 
     public static final SoftwareLimitSwitchConfigs GENERAL_SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
@@ -361,7 +324,7 @@ public final class Constants {
         .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
-    public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIG =
+    public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIGS =
       new MagnetSensorConfigs()
         .withAbsoluteSensorDiscontinuityPoint(1)
         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
@@ -380,46 +343,28 @@ public final class Constants {
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
-    public static final MagnetSensorConfigs CANCODER_CONFIG =
-      GeneralShooterHood.GENERAL_CANCODER_CONFIG
+    public static final MagnetSensorConfigs CANCODER_CONFIGS =
+      GeneralShooterHood.GENERAL_CANCODER_CONFIGS
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
   public final class FlywheelLeaderLeft {
-    public static final int CAN_ID = 30; // TODO: Config later
-    public static final double SIM_MOI = 0.001;
+    public static final int CAN_ID = 30;
     public static final int BEAM_BREAK_PORT = 0; // TODO: update later
 
-    public static final int FOLLOWER_CAN_ID = 31;
-
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+    public static final TalonFXConfiguration CONFIG = GeneralFlywheel.GENERAL_CONFIG;
   }
 
   public final class FlywheelFollowerLeft {
-    public static final int CAN_ID = 31; // TODO: Config later
+    public static final int CAN_ID = 31;
     public static final double SIM_MOI = 0.001;
     public static final int BEAM_BREAK_ID = 0;
-    // public static final boolean BEAM_BREAK = false;
   
     public static final TalonFXConfiguration CONFIG = 
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
+      GeneralFlywheel.GENERAL_CONFIG
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withInverted(InvertedValue.CounterClockwise_Positive));
   }
 
   public final class TurretLeft {
@@ -441,34 +386,16 @@ public final class Constants {
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS
         .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
-        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI)
-        .withReverseSoftLimitEnable(false)
-        .withForwardSoftLimitEnable(false);
+        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI);
 
-    /* Configs */
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60) // TODO: double check
-            .withStatorCurrentLimit(60) // TODO: double check
-            .withStatorCurrentLimitEnable(true))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      GeneralTurret.GENERAL_FEEDBACK_CONFIGS
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
+    public static final MagnetSensorConfigs CANCODER_CONFIGS =
+      GeneralTurret.GENERAL_CANCODER_CONFIGS
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
   /* Right */
@@ -484,44 +411,26 @@ public final class Constants {
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
-    public static final MagnetSensorConfigs CANCODER_CONFIG =
-      GeneralShooterHood.GENERAL_CANCODER_CONFIG
+    public static final MagnetSensorConfigs CANCODER_CONFIGS =
+      GeneralShooterHood.GENERAL_CANCODER_CONFIGS
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
   public final class FlywheelLeaderRight {
-    public static final int CAN_ID = 32; // TODO: Config later
-    public static final double SIM_MOI = 0.001;
+    public static final int CAN_ID = 32;
     public static final int BEAM_BREAK_PORT = 0; // TODO: update later
 
-    public static final int FOLLOWER_CAN_ID = 33;
-
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+    public static final TalonFXConfiguration CONFIG = GeneralFlywheel.GENERAL_CONFIG;
   }
 
   public final class FlywheelFollowerRight {
-    public static final int CAN_ID = 33; // TODO: Config later
-    public static final double SIM_MOI = 0.001;
+    public static final int CAN_ID = 33;
 
     public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
+      GeneralFlywheel.GENERAL_CONFIG
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withInverted(InvertedValue.CounterClockwise_Positive));
   }
 
   public final class TurretRight {
@@ -539,36 +448,19 @@ public final class Constants {
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
+  
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS
+        .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
+        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI);
 
-    public static final double JOYSTICK_DEADZONE = 0.05;
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      GeneralTurret.GENERAL_FEEDBACK_CONFIGS
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
-
-    public static final double STATE_TIMEOUT = 5.0;
-
-    /* Configs */
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60) // TODO: double check
-            .withStatorCurrentLimit(60) // TODO: double check
-            .withStatorCurrentLimitEnable(true))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
-
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
+    public static final MagnetSensorConfigs CANCODER_CONFIGS =
+      GeneralTurret.GENERAL_CANCODER_CONFIGS
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 }
