@@ -21,12 +21,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
+public class ShooterRoller extends GenericRoller<ShooterRoller.ShooterRollerState> {
 
   @RequiredArgsConstructor
   @Getter

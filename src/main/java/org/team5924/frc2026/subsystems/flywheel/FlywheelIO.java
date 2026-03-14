@@ -14,21 +14,21 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.flywheel;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import org.littletonrobotics.junction.AutoLog;
 
 public interface FlywheelIO {
   @AutoLog
   public static class FlywheelIOInputs {
-    public boolean flywheelMotorConnected = true;
-    public double flywheelPosition = 0.0;
-    public double flywheelPositionRads = 0.0;
-    public double flywheelVelocityRadsPerSec = 0.0;
-    public double flywheelAppliedVoltage = 0.0;
-    public double flywheelSupplyCurrentAmps = 0.0;
-    public double flywheelTorqueCurrentAmps = 0.0;
-    public double flywheelTempCelsius = 0.0;
+    public boolean motorConnected = true;
+    public double position = 0.0;
+    public double positionRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
 
     public double followerSupplyCurrentAmps;
     public double followerTempCelsius;

@@ -39,19 +39,19 @@ public class IntakePivotIOSim implements IntakePivotIO {
 
   @Override
   public void updateInputs(IntakePivotIOInputs inputs) {
-    if (DriverStation.isDisabled()) runVolts(0.0);
+    if (DriverStation.isDisabled()) runCurrent(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.intakePivotMotorConnected = true;
-    inputs.intakePivotPositionRads = sim.getAngularPositionRad();
-    inputs.intakePivotVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
-    inputs.intakePivotAppliedVoltage = appliedVoltage;
-    inputs.intakePivotSupplyCurrentAmps = sim.getCurrentDrawAmps();
-    inputs.intakePivotPositionRads = setpoint;
+    inputs.motorConnected = true;
+    inputs.positionRads = sim.getAngularPositionRad();
+    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.appliedVoltage = appliedVoltage;
+    inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.positionRads = setpoint;
   }
 
   @Override
-  public void runVolts(double volts) {
+  public void runCurrent(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
   }
@@ -67,6 +67,6 @@ public class IntakePivotIOSim implements IntakePivotIO {
 
   @Override
   public void stop() {
-    runVolts(0.0);
+    runCurrent(0.0);
   }
 }

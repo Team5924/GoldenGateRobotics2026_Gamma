@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.flywheel;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,7 +27,6 @@ import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
-import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class Flywheel extends SubsystemBase {
@@ -58,20 +57,15 @@ public class Flywheel extends SubsystemBase {
     private final DoubleSupplier velocity;
   }
 
-  @Getter private FlywheelState goalState = FlywheelState.OFF;
-
-  private final Alert flywheelMotorDisconnected;
-
-  private boolean isAtSetpoint = false;
-
-  protected final Alert overheatAlert;
-
   private final String side;
 
-  @Setter private double autoInput = 0.0;
+  private final Alert flywheelMotorDisconnected;
+  protected final Alert overheatAlert;
 
-  // private double lastStateChange = 0.0;
-  // private double timeSinceLastStateChange = 0.0;
+  @Getter private FlywheelState goalState = FlywheelState.OFF;
+  private boolean isAtSetpoint = false;
+
+  @Setter private double autoInput = 0.0;
 
   public Flywheel(FlywheelIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
@@ -96,92 +90,78 @@ public class Flywheel extends SubsystemBase {
     Logger.recordOutput(
         "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
     Logger.recordOutput("Flywheel/" + side + "/TargetRads", goalState.velocity.getAsDouble());
-    Logger.recordOutput("Flywheel/" + side + "/CurrentRads", inputs.flywheelPositionRads);
-    Logger.recordOutput("Flywheel/" + side + "/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
-    // Logger.recordOutput(
-    //     "Flywheel/TimeSinceLastStateChange",
-    //     timeSinceLastStateChange = FieldState.getTime() - lastStateChange);
+    Logger.recordOutput("Flywheel/" + side + "/CurrentRads", inputs.positionRads);
+    Logger.recordOutput("Flywheel/" + side + "/IsAtSetpoint", isAtSetpoint);
 
-    flywheelMotorDisconnected.set(!inputs.flywheelMotorConnected);
+    flywheelMotorDisconnected.set(!inputs.motorConnected);
 
     handleCurrentState();
-    // boolean isOverheating = inputs.flywheelTempCelsius > Constants.OVERHEAT_THRESHOLD;
-    // overheatAlert.set(isOverheating);
+    overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
+  }
+
+  public void runVolts(double volts) {
+    io.runVolts(volts);
+  }
+
+  public void setVelocity(double velocity) {
+    io.setVelocity(velocity);
+  }
+
+  public void stop() {
+    io.stop();
+  }
+
+  public void setGoalState(FlywheelState goalState) {
+    if (this.goalState.equals(goalState)) return;
+
+    if (goalState.equals(FlywheelState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
+      return;
+
+    this.goalState = goalState;
+    switch (goalState) {
+      case MANUAL -> setRespectiveFlywheelState(FlywheelState.MANUAL);
+      case MOVING ->
+          DriverStation.reportError(
+              "Flywheel: MOVING is an invalid goal state; it is a transition state!!", null);
+      case OFF -> setRespectiveFlywheelState(FlywheelState.OFF);
+      case B4, B6, B8, B12 -> setRespectiveFlywheelState(goalState);
+      case AUTO -> setRespectiveFlywheelState(FlywheelState.AUTO);
+      default -> setRespectiveFlywheelState(FlywheelState.MOVING);
+    }
   }
 
   public boolean isAtSetpoint() {
-    // return timeSinceLastStateChange > Constants.Flywheel.STATE_TIMEOUT
-    //     || EqualsUtil.epsilonEquals(
-    //       inputs.setpointRads, inputs.flywheelPositionRads,
-    // Constants.Flywheel.EPSILON_RADS);
     return EqualsUtil.epsilonEquals(
         inputs.setpointVelocity,
-        inputs.flywheelVelocityRadsPerSec,
-        Constants.GeneralFlywheel.EPSILON_Velocity);
+        inputs.velocityRadsPerSec,
+        Constants.GeneralFlywheel.EPSILON_VELOCITY);
   }
 
   private void handleCurrentState() {
+    isAtSetpoint = isAtSetpoint();
+
     switch (getRespectiveFlywheelState()) {
       case MOVING -> {
         if (isAtSetpoint() && goalState != FlywheelState.AUTO)
           setRespectiveFlywheelState(goalState);
       }
       case MANUAL -> handleManualState();
-      case OFF -> io.stop();
-      case LAUNCH -> {
-        io.setVelocity(LaunchCalculator.getInstance().getParameters(isLeft).flywheelSpeed());
-      }
-      case B4, B6, B8, B12 -> {
-        io.runVolts(goalState.getVelocity().getAsDouble());
-      }
-      default -> io.setVelocity(goalState.getVelocity().getAsDouble());
+      case OFF -> stop();
+      case B4, B6, B8, B12 -> runVolts(goalState.getVelocity().getAsDouble());
+      case AUTO -> setVelocity(autoInput);
+      default -> setVelocity(goalState.getVelocity().getAsDouble());
     }
   }
 
   private void handleManualState() {
     if (!goalState.equals(FlywheelState.MANUAL)) return;
 
-    if (Math.abs(input) <= 0.05) {
-      io.runVolts(0);
+    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
+      stop();
       return;
     }
 
-    io.setVelocity(FlywheelState.MANUAL.getVelocity().getAsDouble() * input);
-  }
-
-  public void setGoalState(FlywheelState goalState) {
-    if (this.goalState.equals(goalState)) return;
-
-    if (goalState.equals(FlywheelState.MANUAL) && Math.abs(input) <= 0.05) return;
-
-    this.goalState = goalState;
-    switch (goalState) {
-      case MANUAL:
-        setRespectiveFlywheelState(FlywheelState.MANUAL);
-        break;
-      case MOVING:
-        DriverStation.reportError(
-            "Flywheel: MOVING is an invalid goal state; it is a transition state!!", null);
-        break;
-      case OFF:
-        setRespectiveFlywheelState(FlywheelState.OFF);
-        io.stop();
-        break;
-      case B4, B6, B8, B12:
-        setRespectiveFlywheelState(goalState);
-        io.runVolts(goalState.getVelocity().getAsDouble());
-        break;
-      case AUTO:
-        setRespectiveFlywheelState(FlywheelState.MOVING);
-        io.setVelocity(autoInput);
-        break;
-      default:
-        setRespectiveFlywheelState(FlywheelState.MOVING);
-        io.setVelocity(goalState.velocity.getAsDouble());
-        break;
-    }
-
-    // lastStateChange = FieldState.getTime();
+    setVelocity(FlywheelState.MANUAL.getVelocity().getAsDouble() * input);
   }
 
   private void setRespectiveFlywheelState(FlywheelState state) {

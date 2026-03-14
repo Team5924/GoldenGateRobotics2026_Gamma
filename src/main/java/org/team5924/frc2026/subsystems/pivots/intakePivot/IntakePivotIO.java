@@ -21,14 +21,14 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakePivotIO {
   @AutoLog
   public static class IntakePivotIOInputs {
-    public boolean intakePivotMotorConnected = true;
-    public double intakePivotPosition = 0.0;
-    public double intakePivotPositionRads = 0.0;
-    public double intakePivotVelocityRadsPerSec = 0.0;
-    public double intakePivotAppliedVoltage = 0.0;
-    public double intakePivotSupplyCurrentAmps = 0.0;
-    public double intakePivotTorqueCurrentAmps = 0.0;
-    public double intakePivotTempCelsius = 0.0;
+    public boolean motorConnected = true;
+    public double position = 0.0;
+    public double positionRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
 
     public double motionMagicVelocityTarget = 0.0;
     public double motionMagicPositionTarget = 0.0;
@@ -51,9 +51,9 @@ public interface IntakePivotIO {
   /**
    * Sets the intakePivot motor to the specified voltage
    *
-   * @param volts number of volts
+   * @param amps number of volts
    */
-  public default void runVolts(double volts) {}
+  public default void runCurrent(double amps) {}
 
   /**
    * Sets the intakePivot motor to a specified angle

@@ -1,5 +1,5 @@
 /*
- * FlywheelKrakenFOC.java
+ * FlywheelTalonFX.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.flywheel;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -24,6 +24,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -33,25 +34,26 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import lombok.Getter;
-import lombok.experimental.Accessors;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.Constants.FlywheelFollowerLeft;
+import org.team5924.frc2026.Constants.FlywheelFollowerRight;
+import org.team5924.frc2026.Constants.FlywheelLeaderLeft;
+import org.team5924.frc2026.Constants.FlywheelLeaderRight;
 import org.team5924.frc2026.Constants.GeneralFlywheel;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
-public class FlywheelKrakenFOC implements FlywheelIO {
+public class FlywheelTalonFX implements FlywheelIO {
   /* Hardware */
   private final TalonFX leaderTalon;
-  private final TalonFX flywheelFollowerTalon;
+  private final TalonFX followerTalon;
 
   /* Configurators */
   private TalonFXConfigurator leaderConfig;
-  private TalonFXConfigurator flywheelTalonFollowerConfig;
+  private TalonFXConfigurator followerConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;
@@ -73,42 +75,37 @@ public class FlywheelKrakenFOC implements FlywheelIO {
       new LoggedTunableNumber("Flywheel/MotionJerk", 0.0);
 
   /* Status Signals */
-  private final StatusSignal<Angle> flywheelPosition;
-  private final StatusSignal<AngularVelocity> flywheelVelocity;
-  private final StatusSignal<Voltage> flywheelAppliedVoltage;
-  private final StatusSignal<Current> flywheelSupplyCurrent;
-  private final StatusSignal<Current> flywheelTorqueCurrent;
-  private final StatusSignal<Temperature> flywheelTempCelsius;
+  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> appliedVoltage;
+  private final StatusSignal<Current> supplyCurrent;
+  private final StatusSignal<Current> torqueCurrent;
+  private final StatusSignal<Temperature> tempCelsius;
 
   private final StatusSignal<Double> closedLoopReferenceSlope;
   private double prevClosedLoopReferenceSlope = 0.0;
   private double prevReferenceSlopeTimestamp = 0.0;
 
   private final VoltageOut voltageOut;
-  // private final MotionMagicVelocityVoltage motionMagicVelocity;
+  private final MotionMagicVelocityVoltage motionMagicVelocity;
 
   private final String sideName;
 
-  @Getter
-  @Accessors(fluent = true)
-  @AutoLogOutput(key = "Flywheel/AtGoal")
-  private boolean atGoal = false;
-
-  public FlywheelKrakenFOC(boolean isLeft) {
+  public FlywheelTalonFX(boolean isLeft) {
     sideName = isLeft ? "Left" : "Right";
 
     leaderTalon =
         new TalonFX(
-            isLeft ? Constants.FlywheelLeaderLeft.CAN_ID : Constants.FlywheelLeaderRight.CAN_ID,
-            new CANBus(Constants.GeneralFlywheel.BUS));
+            isLeft ? FlywheelLeaderLeft.CAN_ID : FlywheelLeaderRight.CAN_ID,
+            new CANBus(GeneralFlywheel.BUS));
 
-    flywheelFollowerTalon =
+    followerTalon =
         new TalonFX(
-            isLeft ? Constants.FlywheelFollowerLeft.CAN_ID : Constants.FlywheelFollowerRight.CAN_ID,
-            new CANBus(Constants.GeneralFlywheel.BUS));
+            isLeft ? FlywheelFollowerLeft.CAN_ID : FlywheelFollowerRight.CAN_ID,
+            new CANBus(GeneralFlywheel.BUS));
 
     leaderConfig = leaderTalon.getConfigurator();
-    flywheelTalonFollowerConfig = flywheelFollowerTalon.getConfigurator();
+    followerConfig = followerTalon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
@@ -127,19 +124,15 @@ public class FlywheelKrakenFOC implements FlywheelIO {
     StatusCode[] statusArray = new StatusCode[6];
 
     statusArray[0] =
-        leaderConfig.apply(
-            isLeft ? Constants.FlywheelLeaderLeft.CONFIG : Constants.FlywheelLeaderRight.CONFIG);
-    statusArray[1] = leaderConfig.apply(GeneralFlywheel.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[2] = leaderConfig.apply(GeneralFlywheel.CLOSED_LOOP_RAMPS_CONFIGS);
+        leaderConfig.apply(isLeft ? FlywheelLeaderLeft.CONFIG : FlywheelLeaderRight.CONFIG);
+    statusArray[1] = leaderConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[2] = leaderConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[3] = leaderConfig.apply(GeneralFlywheel.FEEDBACK_CONFIGS);
 
     statusArray[4] = leaderConfig.apply(slot0Configs);
 
     statusArray[5] =
-        flywheelTalonFollowerConfig.apply(
-            isLeft
-                ? Constants.FlywheelFollowerLeft.CONFIG
-                : Constants.FlywheelFollowerRight.CONFIG);
+        followerConfig.apply(isLeft ? FlywheelFollowerLeft.CONFIG : FlywheelFollowerRight.CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -153,59 +146,51 @@ public class FlywheelKrakenFOC implements FlywheelIO {
 
     Logger.recordOutput("Flywheel/" + sideName + "/InitConfReport", statusArray);
 
-    flywheelFollowerTalon.setControl(
+    followerTalon.setControl(
         isLeft
-            ? new Follower(Constants.FlywheelFollowerLeft.CAN_ID, MotorAlignmentValue.Opposed)
-            : new Follower(Constants.FlywheelFollowerRight.CAN_ID, MotorAlignmentValue.Opposed));
+            ? new Follower(FlywheelFollowerLeft.CAN_ID, MotorAlignmentValue.Opposed)
+            : new Follower(FlywheelFollowerRight.CAN_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
-    flywheelPosition = leaderTalon.getPosition();
-    flywheelVelocity = leaderTalon.getVelocity();
-    flywheelAppliedVoltage = leaderTalon.getMotorVoltage();
-    flywheelSupplyCurrent = leaderTalon.getSupplyCurrent();
-    flywheelTorqueCurrent = leaderTalon.getTorqueCurrent();
-    flywheelTempCelsius = leaderTalon.getDeviceTemp();
+    position = leaderTalon.getPosition();
+    velocity = leaderTalon.getVelocity();
+    appliedVoltage = leaderTalon.getMotorVoltage();
+    supplyCurrent = leaderTalon.getSupplyCurrent();
+    torqueCurrent = leaderTalon.getTorqueCurrent();
+    tempCelsius = leaderTalon.getDeviceTemp();
 
     closedLoopReferenceSlope = leaderTalon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0,
-        flywheelPosition,
-        flywheelVelocity,
-        flywheelAppliedVoltage,
-        flywheelSupplyCurrent,
-        flywheelTorqueCurrent,
-        flywheelTempCelsius);
+        100.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    // motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
+    motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
 
     leaderTalon.setPosition(0.0);
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    inputs.flywheelMotorConnected =
+    inputs.motorConnected =
         BaseStatusSignal.refreshAll(
-                flywheelPosition,
-                flywheelVelocity,
-                flywheelAppliedVoltage,
-                flywheelSupplyCurrent,
-                flywheelTorqueCurrent,
-                flywheelTempCelsius,
+                position,
+                velocity,
+                appliedVoltage,
+                supplyCurrent,
+                torqueCurrent,
+                tempCelsius,
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.flywheelPosition =
-        BaseStatusSignal.getLatencyCompensatedValueAsDouble(flywheelPosition, flywheelVelocity);
-    inputs.flywheelPositionRads = Units.rotationsToRadians(inputs.flywheelPosition);
+    inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
+    inputs.positionRads = Units.rotationsToRadians(inputs.position);
 
-    inputs.flywheelVelocityRadsPerSec =
-        Units.rotationsToRadians(flywheelVelocity.getValueAsDouble());
-    inputs.flywheelAppliedVoltage = flywheelAppliedVoltage.getValueAsDouble();
-    inputs.flywheelSupplyCurrentAmps = flywheelSupplyCurrent.getValueAsDouble();
-    inputs.flywheelTorqueCurrentAmps = flywheelTorqueCurrent.getValueAsDouble();
-    inputs.flywheelTempCelsius = flywheelTempCelsius.getValueAsDouble();
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
+    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+    inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
+    inputs.tempCelsius = tempCelsius.getValueAsDouble();
 
     inputs.motionMagicVelocityTarget =
         motorPositionToRads(leaderTalon.getClosedLoopReferenceSlope().getValueAsDouble());
@@ -280,12 +265,11 @@ public class FlywheelKrakenFOC implements FlywheelIO {
   @Override
   public void runVolts(double volts) {
     leaderTalon.setControl(voltageOut.withOutput(volts));
-    Logger.recordOutput("Flywheel/" + sideName + "/running volts yes", volts);
   }
 
   @Override
   public void setVelocity(double velocity) {
-    // leaderTalon.setControl(motionMagicVelocity.withVelocity(velocity));
+    leaderTalon.setControl(motionMagicVelocity.withVelocity(velocity));
   }
 
   @Override

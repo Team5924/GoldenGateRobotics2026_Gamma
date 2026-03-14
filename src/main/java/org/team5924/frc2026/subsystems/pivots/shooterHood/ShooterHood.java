@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -58,19 +59,19 @@ public class ShooterHood extends SubsystemBase {
     private final DoubleSupplier rads;
   }
 
-  @Getter private ShooterHoodState goalState;
+  private final String side;
 
-  @Setter private double input;
-
-  private final Alert shooterHoodMotorDisconnected;
-
+  private final Alert motorDisconnectedAlert;
   protected final Alert overheatAlert;
-
   private final Alert notImplementedAlert;
   private boolean showNotImplementedAlert;
 
-  private final String side;
+  @Getter private ShooterHoodState goalState;
+  private boolean isAtSetpoint = false;
+  private double lastStateChange = 0.0;
+  private double timeSinceLastStateChange = 0.0;
 
+  @Setter private double input;
   @Setter private double autoInput = 0.0;
 
   public ShooterHood(ShooterHoodIO io, boolean isLeft) {
@@ -79,12 +80,10 @@ public class ShooterHood extends SubsystemBase {
     this.isLeft = isLeft;
 
     goalState = ShooterHoodState.OFF;
-    shooterHoodMotorDisconnected =
+    motorDisconnectedAlert =
         new Alert(side + " Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
-
     notImplementedAlert =
         new Alert(side + " Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
-
     overheatAlert = new Alert(side + " Shooter Hood motor overheating!", Alert.AlertType.kWarning);
   }
 
@@ -93,55 +92,18 @@ public class ShooterHood extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("ShooterHood/" + side, inputs);
 
-    Logger.recordOutput("ShooterHood/" + side + "/GoalState", goalState.toString());
-    Logger.recordOutput(
-        "ShooterHood/" + side + "/CurrentState", getRespectiveShooterHoodState().toString());
-    Logger.recordOutput("ShooterHood/" + side + "/TargetRads", goalState.rads.getAsDouble());
-
-    shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
+    motorDisconnectedAlert.set(!inputs.motorConnected);
+    overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
 
     handleCurrentState();
-
-    boolean isOverheating = inputs.shooterHoodTempCelsius > Constants.OVERHEAT_THRESHOLD;
-    overheatAlert.set(isOverheating);
-  }
-
-  private void handleCurrentState() {
-    showNotImplementedAlert = false;
-    switch (getRespectiveShooterHoodState()) {
-      case MOVING -> {
-        if (isAtSetpoint() && goalState != ShooterHoodState.AUTO)
-          setRespectiveShooterHoodState(goalState);
-      }
-      case AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING -> {
-        showNotImplementedAlert = true; // TODO: handle this sometime
-      }
-      case MANUAL -> handleManualState();
-      case OFF -> io.stop();
-      default -> io.setPosition(goalState.rads.getAsDouble());
-    }
-
-    notImplementedAlert.set(showNotImplementedAlert);
-  }
-
-  private void handleManualState() {
-    if (!goalState.equals(ShooterHoodState.MANUAL)) return;
-
-    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
-      io.runVolts(0);
-      return;
-    }
-
-    io.runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
-  }
-
-  private double getShooterHoodPositionRads() {
-    return inputs.shooterHoodPositionRads;
-  }
-
-  public boolean isAtSetpoint() {
-    return Math.abs(getShooterHoodPositionRads() - this.goalState.rads.getAsDouble())
-        <= Constants.GeneralShooterHood.EPSILON_RADS;
+    Logger.recordOutput("ShooterHood/" + side + "GoalState", goalState.toString());
+    Logger.recordOutput(
+        "ShooterHood/" + side + "CurrentState", getRespectiveShooterHoodState().toString());
+    Logger.recordOutput("ShooterHood/" + side + "TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("ShooterHood/" + side + "CurrentRads", inputs.positionRads);
+    Logger.recordOutput("ShooterHood/" + side + "IsAtSetpoint", isAtSetpoint);
+    Logger.recordOutput(
+        "ShooterHood/" + side + "TimeSinceLastStateChange", timeSinceLastStateChange);
   }
 
   public void runVolts(double volts) {
@@ -152,6 +114,10 @@ public class ShooterHood extends SubsystemBase {
     io.setPosition(rads);
   }
 
+  public void stop() {
+    io.stop();
+  }
+
   public void setGoalState(ShooterHoodState goalState) {
     if (this.goalState.equals(goalState)) return;
     if (goalState.equals(ShooterHoodState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
@@ -159,23 +125,60 @@ public class ShooterHood extends SubsystemBase {
 
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL, AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING:
-        setRespectiveShooterHoodState(goalState);
-        break;
-      case MOVING:
-        DriverStation.reportError(
-            side + " Shooter Hood: MOVING is an invalid goal state; it is a transition state!!",
-            null);
-        break;
-      case AUTO:
-        setRespectiveShooterHoodState(ShooterHoodState.MOVING);
-        io.setPosition(autoInput);
-        break;
-      default:
-        setRespectiveShooterHoodState(goalState);
-        io.setPosition(goalState.rads.getAsDouble());
-        break;
+      case MANUAL, AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING ->
+          setRespectiveShooterHoodState(goalState);
+      case MOVING ->
+          DriverStation.reportError(
+              side + " Shooter Hood: MOVING is an invalid goal state; it is a transition state!!",
+              null);
+      case AUTO -> setRespectiveShooterHoodState(ShooterHoodState.MOVING);
+      default -> setRespectiveShooterHoodState(goalState);
     }
+
+    lastStateChange = FieldState.getInstance().getTime();
+  }
+
+  @SuppressWarnings("unused")
+  public boolean isAtSetpoint() {
+    return (!Constants.GeneralShooterHood.ENABLE_TIMEOUT
+            || timeSinceLastStateChange > Constants.GeneralShooterHood.STATE_TIMEOUT)
+        && Math.abs(inputs.positionRads - this.goalState.rads.getAsDouble())
+            <= Constants.GeneralShooterHood.EPSILON_RADS;
+  }
+
+  private void handleCurrentState() {
+    timeSinceLastStateChange = FieldState.getInstance().getTime() - lastStateChange;
+    isAtSetpoint = isAtSetpoint();
+
+    showNotImplementedAlert = false;
+    switch (getRespectiveShooterHoodState()) {
+      case MOVING -> {
+        setPosition(goalState.getRads().getAsDouble());
+        if (isAtSetpoint() && goalState != ShooterHoodState.AUTO)
+          setRespectiveShooterHoodState(goalState);
+      }
+      case AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING -> {
+        showNotImplementedAlert = true; // TODO: handle this sometime
+      }
+      case MANUAL -> handleManualState();
+      case OFF -> stop();
+      default -> {
+        if (!isAtSetpoint) setPosition(goalState.getRads().getAsDouble());
+      }
+    }
+
+    notImplementedAlert.set(showNotImplementedAlert);
+  }
+
+  private void handleManualState() {
+    if (!goalState.equals(ShooterHoodState.MANUAL)) return;
+
+    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
+      stop();
+      return;
+    }
+
+    runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }
 
   private void setRespectiveShooterHoodState(ShooterHoodState state) {
