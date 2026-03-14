@@ -34,8 +34,8 @@ public class FlywheelIOSim implements FlywheelIO {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 gearbox,
-                Constants.GeneralFlywheel.MOTOR_TO_MECHANISM,
-                Constants.GeneralFlywheel.SIM_MOI),
+                Constants.GeneralFlywheel.SIM_MOI,
+                Constants.GeneralFlywheel.MOTOR_TO_MECHANISM),
             gearbox);
   }
 

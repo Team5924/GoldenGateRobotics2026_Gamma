@@ -24,7 +24,7 @@ public class IndexerIOSim extends GenericRollerIOSim implements IndexerIO {
   public IndexerIOSim() {
     super(
         DCMotor.getKrakenX60Foc(1),
-        Constants.Indexer.MOTOR_TO_MECHANISM,
-        Constants.Indexer.SIM_MOI);
+        Constants.Indexer.SIM_MOI,
+        Constants.Indexer.MOTOR_TO_MECHANISM);
   }
 }

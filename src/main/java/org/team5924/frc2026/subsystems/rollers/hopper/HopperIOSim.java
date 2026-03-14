@@ -23,6 +23,6 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOSim;
 public class HopperIOSim extends GenericRollerIOSim implements HopperIO {
   public HopperIOSim() {
     super(
-        DCMotor.getKrakenX60Foc(1), Constants.Hopper.MOTOR_TO_MECHANISM, Constants.Hopper.SIM_MOI);
+        DCMotor.getKrakenX60Foc(1), Constants.Hopper.SIM_MOI, Constants.Hopper.MOTOR_TO_MECHANISM);
   }
 }
