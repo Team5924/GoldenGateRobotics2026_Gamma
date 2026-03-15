@@ -58,14 +58,14 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   /* Configs  */
   private final Slot0Configs slot0Configs;
   private final MotionMagicConfigs motionMagicConfigs;
-  private double setpointVelocityRadsPerSec;
+  private double setpointVelocityRotationsPerSec;
 
   /* Gains Left */
-  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("Flywheel/Left/kP", 0.0);
+  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("Flywheel/Left/kP", 0.5);
   private final LoggedTunableNumber kILeft = new LoggedTunableNumber("Flywheel/Left/kI", 0.0);
   private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("Flywheel/Left/kD", 0.0);
-  private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("Flywheel/Left/kS", 0.0);
-  private final LoggedTunableNumber kVLeft = new LoggedTunableNumber("Flywheel/Left/kV", 1.0);
+  private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("Flywheel/Left/kS", 0.25);
+  private final LoggedTunableNumber kVLeft = new LoggedTunableNumber("Flywheel/Left/kV", 0.0705);
   private final LoggedTunableNumber kALeft = new LoggedTunableNumber("Flywheel/Left/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocityLeft =
@@ -76,17 +76,17 @@ public class FlywheelIOTalonFX implements FlywheelIO {
       new LoggedTunableNumber("Flywheel/Left/MotionJerk", 0.0);
 
   /* Gains Right */
-  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Flywheel/Right/kP", 0.0);
+  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Flywheel/Right/kP", 0.5);
   private final LoggedTunableNumber kIRight = new LoggedTunableNumber("Flywheel/Right/kI", 0.0);
   private final LoggedTunableNumber kDRight = new LoggedTunableNumber("Flywheel/Right/kD", 0.0);
-  private final LoggedTunableNumber kSRight = new LoggedTunableNumber("Flywheel/Right/kS", 0.0);
-  private final LoggedTunableNumber kVRight = new LoggedTunableNumber("Flywheel/Right/kV", 1.0);
+  private final LoggedTunableNumber kSRight = new LoggedTunableNumber("Flywheel/Right/kS", 0.25);
+  private final LoggedTunableNumber kVRight = new LoggedTunableNumber("Flywheel/Right/kV", 0.0705);
   private final LoggedTunableNumber kARight = new LoggedTunableNumber("Flywheel/Right/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocityRight =
-      new LoggedTunableNumber("Flywheel/Right/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("Flywheel/Right/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAccelerationRight =
-      new LoggedTunableNumber("Flywheel/Right/MotionAcceleration", 900.0);
+      new LoggedTunableNumber("Flywheel/Right/MotionAcceleration", 100.0);
   private final LoggedTunableNumber motionJerkRight =
       new LoggedTunableNumber("Flywheel/Right/MotionJerk", 0.0);
 
@@ -155,19 +155,21 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         };
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[7];
+    StatusCode[] statusArray = new StatusCode[10];
 
     statusArray[0] =
         leaderConfig.apply(isLeft ? FlywheelLeaderLeft.CONFIG : FlywheelLeaderRight.CONFIG);
     statusArray[1] = leaderConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[2] = leaderConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[3] = leaderConfig.apply(GeneralFlywheel.FEEDBACK_CONFIGS);
-
     statusArray[4] = leaderConfig.apply(slot0Configs);
     statusArray[5] = leaderConfig.apply(motionMagicConfigs);
 
     statusArray[6] =
         followerConfig.apply(isLeft ? FlywheelFollowerLeft.CONFIG : FlywheelFollowerRight.CONFIG);
+    statusArray[7] = followerConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[8] = followerConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[9] = followerConfig.apply(GeneralFlywheel.FEEDBACK_CONFIGS);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -221,7 +223,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
     inputs.positionRads = Units.rotationsToRadians(inputs.position);
 
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
+    inputs.velocityRotationsPerSec = velocity.getValueAsDouble();
     inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
@@ -238,6 +240,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     }
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
+
+    inputs.setpointVelocityRotationsPerSec = setpointVelocityRotationsPerSec;
   }
 
   @Override
@@ -303,15 +307,14 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   }
 
   @Override
-  public void setVelocity(double velocity) {
-    setpointVelocityRadsPerSec = velocity;
-    leaderTalon.setControl(
-      motionMagicVelocity.withVelocity(
-        radsToMotorPosition(setpointVelocityRadsPerSec)));
+  public void setVelocity(double velocityRotationsPerSec) {
+    setpointVelocityRotationsPerSec = velocityRotationsPerSec;
+    leaderTalon.setControl(motionMagicVelocity.withVelocity(setpointVelocityRotationsPerSec));
   }
 
   @Override
   public void stop() {
+    setpointVelocityRotationsPerSec = 0.0;
     leaderTalon.stopMotor();
   }
 

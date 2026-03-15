@@ -531,6 +531,24 @@ public class RobotContainer {
                 },
                 flywheelRight));
 
+    operatorController
+        .povDown()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  flywheelRight.updateSetpointState(-5.0);
+                },
+                flywheelRight));
+
+    operatorController
+        .povUp()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  flywheelRight.updateSetpointState(5.0);
+                },
+                flywheelRight));
+
     // // driveController
     // //     .rightTrigger()
     // //     .onTrue(
