@@ -42,8 +42,8 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    big(new LoggedTunableNumber("Flywheel/big", 150)),
-    smol(new LoggedTunableNumber("Flywheel/smol", 50)),
+    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 150)),
+    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 50)),
 
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 200)),
@@ -91,9 +91,9 @@ public class Flywheel extends SubsystemBase {
     Logger.recordOutput(
         "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
     Logger.recordOutput(
-        "Flywheel/" + side + "/TargetVelocityRadsPerSec", getTargetVelocityRotationsPerSec());
+        "Flywheel/" + side + "/TargetVelocityRotationsPerSec", getTargetVelocityRotationsPerSec());
     Logger.recordOutput(
-        "Flywheel/" + side + "/CurrentVelocityRadsPerSec", inputs.velocityRotationsPerSec);
+        "Flywheel/" + side + "/CurrentVelocityRotationsPerSec", inputs.velocityRotationsPerSec);
     Logger.recordOutput("Flywheel/" + side + "/IsAtSetpoint", isAtSetpoint);
 
     flywheelMotorDisconnected.set(!inputs.motorConnected);
@@ -106,7 +106,7 @@ public class Flywheel extends SubsystemBase {
     io.runVolts(volts);
   }
 
-  /** Sets the velocity in rads per sec */
+  /** Sets the velocity in rotations per sec */
   public void setVelocity(double velocity) {
     io.setVelocity(velocity);
   }

@@ -19,6 +19,7 @@ package org.team5924.frc2026.subsystems.flywheel;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
@@ -46,7 +47,7 @@ public class FlywheelIOSim implements FlywheelIO {
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
     inputs.motorConnected = true;
     inputs.positionRads = sim.getAngularPositionRad();
-    inputs.velocityRotationsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.velocityRotationsPerSec = Units.radiansToRotations(sim.getAngularVelocityRadPerSec());
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
     inputs.setpointVelocityRotationsPerSec = setpoint;
@@ -61,8 +62,8 @@ public class FlywheelIOSim implements FlywheelIO {
 
   @Override
   public void setVelocity(double velocity) {
-    sim.setAngularVelocity(appliedVoltage);
     setpoint = velocity;
+    sim.setAngularVelocity(setpoint);
   }
 
   @Override

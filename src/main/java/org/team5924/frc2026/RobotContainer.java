@@ -519,7 +519,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  flywheelRight.setGoalState(FlywheelState.big);
+                  flywheelRight.setGoalState(FlywheelState.FAST_LAUNCH);
                 },
                 flywheelRight));
 
@@ -528,7 +528,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  flywheelRight.setGoalState(FlywheelState.smol);
+                  flywheelRight.setGoalState(FlywheelState.SLOW_LAUNCH);
                 },
                 flywheelRight));
 

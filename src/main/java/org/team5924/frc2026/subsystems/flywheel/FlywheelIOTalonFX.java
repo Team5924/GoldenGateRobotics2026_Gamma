@@ -179,7 +179,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
           new Notification(
               NotificationLevel.WARNING,
               side + "Flywheel Configs",
-              "Error in" + side + " shooter flywheel configs!"));
+              "Error in " + side + " shooter flywheel configs!"));
 
     Logger.recordOutput("Flywheel/" + side + "/InitConfReport", statusArray);
 
