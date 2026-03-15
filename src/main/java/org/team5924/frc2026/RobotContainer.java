@@ -54,6 +54,7 @@ import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOSim;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOSim;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
@@ -111,7 +112,7 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIOTalonFX());
         // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         // hopper = new Hopper(new HopperIOTalonFX());
-        // indexer = new Indexer(new IndexerIOTalonFX());
+        indexer = new Indexer(new IndexerIOTalonFX());
 
         // shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
         // flywheelLeft = new Flywheel(new FlywheelIOTalonFX(true), true);
@@ -125,7 +126,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         hopper = new Hopper(new HopperIO() {});
-        indexer = new Indexer(new IndexerIO() {});
+        // indexer = new Indexer(new IndexerIO() {});
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
         flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
@@ -370,26 +371,26 @@ public class RobotContainer {
     // //             intake));
 
     // // ### indexing
-    // driveController
-    //     .rightTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               // intakePivot.setGoalState(IntakePivotState.SHOOTING);
-    //               indexer.setGoalState(Indexer.IndexerState.INDEXING);
-    //             },
-    //             // intakePivot,
-    //             indexer));
-    // driveController
-    //     .rightTrigger()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               // intakePivot.setGoalState(IntakePivotState.STOW);
-    //               indexer.setGoalState(Indexer.IndexerState.OFF);
-    //             },
-    //             // intakePivot,
-    //             indexer));
+    operatorController
+        .a()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  // intakePivot.setGoalState(IntakePivotState.SHOOTING);
+                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                },
+                // intakePivot,
+                indexer));
+    operatorController
+        .a()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  // intakePivot.setGoalState(IntakePivotState.STOW);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                },
+                // intakePivot,
+                indexer));
 
     // // ### shooting voltages
     // operatorController
