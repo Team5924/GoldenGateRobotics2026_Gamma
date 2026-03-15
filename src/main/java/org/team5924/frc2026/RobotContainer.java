@@ -117,7 +117,7 @@ public class RobotContainer {
         // shooterRollerLeft = new ShooterRoller(new ShooterRollerIOTalonFX(true), true);
         // turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
-        // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
         // shooterRollerRight = new ShooterRoller(new ShooterRollerIOTalonFX(false), false);
         // turretRight = new Turret(new TurretIOTalonFX(false), false);
 
@@ -131,7 +131,7 @@ public class RobotContainer {
         shooterRollerLeft = new ShooterRoller(new ShooterRollerIO() {}, true);
         turretLeft = new Turret(new TurretIO() {}, true);
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
+        // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
         shooterRollerRight = new ShooterRoller(new ShooterRollerIO() {}, false);
         turretRight = new Turret(new TurretIO() {}, false);
         break;
@@ -322,26 +322,26 @@ public class RobotContainer {
     //         shooterRollerRight));
 
     // // ### intake pivot down/stow
-    // driveController
+    // operatorController
     //     .leftBumper()
     //     .onTrue(
     //         Commands.runOnce(
     //             () -> {
     //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    //               intake.setGoalState(IntakeState.INTAKE);
+    //               // intake.setGoalState(IntakeState.INTAKE);
     //             },
-    //             intakePivot,
-    //             intake));
-    // driveController
+    //             intakePivot /*,
+    //                         intake*/));
+    // operatorController
     //     .rightBumper()
     //     .onTrue(
     //         Commands.runOnce(
     //             () -> {
     //               intakePivot.setGoalState(IntakePivotState.STOW);
-    //               intake.setGoalState(IntakeState.OFF);
+    //               // intake.setGoalState(IntakeState.OFF);
     //             },
-    //             intakePivot,
-    //             intake));
+    //             intakePivot /*,
+    //                         intake*/));
 
     // // // ### intake pivot spit
     // // driveController
@@ -495,14 +495,14 @@ public class RobotContainer {
 
     // // ---------------------------------------------------------
 
-    shooterHoodLeft.setDefaultCommand(
-        Commands.run(
-            () -> {
-              shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);
-              shooterHoodLeft.setInput(operatorController.getRightY());
-            },
-            shooterHoodLeft,
-            shooterHoodRight));
+    // shooterHoodLeft.setDefaultCommand(
+    //     Commands.run(
+    //         () -> {
+    //           shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);
+    //           shooterHoodLeft.setInput(operatorController.getRightY());
+    //         },
+    //         shooterHoodLeft,
+    //         shooterHoodRight));
 
     operatorController
         .leftTrigger()
@@ -510,8 +510,10 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   shooterHoodLeft.setGoalState(ShooterHoodState.MAX);
+                  shooterHoodRight.setGoalState(ShooterHoodState.MAX);
                 },
-                shooterHoodLeft));
+                shooterHoodLeft,
+                shooterHoodRight));
 
     operatorController
         .rightTrigger()
@@ -519,8 +521,21 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   shooterHoodLeft.setGoalState(ShooterHoodState.ZERO);
+                  shooterHoodRight.setGoalState(ShooterHoodState.ZERO);
                 },
-                shooterHoodLeft));
+                shooterHoodLeft,
+                shooterHoodRight));
+
+    operatorController
+        .y()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  shooterHoodLeft.setGoalState(ShooterHoodState.CENTER);
+                  shooterHoodRight.setGoalState(ShooterHoodState.CENTER);
+                },
+                shooterHoodLeft,
+                shooterHoodRight));
 
     operatorController
         .a()
@@ -528,8 +543,10 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   shooterHoodLeft.setGoalState(ShooterHoodState.OFF);
+                  shooterHoodRight.setGoalState(ShooterHoodState.OFF);
                 },
-                shooterHoodLeft));
+                shooterHoodLeft,
+                shooterHoodRight));
 
     // // driveController
     // //     .rightTrigger()

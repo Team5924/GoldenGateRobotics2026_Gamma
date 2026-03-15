@@ -50,8 +50,8 @@ public class ShooterHood extends SubsystemBase {
     NEUTRAL_SHUFFLING(() -> 0.0),
     OPPONENT_SHUFFLING(() -> 0.0),
 
-    // TODO: test and update angle (rads)
-    MAX(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(30))),
+    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
+    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
     AUTO(() -> 0.0),
 
     // in-between state
@@ -90,6 +90,7 @@ public class ShooterHood extends SubsystemBase {
 
   @Override
   public void periodic() {
+    io.periodicUpdates();
     io.updateInputs(inputs);
     Logger.processInputs("ShooterHood/" + side, inputs);
 
@@ -97,9 +98,10 @@ public class ShooterHood extends SubsystemBase {
     overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
 
     handleCurrentState();
+
     Logger.recordOutput("ShooterHood/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput(
-        "ShooterHood/" + side + "CurrentState", getRespectiveShooterHoodState().toString());
+        "ShooterHood/" + side + "/CurrentState", getRespectiveShooterHoodState().toString());
     Logger.recordOutput("ShooterHood/" + side + "/TargetRads", getTargetRads());
     Logger.recordOutput("ShooterHood/" + side + "/CurrentRads", inputs.positionRads);
     Logger.recordOutput("ShooterHood/" + side + "/IsAtSetpoint", isAtSetpoint);
@@ -159,7 +161,7 @@ public class ShooterHood extends SubsystemBase {
     showNotImplementedAlert = false;
     switch (getRespectiveShooterHoodState()) {
       case MOVING -> {
-        setPosition(goalState.getRads().getAsDouble());
+        setPosition(getTargetRads());
         if (isAtSetpoint() && goalState != ShooterHoodState.AUTO)
           setRespectiveShooterHoodState(goalState);
       }
@@ -169,7 +171,7 @@ public class ShooterHood extends SubsystemBase {
       case MANUAL -> handleManualState();
       case OFF -> stop();
       default -> {
-        if (!isAtSetpoint) setPosition(goalState.getRads().getAsDouble());
+        if (!isAtSetpoint) setPosition(getTargetRads());
       }
     }
 
