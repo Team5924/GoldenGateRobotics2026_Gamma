@@ -49,7 +49,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private final TalonFX talon;
 
   /* Configurators */
-  private TalonFXConfigurator intakePivotTalonConfig;
+  private TalonFXConfigurator talonConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;
@@ -57,7 +57,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 100.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 70.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 1.5);
@@ -91,7 +91,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   public IntakePivotIOTalonFX() {
     talon = new TalonFX(Constants.IntakePivot.CAN_ID, new CANBus(Constants.IntakePivot.BUS));
 
-    intakePivotTalonConfig = talon.getConfigurator();
+    talonConfig = talon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
@@ -111,13 +111,13 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[7];
 
-    statusArray[0] = intakePivotTalonConfig.apply(Constants.IntakePivot.CONFIG);
-    statusArray[1] = intakePivotTalonConfig.apply(slot0Configs);
-    statusArray[2] = intakePivotTalonConfig.apply(motionMagicConfigs);
-    statusArray[3] = intakePivotTalonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[4] = intakePivotTalonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.SOFTWARE_LIMIT_CONFIGS);
-    statusArray[6] = intakePivotTalonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
+    statusArray[0] = talonConfig.apply(Constants.IntakePivot.CONFIG);
+    statusArray[1] = talonConfig.apply(slot0Configs);
+    statusArray[2] = talonConfig.apply(motionMagicConfigs);
+    statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[5] = talonConfig.apply(Constants.IntakePivot.SOFTWARE_LIMIT_CONFIGS);
+    statusArray[6] = talonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;

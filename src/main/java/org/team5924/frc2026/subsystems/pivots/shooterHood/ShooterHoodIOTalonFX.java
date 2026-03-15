@@ -60,9 +60,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double setpointRads;
 
   /* Gains Left */
-  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("ShooterHood/Left/kP", 1.0);
+  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("ShooterHood/Left/kP", 250.0);
   private final LoggedTunableNumber kILeft = new LoggedTunableNumber("ShooterHood/Left/kI", 0.0);
-  private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("ShooterHood/Left/kD", 0.0);
+  private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("ShooterHood/Left/kD", 5.0);
   private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("ShooterHood/Left/kS", 0.0);
   private final LoggedTunableNumber kVLeft = new LoggedTunableNumber("ShooterHood/Left/kV", 0.0);
   private final LoggedTunableNumber kALeft = new LoggedTunableNumber("ShooterHood/Left/kA", 0.0);
@@ -75,9 +75,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
       new LoggedTunableNumber("ShooterHood/Left/MotionJerk", 0.0);
 
   /* Gains Right */
-  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("ShooterHood/Right/kP", 1.0);
+  private final LoggedTunableNumber kPRight =
+      new LoggedTunableNumber("ShooterHood/Right/kP", 250.0);
   private final LoggedTunableNumber kIRight = new LoggedTunableNumber("ShooterHood/Right/kI", 0.0);
-  private final LoggedTunableNumber kDRight = new LoggedTunableNumber("ShooterHood/Right/kD", 0.0);
+  private final LoggedTunableNumber kDRight = new LoggedTunableNumber("ShooterHood/Right/kD", 5.0);
   private final LoggedTunableNumber kSRight = new LoggedTunableNumber("ShooterHood/Right/kS", 0.0);
   private final LoggedTunableNumber kVRight = new LoggedTunableNumber("ShooterHood/Right/kV", 0.0);
   private final LoggedTunableNumber kARight = new LoggedTunableNumber("ShooterHood/Right/kA", 0.0);
@@ -158,17 +159,18 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         };
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[7];
+    StatusCode[] statusArray = new StatusCode[8];
 
     statusArray[0] = talonConfig.apply(GeneralShooterHood.CONFIG);
     statusArray[1] = talonConfig.apply(slot0Configs);
-    statusArray[2] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[3] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[4] =
-        talonConfig.apply(
-            isLeft ? ShooterHoodLeft.FEEDBACK_CONFIGS : ShooterHoodRight.FEEDBACK_CONFIGS);
+    statusArray[2] = talonConfig.apply(motionMagicConfigs);
+    statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[5] = talonConfig.apply(GeneralShooterHood.SOFTWARE_LIMIT_CONFIGS);
     statusArray[6] =
+        talonConfig.apply(
+            isLeft ? ShooterHoodLeft.FEEDBACK_CONFIGS : ShooterHoodRight.FEEDBACK_CONFIGS);
+    statusArray[7] =
         cancoder
             .getConfigurator()
             .apply(isLeft ? ShooterHoodLeft.CANCODER_CONFIGS : ShooterHoodRight.CANCODER_CONFIGS);
@@ -216,7 +218,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     positionOut = new PositionVoltage(0).withEnableFOC(true).withSlot(0);
-    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(100.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 
@@ -276,7 +278,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.positionCancoder = inputs.cancoderPositionRotations;
+    inputs.positionCancoder = Units.radiansToRotations(inputs.cancoderPositionRotations);
   }
 
   @Override

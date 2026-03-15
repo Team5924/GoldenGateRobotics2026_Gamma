@@ -219,7 +219,7 @@ public final class Constants {
 
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double CANCODER_TO_MECHANISM = CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
-    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
+    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
 
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
     public static final double STATE_TIMEOUT = 5.0;
@@ -242,7 +242,7 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
 
@@ -262,7 +262,7 @@ public final class Constants {
     public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIGS =
       new MagnetSensorConfigs()
         .withAbsoluteSensorDiscontinuityPoint(1.0)
-        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 
   public final class GeneralFlywheel {
