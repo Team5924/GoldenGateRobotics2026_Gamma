@@ -49,7 +49,7 @@ public class FlywheelIOSim implements FlywheelIO {
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
-    inputs.setpointVelocity = setpoint;
+    inputs.setpointVelocityRadsPerSec = setpoint;
     inputs.tempCelsius = 25.0;
   }
 

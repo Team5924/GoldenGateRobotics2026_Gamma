@@ -37,14 +37,17 @@ import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
+import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
+import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
+import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOSim;
@@ -54,11 +57,6 @@ import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOSim;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
-import org.team5924.frc2026.subsystems.flywheel.Flywheel;
-import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
-import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
-import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
-import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
 import org.team5924.frc2026.subsystems.turret.TurretIOSim;
@@ -116,11 +114,11 @@ public class RobotContainer {
         // indexer = new Indexer(new IndexerIOTalonFX());
 
         // shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
-        flywheelLeft = new Flywheel(new FlywheelIOTalonFX(true), true);
+        // flywheelLeft = new Flywheel(new FlywheelIOTalonFX(true), true);
         // turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        // flywheelRight = new Flywheel(new FlywheelIOTalonFX(false), false);
+        flywheelRight = new Flywheel(new FlywheelIOTalonFX(false), false);
         // turretRight = new Turret(new TurretIOTalonFX(false), false);
 
         // ---------------------------- IO ----------------------------
@@ -130,11 +128,11 @@ public class RobotContainer {
         indexer = new Indexer(new IndexerIO() {});
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
-        // flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
+        flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
         turretLeft = new Turret(new TurretIO() {}, true);
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
-        flywheelRight = new Flywheel(new FlywheelIO() {}, false);
+        // flywheelRight = new Flywheel(new FlywheelIO() {}, false);
         turretRight = new Turret(new TurretIO() {}, false);
         break;
 
@@ -511,27 +509,27 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  flywheelLeft.setGoalState(FlywheelState.OFF);
+                  flywheelRight.setGoalState(FlywheelState.OFF);
                 },
-                flywheelLeft));
+                flywheelRight));
 
     operatorController
         .rightTrigger()
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  flywheelLeft.setGoalState(FlywheelState.big);
+                  flywheelRight.setGoalState(FlywheelState.big);
                 },
-                flywheelLeft));
+                flywheelRight));
 
     operatorController
         .y()
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  flywheelLeft.setGoalState(FlywheelState.smol);
+                  flywheelRight.setGoalState(FlywheelState.smol);
                 },
-                flywheelLeft));
+                flywheelRight));
 
     // // driveController
     // //     .rightTrigger()

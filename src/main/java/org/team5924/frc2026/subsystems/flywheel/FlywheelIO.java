@@ -33,7 +33,7 @@ public interface FlywheelIO {
     public double followerSupplyCurrentAmps;
     public double followerTempCelsius;
 
-    public double setpointVelocity;
+    public double setpointVelocityRadsPerSec;
 
     public double motionMagicVelocityTarget = 0.0;
     public double acceleration = 0.0;

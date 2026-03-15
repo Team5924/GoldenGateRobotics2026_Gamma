@@ -42,8 +42,8 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    big(() -> 20.0),
-    smol(() -> 10.0),
+    big(new LoggedTunableNumber("Flywheel/big", 10)),
+    smol(new LoggedTunableNumber("Flywheel/smol", 5)),
 
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 200)),
@@ -55,7 +55,7 @@ public class Flywheel extends SubsystemBase {
     B12(() -> 12.0);
 
     /** measured in rads/sec */
-    private final DoubleSupplier velocity;
+    private final DoubleSupplier velocityRadsPerSec;
   }
 
   private final String side;
@@ -88,8 +88,8 @@ public class Flywheel extends SubsystemBase {
     Logger.recordOutput("Flywheel/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput(
         "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
-    Logger.recordOutput("Flywheel/" + side + "/TargetRads", goalState.velocity.getAsDouble());
-    Logger.recordOutput("Flywheel/" + side + "/CurrentRads", inputs.positionRads);
+    Logger.recordOutput("Flywheel/" + side + "/TargetVelocityRadsPerSec", getTargetVelocityRadsPerSec());
+    Logger.recordOutput("Flywheel/" + side + "/CurrentVelocityRadsPerSec", inputs.velocityRadsPerSec);
     Logger.recordOutput("Flywheel/" + side + "/IsAtSetpoint", isAtSetpoint);
 
     flywheelMotorDisconnected.set(!inputs.motorConnected);
@@ -102,6 +102,7 @@ public class Flywheel extends SubsystemBase {
     io.runVolts(volts);
   }
 
+  /** Sets the velocity in rads per sec */
   public void setVelocity(double velocity) {
     io.setVelocity(velocity);
   }
@@ -131,9 +132,11 @@ public class Flywheel extends SubsystemBase {
 
   public boolean isAtSetpoint() {
     return EqualsUtil.epsilonEquals(
-        inputs.setpointVelocity,
-        inputs.velocityRadsPerSec,
-        Constants.GeneralFlywheel.EPSILON_VELOCITY);
+        getTargetVelocityRadsPerSec(), inputs.velocityRadsPerSec, Constants.GeneralFlywheel.EPSILON_VELOCITY);
+  }
+
+  private double getTargetVelocityRadsPerSec() {
+    return goalState == FlywheelState.AUTO ? autoInput : goalState.velocityRadsPerSec.getAsDouble();
   }
 
   private void handleCurrentState() {
@@ -141,15 +144,15 @@ public class Flywheel extends SubsystemBase {
 
     switch (getRespectiveFlywheelState()) {
       case MOVING -> {
-        setVelocity(goalState.getVelocity().getAsDouble());
+        setVelocity(getTargetVelocityRadsPerSec());
         if (isAtSetpoint() && goalState != FlywheelState.AUTO)
           setRespectiveFlywheelState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
-      case B4, B6, B8, B12 -> runVolts(goalState.getVelocity().getAsDouble());
+      case B4, B6, B8, B12 -> runVolts(getTargetVelocityRadsPerSec());
       case AUTO -> setVelocity(autoInput);
-      default -> setVelocity(goalState.getVelocity().getAsDouble());
+      default -> setVelocity(getTargetVelocityRadsPerSec());
     }
   }
 
@@ -161,7 +164,7 @@ public class Flywheel extends SubsystemBase {
       return;
     }
 
-    setVelocity(FlywheelState.MANUAL.getVelocity().getAsDouble() * input);
+    setVelocity(FlywheelState.MANUAL.getVelocityRadsPerSec().getAsDouble() * input);
   }
 
   private void setRespectiveFlywheelState(FlywheelState state) {
