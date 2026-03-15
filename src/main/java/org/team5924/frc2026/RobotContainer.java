@@ -91,14 +91,8 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        // drive =
-        //     new Drive(
-        //         new GyroIOPigeon2(),
-        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
-        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
-        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
-        //         new ModuleIOTalonFX(TunerConstants.BackRight),
-        //         (pose) -> {});
+
+        // -------------------------- real --------------------------
         drive =
             new Drive(
                 new GyroIO() {},
@@ -108,7 +102,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 (pose) -> {});
 
-        // -------------------------- real --------------------------
         // intake = new Intake(new IntakeIOTalonFX());
         // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         // hopper = new Hopper(new HopperIOTalonFX());
@@ -123,6 +116,15 @@ public class RobotContainer {
         // turretRight = new Turret(new TurretIOTalonFX(false), false);
 
         // ---------------------------- IO ----------------------------
+        // drive =
+        //     new Drive(
+        //         new GyroIOPigeon2(),
+        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
+        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
+        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
+        //         new ModuleIOTalonFX(TunerConstants.BackRight),
+        //         (pose) -> {});
+
         intake = new Intake(new IntakeIO() {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         hopper = new Hopper(new HopperIO() {});

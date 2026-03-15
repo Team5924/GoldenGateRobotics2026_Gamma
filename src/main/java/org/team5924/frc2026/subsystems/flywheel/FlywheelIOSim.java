@@ -42,7 +42,7 @@ public class FlywheelIOSim implements FlywheelIO {
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    if (DriverStation.isDisabled()) runVolts(0.0);
+    if (DriverStation.isDisabled()) stop();
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
     inputs.motorConnected = true;
@@ -63,11 +63,12 @@ public class FlywheelIOSim implements FlywheelIO {
   @Override
   public void setVelocity(double velocity) {
     setpoint = velocity;
-    sim.setAngularVelocity(setpoint);
+    sim.setAngularVelocity(Units.rotationsToRadians(setpoint));
   }
 
   @Override
   public void stop() {
+    setpoint = 0.0;
     runVolts(0.0);
   }
 }

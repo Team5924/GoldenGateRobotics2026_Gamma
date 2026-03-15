@@ -61,7 +61,7 @@ public final class Constants {
   }
 
   public static final double TRACK_WIDTH_Y_METERS = Units.inchesToMeters(19.5);
-  public static final boolean TUNING_MODE = true; // TODO: tuning mode off
+  public static final boolean TUNING_MODE = false; // TODO: tuning mode off
 
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.33;
@@ -275,8 +275,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(10)
-            .withStatorCurrentLimit(10))
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
