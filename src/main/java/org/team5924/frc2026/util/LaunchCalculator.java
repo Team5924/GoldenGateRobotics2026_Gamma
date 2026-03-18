@@ -272,9 +272,15 @@ public class LaunchCalculator {
   public static double getMaxTimeOfFlight() {
     return timeOfFlightMap.get(maxDistance);
   }
+  public LaunchingParameters getParameters() {
+    return getParameters(robotToLauncherCenter);
+  }
 
   public LaunchingParameters getParameters(boolean isLeft) {
-    Transform3d robotToLauncher = isLeft ? robotToLauncherLeft : robotToLauncherRight;
+    return getParameters(isLeft ? robotToLauncherLeft : robotToLauncherRight);
+  }
+
+  public LaunchingParameters getParameters(Transform3d robotToLauncher) {
     boolean passing =
         AllianceFlipUtil.applyX(RobotState.getInstance().getEstimatedPose().getX())
             > FieldConstants.LinesVertical.hubCenter;
@@ -331,12 +337,12 @@ public class LaunchCalculator {
       lookaheadLauncherToTargetDistance = target.getDistance(lookaheadPose.getTranslation());
     }
 
-    double turretRads = getTurretAngle(lookaheadPose, target, isLeft).getRadians();
+    double turretRads = getTurretAngle(lookaheadPose, target).getRadians();
 
     // Account for launcher being off center
     Pose2d lookaheadRobotPose =
         lookaheadPose.transformBy(robotToLauncher.toTransform2d().inverse());
-    Rotation2d driveAngle = getDriveAngleWithLauncherOffset(lookaheadRobotPose, target, isLeft);
+    Rotation2d driveAngle = getDriveAngleWithLauncherOffset(lookaheadRobotPose, target, robotToLauncher);
 
     // Calculate remaining parameters
     double hoodAngle =
@@ -392,8 +398,7 @@ public class LaunchCalculator {
     return latestParameters;
   }
 
-  private static Rotation2d getTurretAngle(
-      Pose2d turretPose, Translation2d target, boolean isLeft) {
+  private static Rotation2d getTurretAngle(Pose2d turretPose, Translation2d target) {
 
     Rotation2d turretToHub = target.minus(turretPose.getTranslation()).getAngle();
     Rotation2d turretRads = turretPose.getRotation().minus(turretToHub);
@@ -401,8 +406,7 @@ public class LaunchCalculator {
   }
 
   private static Rotation2d getDriveAngleWithLauncherOffset(
-      Pose2d robotPose, Translation2d target, boolean isLeft) {
-    Transform3d robotToLauncher = isLeft ? robotToLauncherLeft : robotToLauncherRight;
+      Pose2d robotPose, Translation2d target, Transform3d robotToLauncher) {;
 
     Rotation2d fieldToHubAngle = target.minus(robotPose.getTranslation()).getAngle();
     Rotation2d hubAngle =
@@ -471,7 +475,7 @@ public class LaunchCalculator {
 
     return new Pose2d(
         robotTranslation,
-        getDriveAngleWithLauncherOffset(robotTranslation.toPose2d(), target, isLeft));
+        getDriveAngleWithLauncherOffset(robotTranslation.toPose2d(), target, isLeft ? robotToLauncherLeft : robotToLauncherRight));
   }
 
   /** Adjusts the hood angle offset up or down the specified amount. */

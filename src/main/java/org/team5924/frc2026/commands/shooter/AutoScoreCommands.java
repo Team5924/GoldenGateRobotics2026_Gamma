@@ -46,21 +46,28 @@ public class AutoScoreCommands {
   public static Command runTrackTargetCommand(
       Turret turret, ShooterHood shooterHood, Flywheel flywheel, boolean isLeft) {
     return Commands.run(
-        () -> {
-          LaunchingParameters launchParams = LaunchCalculator.getInstance().getParameters(isLeft);
+            () -> {
+              LaunchingParameters launchParams =
+                  LaunchCalculator.getInstance().getParameters(isLeft);
 
-          turret.setAutoInput(launchParams.turretRadians());
-          shooterHood.setAutoInput(launchParams.hoodAngle());
-          flywheel.setAutoInput(launchParams.flywheelSpeed());
+              turret.setAutoInput(launchParams.turretRadians());
+              shooterHood.setAutoInput(launchParams.hoodAngle());
+              flywheel.setAutoInput(launchParams.flywheelSpeed());
 
-          turret.setGoalState(TurretState.AUTO);
-          shooterHood.setGoalState(ShooterHoodState.AUTO);
-          flywheel.setGoalState(FlywheelState.AUTO);
+              turret.setGoalState(TurretState.AUTO);
+              shooterHood.setGoalState(ShooterHoodState.AUTO);
+              flywheel.setGoalState(FlywheelState.AUTO);
 
-          LaunchCalculator.getInstance().clearLaunchingParameters();
-        },
-        turret,
-        shooterHood,
-        flywheel);
+              LaunchCalculator.getInstance().clearLaunchingParameters();
+            },
+            turret,
+            shooterHood,
+            flywheel)
+        .finallyDo(
+            () -> {
+              turret.setGoalState(TurretState.OFF);
+              shooterHood.setGoalState(ShooterHoodState.OFF);
+              flywheel.setGoalState(FlywheelState.OFF);
+            });
   }
 }
