@@ -16,6 +16,8 @@
 
 package org.team5924.frc2026.commands.drive;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -31,16 +33,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.FieldConstants;
@@ -80,7 +78,6 @@ public class DriveCommands {
       new LoggedTunableNumber("DriveCommands/Launching/DriveLauncherCORMinErrorDeg", 15.0);
   private static final LoggedTunableNumber driveLauncherCORMaxErrorDeg =
       new LoggedTunableNumber("DriveCommands/Launching/DriveLauncherCORMaxErrorDeg", 30.0);
-
 
   private DriveCommands() {}
 
@@ -203,9 +200,9 @@ public class DriveCommands {
                 .minus(drive.getPose().getTranslation())
                 .getAngle());
   }
-  
+
   public static Command joystickDriveWhileLaunching(
-    Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     // Create command
     return Commands.run(
         () -> {
@@ -278,7 +275,10 @@ public class DriveCommands {
                   0.0,
                   1.0);
           Translation2d launcherToRobot =
-              LauncherConstants.robotToLauncherCenter.getTranslation().toTranslation2d().unaryMinus();
+              LauncherConstants.robotToLauncherCenter
+                  .getTranslation()
+                  .toTranslation2d()
+                  .unaryMinus();
           ChassisSpeeds fieldRelativeSpeedsWithOffset =
               GeomUtil.transformVelocity(
                   new ChassisSpeeds(

@@ -272,6 +272,7 @@ public class LaunchCalculator {
   public static double getMaxTimeOfFlight() {
     return timeOfFlightMap.get(maxDistance);
   }
+
   public LaunchingParameters getParameters() {
     return getParameters(robotToLauncherCenter);
   }
@@ -342,7 +343,8 @@ public class LaunchCalculator {
     // Account for launcher being off center
     Pose2d lookaheadRobotPose =
         lookaheadPose.transformBy(robotToLauncher.toTransform2d().inverse());
-    Rotation2d driveAngle = getDriveAngleWithLauncherOffset(lookaheadRobotPose, target, robotToLauncher);
+    Rotation2d driveAngle =
+        getDriveAngleWithLauncherOffset(lookaheadRobotPose, target, robotToLauncher);
 
     // Calculate remaining parameters
     double hoodAngle =
@@ -406,7 +408,8 @@ public class LaunchCalculator {
   }
 
   private static Rotation2d getDriveAngleWithLauncherOffset(
-      Pose2d robotPose, Translation2d target, Transform3d robotToLauncher) {;
+      Pose2d robotPose, Translation2d target, Transform3d robotToLauncher) {
+    ;
 
     Rotation2d fieldToHubAngle = target.minus(robotPose.getTranslation()).getAngle();
     Rotation2d hubAngle =
@@ -475,7 +478,10 @@ public class LaunchCalculator {
 
     return new Pose2d(
         robotTranslation,
-        getDriveAngleWithLauncherOffset(robotTranslation.toPose2d(), target, isLeft ? robotToLauncherLeft : robotToLauncherRight));
+        getDriveAngleWithLauncherOffset(
+            robotTranslation.toPose2d(),
+            target,
+            isLeft ? robotToLauncherLeft : robotToLauncherRight));
   }
 
   /** Adjusts the hood angle offset up or down the specified amount. */
