@@ -43,10 +43,10 @@ import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
-import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
@@ -61,6 +61,7 @@ import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOSim;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOTalonFX;
@@ -135,11 +136,9 @@ public class RobotContainer {
 
         // shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
         // flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
-        // turretLeft = new Turret(new TurretIO() {}, true);
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
         // flywheelRight = new Flywheel(new FlywheelIO() {}, false);
-        // turretRight = new Turret(new TurretIO() {}, false);
         break;
 
       case SIM:
@@ -323,52 +322,57 @@ public class RobotContainer {
     //         flywheelRight));
 
     // // ### intake pivot down/stow
-    // operatorController
-    //     .leftBumper()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    //               // intake.setGoalState(IntakeState.INTAKE);
-    //             },
-    //             intakePivot /*,
-    //                         intake*/));
-    // operatorController
-    //     .rightBumper()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.STOW);
-    //               // intake.setGoalState(IntakeState.OFF);
-    //             },
-    //             intakePivot /*,
-    //                         intake*/));
+
+    intakePivot.setDefaultCommand(
+        Commands.run(
+            () -> {
+              intakePivot.setGoalState(IntakePivotState.MANUAL);
+              intakePivot.setInput(operatorController.getLeftX());
+            },
+            intakePivot));
+
+    operatorController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  // intake.setGoalState(IntakeState.INTAKE);
+                },
+                intakePivot /*,
+                            intake*/));
+    operatorController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  // intake.setGoalState(IntakeState.OFF);
+                },
+                intakePivot /*,
+                            intake*/));
 
     // // // ### intake pivot spit
-    // // driveController
-    // //     .leftTrigger()
-    // //     .onTrue(
-    // //         Commands.runOnce(
-    // //             () -> {
-    // //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    // //               hopper.setGoalState(Hopper.HopperState.SPIT);
-    // //               intake.setGoalState(IntakeState.SPITOUT);
-    // //             },
-    // //             intakePivot,
-    // //             hopper,
-    // //             intake));
-    // // driveController
-    // //     .leftTrigger()
-    // //     .onFalse(
-    // //         Commands.runOnce(
-    // //             () -> {
-    // //               intakePivot.setGoalState(IntakePivotState.STOW);
-    // //               hopper.setGoalState(Hopper.HopperState.ON);
-    // //               intake.setGoalState(IntakeState.OFF);
-    // //             },
-    // //             intakePivot,
-    // //             hopper,
-    // //             intake));
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  intake.setGoalState(IntakeState.SPITOUT);
+                },
+                intakePivot,
+                intake));
+    driveController
+        .leftTrigger()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  intake.setGoalState(IntakeState.OFF);
+                },
+                intakePivot,
+                intake));
 
     // // ### indexing
     operatorController
