@@ -168,8 +168,8 @@ public final class Constants {
       new SoftwareLimitSwitchConfigs()
         .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
         .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true);
+        .withForwardSoftLimitEnable(false)
+        .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()

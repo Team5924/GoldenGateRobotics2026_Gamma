@@ -23,7 +23,6 @@ import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.turret.Turret;
-import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LaunchCalculator.LaunchingParameters;
 
@@ -50,22 +49,18 @@ public class AutoScoreCommands {
               LaunchingParameters launchParams =
                   LaunchCalculator.getInstance().getParameters(isLeft);
 
-              turret.setAutoInput(launchParams.turretRadians());
               shooterHood.setAutoInput(launchParams.hoodAngle());
               flywheel.setAutoInput(launchParams.flywheelSpeed());
 
-              turret.setGoalState(TurretState.AUTO);
               shooterHood.setGoalState(ShooterHoodState.AUTO);
               flywheel.setGoalState(FlywheelState.AUTO);
 
               LaunchCalculator.getInstance().clearLaunchingParameters();
             },
-            turret,
             shooterHood,
             flywheel)
         .finallyDo(
             () -> {
-              turret.setGoalState(TurretState.OFF);
               shooterHood.setGoalState(ShooterHoodState.OFF);
               flywheel.setGoalState(FlywheelState.OFF);
             });

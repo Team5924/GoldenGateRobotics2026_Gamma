@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.flywheel;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -68,7 +69,11 @@ public class Flywheel extends SubsystemBase {
   @Getter private FlywheelState goalState = FlywheelState.OFF;
   private boolean isAtSetpoint = false;
 
-  @Setter private double autoInput = 0.0;
+  private double autoInput = 0.0;
+
+  public void setAutoInput(double inputRads) {
+    autoInput = MathUtil.clamp(inputRads, 0.0, 100.0);
+  }
 
   public Flywheel(FlywheelIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";

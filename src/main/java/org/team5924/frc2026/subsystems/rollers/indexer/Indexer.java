@@ -30,7 +30,7 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   @Getter
   public enum IndexerState implements VoltageState {
     OFF(() -> 0.0),
-    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 4.0));
+    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 8.0));
 
     private final DoubleSupplier voltageSupplier;
   }

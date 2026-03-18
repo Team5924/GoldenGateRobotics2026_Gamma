@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.Constants.GeneralShooterHood;
 import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
@@ -73,7 +75,13 @@ public class ShooterHood extends SubsystemBase {
   private double timeSinceLastStateChange = 0.0;
 
   @Setter private double input;
-  @Setter private double autoInput = 0.0;
+  private double autoInput = 0.0;
+
+  public void setAutoInput(double inputRads) {
+    autoInput =
+        MathUtil.clamp(
+            inputRads, GeneralShooterHood.MIN_POSITION_RADS, GeneralShooterHood.MAX_POSITION_RADS);
+  }
 
   public ShooterHood(ShooterHoodIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
