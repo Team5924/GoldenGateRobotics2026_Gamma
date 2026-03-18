@@ -67,11 +67,16 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOTalonFX;
+import org.team5924.frc2026.subsystems.vision.Vision;
+import org.team5924.frc2026.subsystems.vision.VisionConstants;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
+  private Vision vision;
+
   private final Intake intake;
   private final IntakePivot intakePivot;
   private final Hopper hopper;
@@ -153,6 +158,20 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
 
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_LEFT_NAME,
+                    VisionConstants.FRONT_LEFT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_RIGHT_NAME,
+                    VisionConstants.FRONT_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose));
+
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         hopper = new Hopper(new HopperIOSim());
@@ -176,6 +195,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
+
+        vision = null; // no vision implementation for replay
 
         intake = new Intake(new IntakeIO() {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
@@ -295,78 +316,11 @@ public class RobotContainer {
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // [driver] Reset gyro to 0° when B button is pressed
-    driveController
-        .b()
-        .onTrue(
-            Commands.runOnce(resetGyro, drive)
-                .ignoringDisable(true));
+    driveController.b().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // ### hopper on by default
     hopper.setDefaultCommand(
         Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
-
-    // flywheelLeft.setDefaultCommand(
-    //     Commands.runOnce(
-    //         () -> flywheelLeft.setGoalState(FlywheelState.OFF),
-    // flywheelLeft));
-
-    // flywheelRight.setDefaultCommand(
-    //     Commands.runOnce(
-    //         () -> flywheelRight.setGoalState(FlywheelState.OFF),
-    //         flywheelRight));
-
-    // // ### intake pivot down/stow
-
-    // intakePivot.setDefaultCommand(
-    //     Commands.run(
-    //         () -> {
-    //           intakePivot.setGoalState(IntakePivotState.MANUAL);
-    //           intakePivot.setInput(operatorController.getLeftX());
-    //         },
-    //         intakePivot));
-
-    // operatorController
-    //     .leftBumper()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    //               // intake.setGoalState(IntakeState.INTAKE);
-    //             },
-    //             intakePivot /*,
-    //                         intake*/));
-    // operatorController
-    //     .rightBumper()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.STOW);
-    //               // intake.setGoalState(IntakeState.OFF);
-    //             },
-    //             intakePivot /*,
-    //                         intake*/));
-
-    // // // // ### intake pivot spit
-    // driveController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    //               intake.setGoalState(IntakeState.SPITOUT);
-    //             },
-    //             intakePivot,
-    //             intake));
-    // driveController
-    //     .leftTrigger()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.STOW);
-    //               intake.setGoalState(IntakeState.OFF);
-    //             },
-    //             intakePivot,
-    //             intake));
 
     // // ### indexing
     driveController
