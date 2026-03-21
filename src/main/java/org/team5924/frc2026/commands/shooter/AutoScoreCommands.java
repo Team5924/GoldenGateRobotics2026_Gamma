@@ -22,9 +22,7 @@ import org.team5924.frc2026.subsystems.flywheel.Flywheel;
 import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.util.LaunchCalculator;
-import org.team5924.frc2026.util.LaunchCalculator.LaunchingParameters;
 
 public class AutoScoreCommands {
   // TODO Make and auto score program
@@ -43,14 +41,14 @@ public class AutoScoreCommands {
   private AutoScoreCommands() {}
 
   public static Command runTrackTargetCommand(
-      Turret turret, ShooterHood shooterHood, Flywheel flywheel, boolean isLeft) {
+      ShooterHood shooterHood, Flywheel flywheel, boolean isLeft) {
     return Commands.run(
             () -> {
-              LaunchingParameters launchParams =
-                  LaunchCalculator.getInstance().getParameters(isLeft);
+              // LaunchingParameters launchParams =
+              //     LaunchCalculator.getInstance().getParameters(isLeft);
 
-              shooterHood.setAutoInput(launchParams.hoodAngle());
-              flywheel.setAutoInput(launchParams.flywheelSpeed());
+              // shooterHood.setAutoInput(launchParams.hoodAngle());
+              // flywheel.setAutoInput(launchParams.flywheelSpeed());
 
               shooterHood.setGoalState(ShooterHoodState.AUTO);
               flywheel.setGoalState(FlywheelState.AUTO);

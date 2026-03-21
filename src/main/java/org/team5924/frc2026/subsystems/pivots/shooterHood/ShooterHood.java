@@ -30,6 +30,7 @@ import org.team5924.frc2026.Constants.GeneralShooterHood;
 import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
+import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHood extends SubsystemBase {
@@ -142,7 +143,7 @@ public class ShooterHood extends SubsystemBase {
           DriverStation.reportError(
               side + " Shooter Hood: MOVING is an invalid goal state; it is a transition state!!",
               null);
-      case AUTO -> setRespectiveShooterHoodState(ShooterHoodState.MOVING);
+      case AUTO -> setRespectiveShooterHoodState(ShooterHoodState.AUTO);
       case OFF -> setRespectiveShooterHoodState(ShooterHoodState.OFF);
       default -> setRespectiveShooterHoodState(ShooterHoodState.MOVING);
     }
@@ -178,6 +179,10 @@ public class ShooterHood extends SubsystemBase {
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
+      case AUTO -> {
+        autoInput = LaunchCalculator.getInstance().getParameters(isLeft).hoodAngle();
+        if (!isAtSetpoint) setPosition(autoInput);
+      }
       default -> {
         if (!isAtSetpoint) setPosition(getTargetRads());
       }

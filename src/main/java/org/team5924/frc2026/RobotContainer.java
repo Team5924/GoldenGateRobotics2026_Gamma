@@ -31,6 +31,7 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
+import org.team5924.frc2026.commands.shooter.AutoScoreCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
@@ -69,13 +70,14 @@ import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOTalonFX;
 import org.team5924.frc2026.subsystems.vision.Vision;
 import org.team5924.frc2026.subsystems.vision.VisionConstants;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
-  private Vision vision;
+  private final Vision vision;
 
   private final Intake intake;
   private final IntakePivot intakePivot;
@@ -119,8 +121,24 @@ public class RobotContainer {
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
         flywheelLeft = new Flywheel(new FlywheelIOTalonFX(true), true);
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        flywheelRight = new Flywheel(new FlywheelIOTalonFX(false), false);
+        // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+        // flywheelRight = new Flywheel(new FlywheelIOTalonFX(false), false);
+
+        // -------------------------- sim drive --------------------------
+        // driveSimulation =
+        //     new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        // SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        // drive =
+        //     new Drive(
+        //         new GyroIOSim(driveSimulation.getGyroSimulation()),
+        //         new ModuleIOTalonFXSim(TunerConstants.FrontLeft,
+        // driveSimulation.getModules()[0]),
+        //         new ModuleIOTalonFXSim(TunerConstants.FrontRight,
+        // driveSimulation.getModules()[1]),
+        //         new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+        //         new ModuleIOTalonFXSim(TunerConstants.BackRight,
+        // driveSimulation.getModules()[3]),
+        //         driveSimulation::setSimulationWorldPose);
 
         // ---------------------------- IO ----------------------------
         // drive =
@@ -140,8 +158,16 @@ public class RobotContainer {
         // shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
         // flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
 
-        // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
-        // flywheelRight = new Flywheel(new FlywheelIO() {}, false);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
+        flywheelRight = new Flywheel(new FlywheelIO() {}, false);
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_LEFT_NAME, VisionConstants.FRONT_LEFT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM));
         break;
 
       case SIM:
@@ -308,8 +334,8 @@ public class RobotContainer {
             ? () ->
                 drive.setPose(
                     driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-            // simulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+            // during simulation
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
@@ -344,18 +370,29 @@ public class RobotContainer {
                 intakePivot,
                 indexer));
 
+    // driveController
+    //     .leftBumper()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () -> {
+    //                   flywheelLeft.setGoalState(FlywheelState.FAST_LAUNCH);
+    //                   flywheelRight.setGoalState(FlywheelState.FAST_LAUNCH);
+    //                 },
+    //                 flywheelLeft,
+    //                 flywheelRight)
+    //             .andThen(Commands.waitSeconds(0.5))
+    //             .andThen(
+    //                 Commands.runOnce(
+    //                     () -> {
+    //                       indexer.setGoalState(IndexerState.INDEXING);
+    //                     },
+    //                     indexer)));
+
     driveController
         .leftBumper()
         .onTrue(
-            Commands.runOnce(
-                    () -> {
-                      flywheelLeft.setGoalState(FlywheelState.FAST_LAUNCH);
-                      flywheelRight.setGoalState(FlywheelState.FAST_LAUNCH);
-                    },
-                    flywheelLeft,
-                    flywheelRight)
-                .andThen(Commands.waitSeconds(1.5))
-                .andThen(
+            AutoScoreCommands.runTrackTargetCommand(shooterHoodLeft, flywheelLeft, true)
+                .alongWith(
                     Commands.runOnce(
                         () -> {
                           indexer.setGoalState(IndexerState.INDEXING);
@@ -374,6 +411,8 @@ public class RobotContainer {
                 flywheelLeft,
                 flywheelRight,
                 indexer));
+    
+    
 
     // // driveController
     // //     .rightTrigger()
@@ -456,7 +495,6 @@ public class RobotContainer {
     // // turretRight.setDefaultCommand(getAutonomousCommand()); // todo
     // // flywheelLeft.setDefaultCommand(getAutonomousCommand()); // todo
     // // flywheelRight.setDefaultCommand(getAutonomousCommand()); // todo
-
   }
 
   /**

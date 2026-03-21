@@ -28,6 +28,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
+import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class Flywheel extends SubsystemBase {
@@ -164,7 +165,10 @@ public class Flywheel extends SubsystemBase {
       case MANUAL -> handleManualState();
       case OFF -> stop();
       case B4, B6, B8, B12 -> runVolts(getTargetVelocityRotationsPerSec());
-      case AUTO -> setVelocity(autoInput);
+      case AUTO -> {
+        autoInput = LaunchCalculator.getInstance().getParameters(isLeft).flywheelSpeed();
+        setVelocity(autoInput);
+      }
       default -> setVelocity(getTargetVelocityRotationsPerSec());
     }
   }

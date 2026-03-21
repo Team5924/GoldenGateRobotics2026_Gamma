@@ -159,18 +159,18 @@ public class LaunchCalculator {
     phaseDelay = 0.03;
 
     // if (true) {
-    hoodAngleMap.put(0.96, Rotation2d.fromDegrees(10.0));
-    hoodAngleMap.put(1.16, Rotation2d.fromDegrees(12.0));
-    hoodAngleMap.put(1.58, Rotation2d.fromDegrees(14.0));
-    hoodAngleMap.put(2.07, Rotation2d.fromDegrees(18.5));
-    hoodAngleMap.put(2.37, Rotation2d.fromDegrees(22.0));
-    hoodAngleMap.put(2.47, Rotation2d.fromDegrees(23.0));
-    hoodAngleMap.put(2.70, Rotation2d.fromDegrees(24.0));
-    hoodAngleMap.put(2.94, Rotation2d.fromDegrees(25.0));
-    hoodAngleMap.put(3.48, Rotation2d.fromDegrees(27.0));
-    hoodAngleMap.put(3.92, Rotation2d.fromDegrees(32.0));
-    hoodAngleMap.put(4.35, Rotation2d.fromDegrees(34.0));
-    hoodAngleMap.put(4.84, Rotation2d.fromDegrees(38.0));
+    hoodAngleMap.put(0.96, Rotation2d.fromDegrees(10.0 / 2.0));
+    hoodAngleMap.put(1.16, Rotation2d.fromDegrees(12.0 / 2.0));
+    hoodAngleMap.put(1.58, Rotation2d.fromDegrees(14.0 / 2.0));
+    hoodAngleMap.put(2.07, Rotation2d.fromDegrees(18.5 / 2.0));
+    hoodAngleMap.put(2.37, Rotation2d.fromDegrees(22.0 / 2.0));
+    hoodAngleMap.put(2.47, Rotation2d.fromDegrees(23.0 / 2.0));
+    hoodAngleMap.put(2.70, Rotation2d.fromDegrees(24.0 / 2.0));
+    hoodAngleMap.put(2.94, Rotation2d.fromDegrees(25.0 / 2.0));
+    hoodAngleMap.put(3.48, Rotation2d.fromDegrees(27.0 / 2.0));
+    hoodAngleMap.put(3.92, Rotation2d.fromDegrees(32.0 / 2.0));
+    hoodAngleMap.put(4.35, Rotation2d.fromDegrees(34.0 / 2.0));
+    hoodAngleMap.put(4.84, Rotation2d.fromDegrees(38.0 / 2.0));
 
     flywheelSpeedMap.put(0.96, 150.0);
     flywheelSpeedMap.put(1.16, 155.0);
@@ -191,16 +191,18 @@ public class LaunchCalculator {
     timeOfFlightMap.put(1.88, 1.09);
     timeOfFlightMap.put(1.38, 0.90);
 
-    passingHoodAngleMap.put(5.46, Rotation2d.fromDegrees(38.0));
-    passingHoodAngleMap.put(6.62, Rotation2d.fromDegrees(38.0));
-    passingHoodAngleMap.put(7.80, Rotation2d.fromDegrees(38.0));
+    {
+        passingHoodAngleMap.put(5.46, Rotation2d.fromDegrees(38.0));
+        passingHoodAngleMap.put(6.62, Rotation2d.fromDegrees(38.0));
+        passingHoodAngleMap.put(7.80, Rotation2d.fromDegrees(38.0));
 
-    passingFlywheelSpeedMap.put(5.46, 160.0);
-    passingFlywheelSpeedMap.put(6.62, 180.0);
-    passingFlywheelSpeedMap.put(7.80, 200.0);
+        passingFlywheelSpeedMap.put(5.46, 160.0);
+        passingFlywheelSpeedMap.put(6.62, 180.0);
+        passingFlywheelSpeedMap.put(7.80, 200.0);
 
-    passingTimeOfFlightMap.put(passingMinDistance, 0.0);
-    passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
+        passingTimeOfFlightMap.put(passingMinDistance, 0.0);
+        passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
+    }
     // } else {
     //   // Full field maps
 
@@ -283,14 +285,14 @@ public class LaunchCalculator {
 
   public LaunchingParameters getParameters(Transform3d robotToLauncher) {
     boolean passing =
-        AllianceFlipUtil.applyX(RobotState.getInstance().getEstimatedPose().getX())
+        AllianceFlipUtil.applyX(RobotState.getInstance().getOdometryPose().getX())
             > FieldConstants.LinesVertical.hubCenter;
     if (latestParameters != null) {
       return latestParameters;
     }
 
     // Calculate estimated pose while accounting for phase delay
-    Pose2d estimatedPose = RobotState.getInstance().getEstimatedPose();
+    Pose2d estimatedPose = RobotState.getInstance().getOdometryPose();
     ChassisSpeeds robotRelativeVelocity = RobotState.getInstance().getRobotVelocity();
     estimatedPose =
         estimatedPose.exp(
@@ -397,6 +399,8 @@ public class LaunchCalculator {
     Logger.recordOutput(
         "LaunchCalculator/LauncherToTargetDistance", lookaheadLauncherToTargetDistance);
 
+    Logger.recordOutput("LaunchCalculator/LaunchParams", latestParameters);
+
     return latestParameters;
   }
 
@@ -434,7 +438,7 @@ public class LaunchCalculator {
   }
 
   public Translation2d getPassingTarget() {
-    double flippedY = AllianceFlipUtil.apply(RobotState.getInstance().getEstimatedPose()).getY();
+    double flippedY = AllianceFlipUtil.apply(RobotState.getInstance().getOdometryPose()).getY();
     boolean mirror = flippedY > FieldConstants.LinesHorizontal.center;
 
     // Check if we need to interpolate

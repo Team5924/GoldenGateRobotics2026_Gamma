@@ -230,7 +230,7 @@ public class DriveCommands {
             double robotAngle =
                 Math.abs(
                     AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d())
-                        .minus(RobotState.getInstance().getEstimatedPose().getTranslation())
+                        .minus(RobotState.getInstance().getOdometryPose().getTranslation())
                         .getAngle()
                         .minus(fieldRelativeLinearVelocity.getAngle())
                         .getRadians());
@@ -311,7 +311,7 @@ public class DriveCommands {
           Logger.recordOutput(
               "DriveCommands/Launching/SetpointPose",
               new Pose2d(
-                  RobotState.getInstance().getEstimatedPose().getTranslation(),
+                  RobotState.getInstance().getOdometryPose().getTranslation(),
                   parameters.driveAngle()));
           Logger.recordOutput("DriveCommands/Launching/AtGoalTolerance", atLaunchGoal());
           Logger.recordOutput(

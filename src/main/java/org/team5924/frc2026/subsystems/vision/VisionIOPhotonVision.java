@@ -17,18 +17,31 @@
 package org.team5924.frc2026.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import lombok.Setter;
 import org.photonvision.PhotonCamera;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.util.LoggedTunableNumber;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
   protected final PhotonCamera camera;
-  protected final Transform3d robotToCamera;
+  @Setter protected Transform3d robotToCamera;
+
+  private final LoggedTunableNumber rollDegrees;
+  private final LoggedTunableNumber pitchDegrees;
+  private final LoggedTunableNumber yawDegrees;
+
+  private final LoggedTunableNumber xInches;
+  private final LoggedTunableNumber yInches;
+  private final LoggedTunableNumber zInches;
 
   /**
    * Creates a new VisionIOPhotonVision.
@@ -38,11 +51,71 @@ public class VisionIOPhotonVision implements VisionIO {
    */
   public VisionIOPhotonVision(String name, Transform3d robotToCamera) {
     camera = new PhotonCamera(name);
-    this.robotToCamera = robotToCamera;
+    // this.robotToCamera = robotToCamera;
+
+    rollDegrees =
+        new LoggedTunableNumber(
+            "Vision/Camera" + camera.getName() + "/rotation roll degrees",
+            Units.radiansToDegrees(robotToCamera.getRotation().getX()));
+    pitchDegrees =
+        new LoggedTunableNumber(
+            "Vision/Camera" + camera.getName() + "/rotation pitch degrees",
+            Units.radiansToDegrees(robotToCamera.getRotation().getY()));
+    yawDegrees =
+        new LoggedTunableNumber(
+            "Vision/Camera" + camera.getName() + "/rotation yaw degrees",
+            Units.radiansToDegrees(robotToCamera.getRotation().getZ()));
+
+    xInches =
+        new LoggedTunableNumber(
+            "Vision/Camera" + camera.getName() + "/position x inches",
+            Units.metersToInches(robotToCamera.getX()));
+    yInches =
+        new LoggedTunableNumber(
+            "Vision/Camera" + camera.getName() + "/position y inches",
+            Units.metersToInches(robotToCamera.getY()));
+    zInches =
+        new LoggedTunableNumber(
+            "Vision/Camera" + camera.getName() + "/position z inches",
+            Units.metersToInches(robotToCamera.getZ()));
+
+    this.robotToCamera =
+        new Transform3d(
+            new Translation3d(
+                Units.inchesToMeters(xInches.getAsDouble()),
+                Units.inchesToMeters(yInches.getAsDouble()),
+                Units.inchesToMeters(zInches.getAsDouble())),
+            new Rotation3d(
+                Units.degreesToRadians(rollDegrees.getAsDouble()),
+                Units.degreesToRadians(pitchDegrees.getAsDouble()),
+                Units.degreesToRadians(yawDegrees.getAsDouble())));
+  }
+
+  private void updateLoggedTunableNumbers() {
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () ->
+            robotToCamera =
+                new Transform3d(
+                    new Translation3d(
+                        Units.inchesToMeters(xInches.getAsDouble()),
+                        Units.inchesToMeters(yInches.getAsDouble()),
+                        Units.inchesToMeters(zInches.getAsDouble())),
+                    new Rotation3d(
+                        Units.degreesToRadians(rollDegrees.getAsDouble()),
+                        Units.degreesToRadians(pitchDegrees.getAsDouble()),
+                        Units.degreesToRadians(yawDegrees.getAsDouble()))),
+        xInches,
+        yInches,
+        zInches,
+        rollDegrees,
+        pitchDegrees,
+        yawDegrees);
   }
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
+    updateLoggedTunableNumbers();
     inputs.connected = camera.isConnected();
 
     // Read new camera observations
@@ -86,6 +159,15 @@ public class VisionIOPhotonVision implements VisionIO {
           Transform3d fieldToTarget =
               new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
           Transform3d cameraToTarget = target.bestCameraToTarget;
+
+          Rotation3d cameraToTargetRotation = cameraToTarget.getRotation();
+          inputs.cameraToTarget =
+              new TranslationRotation(
+                  cameraToTarget.getTranslation(),
+                  Units.radiansToDegrees(cameraToTargetRotation.getX()),
+                  Units.radiansToDegrees(cameraToTargetRotation.getY()),
+                  Units.radiansToDegrees(cameraToTargetRotation.getZ()));
+
           Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
           Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
           Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
