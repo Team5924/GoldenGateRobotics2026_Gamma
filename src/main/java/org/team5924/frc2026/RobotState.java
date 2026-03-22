@@ -89,6 +89,7 @@ public class RobotState {
   /*### Flywheel ### */
   @Getter @Setter private FlywheelState leftFlywheelState = FlywheelState.OFF;
   @Getter @Setter private FlywheelState rightFlywheelState = FlywheelState.OFF;
+  @Getter @Setter private boolean leftFlywheelAtSetpoint = false;
 
   /*### Shooter Hood ### */
   @Getter @Setter private ShooterHoodState leftShooterHoodState = ShooterHoodState.OFF;

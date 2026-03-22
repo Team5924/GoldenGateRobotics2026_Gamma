@@ -102,11 +102,11 @@ public class LaunchCalculator {
   public static final double trenchPresetDistance = 3.03;
   public static final double outpostPresetDistance = 4.84;
   public static final double passingPresetDistance = 7.0;
-  public static final LaunchPreset passingPreset;
-  public static final LaunchPreset hubPreset;
-  public static final LaunchPreset towerPreset;
-  public static final LaunchPreset trenchPreset;
-  public static final LaunchPreset outpostPreset;
+  //   public static final LaunchPreset passingPreset;
+  //   public static final LaunchPreset hubPreset;
+  //   public static final LaunchPreset towerPreset;
+  //   public static final LaunchPreset trenchPreset;
+  //   public static final LaunchPreset outpostPreset;
   public static final LaunchPreset hoodMinPreset =
       new LaunchPreset(
           new LoggedTunableNumber(
@@ -159,50 +159,82 @@ public class LaunchCalculator {
     phaseDelay = 0.03;
 
     // if (true) {
-    hoodAngleMap.put(0.96, Rotation2d.fromDegrees(10.0 / 2.0));
-    hoodAngleMap.put(1.16, Rotation2d.fromDegrees(12.0 / 2.0));
-    hoodAngleMap.put(1.58, Rotation2d.fromDegrees(14.0 / 2.0));
-    hoodAngleMap.put(2.07, Rotation2d.fromDegrees(18.5 / 2.0));
-    hoodAngleMap.put(2.37, Rotation2d.fromDegrees(22.0 / 2.0));
-    hoodAngleMap.put(2.47, Rotation2d.fromDegrees(23.0 / 2.0));
-    hoodAngleMap.put(2.70, Rotation2d.fromDegrees(24.0 / 2.0));
-    hoodAngleMap.put(2.94, Rotation2d.fromDegrees(25.0 / 2.0));
-    hoodAngleMap.put(3.48, Rotation2d.fromDegrees(27.0 / 2.0));
-    hoodAngleMap.put(3.92, Rotation2d.fromDegrees(32.0 / 2.0));
-    hoodAngleMap.put(4.35, Rotation2d.fromDegrees(34.0 / 2.0));
-    hoodAngleMap.put(4.84, Rotation2d.fromDegrees(38.0 / 2.0));
+    hoodAngleMap.put(2.388, Rotation2d.fromRadians(0.0));
+    hoodAngleMap.put(2.450, Rotation2d.fromRadians(0.031));
+    hoodAngleMap.put(2.570, Rotation2d.fromRadians(0.040));
+    hoodAngleMap.put(2.730, Rotation2d.fromRadians(0.052));
+    hoodAngleMap.put(3.050, Rotation2d.fromRadians(0.052));
+    hoodAngleMap.put(3.550, Rotation2d.fromRadians(0.110));
+    hoodAngleMap.put(4.000, Rotation2d.fromRadians(0.139));
+    hoodAngleMap.put(4.470, Rotation2d.fromRadians(0.181));
 
-    flywheelSpeedMap.put(0.96, 150.0);
-    flywheelSpeedMap.put(1.16, 155.0);
-    flywheelSpeedMap.put(1.58, 160.0);
-    flywheelSpeedMap.put(2.07, 165.0);
-    flywheelSpeedMap.put(2.37, 170.0);
-    flywheelSpeedMap.put(2.47, 170.0);
-    flywheelSpeedMap.put(2.70, 170.0);
-    flywheelSpeedMap.put(2.94, 175.0);
-    flywheelSpeedMap.put(3.48, 175.0);
-    flywheelSpeedMap.put(3.92, 180.0);
-    flywheelSpeedMap.put(4.35, 185.0);
-    flywheelSpeedMap.put(4.84, 190.0);
+    flywheelSpeedMap.put(2.388, 75.0);
+    flywheelSpeedMap.put(2.450, 75.0);
+    flywheelSpeedMap.put(2.570, 77.5);
+    flywheelSpeedMap.put(2.730, 77.5);
+    flywheelSpeedMap.put(3.050, 80.0);
+    flywheelSpeedMap.put(3.550, 85.0);
+    flywheelSpeedMap.put(4.000, 87.5);
+    flywheelSpeedMap.put(4.470, 92.5);
 
-    timeOfFlightMap.put(5.68, 1.16);
-    timeOfFlightMap.put(4.55, 1.12);
-    timeOfFlightMap.put(3.15, 1.11);
-    timeOfFlightMap.put(1.88, 1.09);
-    timeOfFlightMap.put(1.38, 0.90);
+    timeOfFlightMap.put(2.388, 0.814);
+    timeOfFlightMap.put(3.050, 0.879);
+    timeOfFlightMap.put(4.000, 0.935);
+    timeOfFlightMap.put(4.470, 0.975);
 
-    {
-        passingHoodAngleMap.put(5.46, Rotation2d.fromDegrees(38.0));
-        passingHoodAngleMap.put(6.62, Rotation2d.fromDegrees(38.0));
-        passingHoodAngleMap.put(7.80, Rotation2d.fromDegrees(38.0));
+    // ------------------------
 
-        passingFlywheelSpeedMap.put(5.46, 160.0);
-        passingFlywheelSpeedMap.put(6.62, 180.0);
-        passingFlywheelSpeedMap.put(7.80, 200.0);
+    // minDistance = 0.9;
+    // maxDistance = 4.9;
+    // passingMinDistance = 0.0;
+    // passingMaxDistance = 12.0;
+    // phaseDelay = 0.03;
 
-        passingTimeOfFlightMap.put(passingMinDistance, 0.0);
-        passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
-    }
+    // // if (true) {
+    // hoodAngleMap.put(0.96, Rotation2d.fromDegrees(10.0 / 2.0));
+    // hoodAngleMap.put(1.16, Rotation2d.fromDegrees(12.0 / 2.0));
+    // hoodAngleMap.put(1.58, Rotation2d.fromDegrees(14.0 / 2.0));
+    // hoodAngleMap.put(2.07, Rotation2d.fromDegrees(18.5 / 2.0));
+    // hoodAngleMap.put(2.37, Rotation2d.fromDegrees(22.0 / 2.0));
+    // hoodAngleMap.put(2.47, Rotation2d.fromDegrees(23.0 / 2.0));
+    // hoodAngleMap.put(2.70, Rotation2d.fromDegrees(24.0 / 2.0));
+    // hoodAngleMap.put(2.94, Rotation2d.fromDegrees(25.0 / 2.0));
+    // hoodAngleMap.put(3.48, Rotation2d.fromDegrees(27.0 / 2.0));
+    // hoodAngleMap.put(3.92, Rotation2d.fromDegrees(32.0 / 2.0));
+    // hoodAngleMap.put(4.35, Rotation2d.fromDegrees(34.0 / 2.0));
+    // hoodAngleMap.put(4.84, Rotation2d.fromDegrees(38.0 / 2.0));
+
+    // flywheelSpeedMap.put(0.96, 150.0);
+    // flywheelSpeedMap.put(1.16, 155.0);
+    // flywheelSpeedMap.put(1.58, 160.0);
+    // flywheelSpeedMap.put(2.07, 165.0);
+    // flywheelSpeedMap.put(2.37, 170.0);
+    // flywheelSpeedMap.put(2.47, 170.0);
+    // flywheelSpeedMap.put(2.70, 170.0);
+    // flywheelSpeedMap.put(2.94, 175.0);
+    // flywheelSpeedMap.put(3.48, 175.0);
+    // flywheelSpeedMap.put(3.92, 180.0);
+    // flywheelSpeedMap.put(4.35, 185.0);
+    // flywheelSpeedMap.put(4.84, 190.0);
+
+    // timeOfFlightMap.put(5.68, 1.16);
+    // timeOfFlightMap.put(4.55, 1.12);
+    // timeOfFlightMap.put(3.15, 1.11);
+    // timeOfFlightMap.put(1.88, 1.09);
+    // timeOfFlightMap.put(1.38, 0.90);
+
+    // {
+    //   passingHoodAngleMap.put(5.46, Rotation2d.fromDegrees(38.0));
+    //   passingHoodAngleMap.put(6.62, Rotation2d.fromDegrees(38.0));
+    //   passingHoodAngleMap.put(7.80, Rotation2d.fromDegrees(38.0));
+
+    //   passingFlywheelSpeedMap.put(5.46, 160.0);
+    //   passingFlywheelSpeedMap.put(6.62, 180.0);
+    //   passingFlywheelSpeedMap.put(7.80, 200.0);
+
+    //   passingTimeOfFlightMap.put(passingMinDistance, 0.0);
+    //   passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
+    // }
     // } else {
     //   // Full field maps
 
@@ -225,46 +257,46 @@ public class LaunchCalculator {
     //   passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
     // }
 
-    passingPreset =
-        new LaunchPreset(
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Passing/HoodAngle",
-                passingHoodAngleMap.get(passingPresetDistance).getDegrees()),
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Passing/FlywheelSpeed",
-                passingFlywheelSpeedMap.get(passingPresetDistance)));
-    hubPreset =
-        new LaunchPreset(
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Hub/HoodAngle",
-                hoodAngleMap.get(hubPresetDistance).getDegrees()),
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Hub/FlywheelSpeed",
-                flywheelSpeedMap.get(hubPresetDistance)));
-    towerPreset =
-        new LaunchPreset(
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Tower/HoodAngle",
-                hoodAngleMap.get(towerPresetDistance).getDegrees()),
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Tower/FlywheelSpeed",
-                flywheelSpeedMap.get(towerPresetDistance)));
-    trenchPreset =
-        new LaunchPreset(
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Trench/HoodAngle",
-                hoodAngleMap.get(trenchPresetDistance).getDegrees()),
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Trench/FlywheelSpeed",
-                flywheelSpeedMap.get(trenchPresetDistance)));
-    outpostPreset =
-        new LaunchPreset(
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Outpost/HoodAngle",
-                hoodAngleMap.get(outpostPresetDistance).getDegrees()),
-            new LoggedTunableNumber(
-                "LaunchCalculator/Presets/Outpost/FlywheelSpeed",
-                flywheelSpeedMap.get(outpostPresetDistance)));
+    // passingPreset =
+    //     new LaunchPreset(
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Passing/HoodAngle",
+    //             passingHoodAngleMap.get(passingPresetDistance).getDegrees()),
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Passing/FlywheelSpeed",
+    //             passingFlywheelSpeedMap.get(passingPresetDistance)));
+    // hubPreset =
+    //     new LaunchPreset(
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Hub/HoodAngle",
+    //             hoodAngleMap.get(hubPresetDistance).getDegrees()),
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Hub/FlywheelSpeed",
+    //             flywheelSpeedMap.get(hubPresetDistance)));
+    // towerPreset =
+    //     new LaunchPreset(
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Tower/HoodAngle",
+    //             hoodAngleMap.get(towerPresetDistance).getDegrees()),
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Tower/FlywheelSpeed",
+    //             flywheelSpeedMap.get(towerPresetDistance)));
+    // trenchPreset =
+    //     new LaunchPreset(
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Trench/HoodAngle",
+    //             hoodAngleMap.get(trenchPresetDistance).getDegrees()),
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Trench/FlywheelSpeed",
+    //             flywheelSpeedMap.get(trenchPresetDistance)));
+    // outpostPreset =
+    //     new LaunchPreset(
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Outpost/HoodAngle",
+    //             hoodAngleMap.get(outpostPresetDistance).getDegrees()),
+    //         new LoggedTunableNumber(
+    //             "LaunchCalculator/Presets/Outpost/FlywheelSpeed",
+    //             flywheelSpeedMap.get(outpostPresetDistance)));
   }
 
   public static double getMinTimeOfFlight() {
@@ -276,7 +308,7 @@ public class LaunchCalculator {
   }
 
   public LaunchingParameters getParameters() {
-    return getParameters(robotToLauncherCenter);
+    return getParameters(true);
   }
 
   public LaunchingParameters getParameters(boolean isLeft) {
@@ -310,7 +342,7 @@ public class LaunchCalculator {
     double launcherToTargetDistance = target.getDistance(launcherPosition.getTranslation());
 
     // Calculate field relative launcher velocity
-    var robotVelocity = RobotState.getInstance().getFieldSetpointVelocity();
+    var robotVelocity = new ChassisSpeeds(); // RobotState.getInstance().getFieldSetpointVelocity();
     var robotAngle = RobotState.getInstance().getRotation();
     ChassisSpeeds launcherVelocity =
         DriverStation.isAutonomous()

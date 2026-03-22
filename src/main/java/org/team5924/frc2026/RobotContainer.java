@@ -388,6 +388,33 @@ public class RobotContainer {
     //                     },
     //                     indexer)));
 
+    // driveController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               LaunchCalculator.getInstance().getParameters(true);
+    //               flywheelLeft.setGoalState(FlywheelState.MANUAL);
+    //               shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL_ANGLE);
+    //               indexer.setGoalState(IndexerState.INDEXING);
+    //             },
+    //             shooterHoodLeft,
+    //             flywheelLeft,
+    //             indexer));
+
+    // driveController
+    //     .leftTrigger()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               flywheelLeft.setGoalState(FlywheelState.OFF);
+    //               shooterHoodLeft.setGoalState(ShooterHoodState.OFF);
+    //               indexer.setGoalState(IndexerState.OFF);
+    //             },
+    //             shooterHoodLeft,
+    //             flywheelLeft,
+    //             indexer));
+
     driveController
         .leftBumper()
         .onTrue(
@@ -398,6 +425,11 @@ public class RobotContainer {
                           indexer.setGoalState(IndexerState.INDEXING);
                         },
                         indexer)));
+    // driveController
+    //     .rightTrigger()
+    //     .onTrue(
+    //         DriveCommands.joystickDriveWhileLaunching(
+    //             drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
     driveController
         .leftBumper()
@@ -411,8 +443,6 @@ public class RobotContainer {
                 flywheelLeft,
                 flywheelRight,
                 indexer));
-    
-    
 
     // // driveController
     // //     .rightTrigger()

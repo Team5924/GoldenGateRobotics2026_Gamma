@@ -53,6 +53,8 @@ public class ShooterHood extends SubsystemBase {
     NEUTRAL_SHUFFLING(() -> 0.0),
     OPPONENT_SHUFFLING(() -> 0.0),
 
+    MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
+
     MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
     CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
     AUTO(() -> 0.0),

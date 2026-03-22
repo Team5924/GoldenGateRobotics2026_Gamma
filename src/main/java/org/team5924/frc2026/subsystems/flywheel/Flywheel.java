@@ -48,7 +48,7 @@ public class Flywheel extends SubsystemBase {
     SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 50)),
 
     // current at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 200)),
+    MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 135)),
     AUTO(() -> 0.0),
 
     SETPOINT(() -> 0.0),
@@ -124,9 +124,6 @@ public class Flywheel extends SubsystemBase {
   public void setGoalState(FlywheelState goalState) {
     if (this.goalState.equals(goalState)) return;
 
-    if (goalState.equals(FlywheelState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
-      return;
-
     this.goalState = goalState;
     switch (goalState) {
       case MANUAL -> setRespectiveFlywheelState(FlywheelState.MANUAL);
@@ -155,6 +152,7 @@ public class Flywheel extends SubsystemBase {
 
   private void handleCurrentState() {
     isAtSetpoint = isAtSetpoint();
+    if (isLeft) RobotState.getInstance().setLeftFlywheelAtSetpoint(isAtSetpoint);
 
     switch (getRespectiveFlywheelState()) {
       case MOVING -> {
@@ -176,12 +174,12 @@ public class Flywheel extends SubsystemBase {
   private void handleManualState() {
     if (!goalState.equals(FlywheelState.MANUAL)) return;
 
-    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
-      stop();
-      return;
-    }
+    // if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
+    //   stop();
+    //   return;
+    // }
 
-    setVelocity(FlywheelState.MANUAL.getVelocityRotationsPerSec().getAsDouble() * input);
+    setVelocity(FlywheelState.MANUAL.getVelocityRotationsPerSec().getAsDouble());
   }
 
   public void updateSetpointState(double change) {

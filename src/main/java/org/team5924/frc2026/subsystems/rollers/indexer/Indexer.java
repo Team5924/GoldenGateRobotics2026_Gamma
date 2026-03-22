@@ -47,6 +47,13 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   }
 
   @Override
+  protected void handleCurrentState() {
+    if (RobotState.getInstance().isLeftFlywheelAtSetpoint())
+      io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
+    else io.stop();
+  }
+
+  @Override
   public void periodic() {
     super.periodic();
   }
