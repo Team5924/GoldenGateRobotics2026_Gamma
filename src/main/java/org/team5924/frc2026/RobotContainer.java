@@ -427,7 +427,7 @@ public class RobotContainer {
                         indexer)));
     // driveController
     //     .rightTrigger()
-    //     .onTrue(
+    //     .whileTrue(
     //         DriveCommands.joystickDriveWhileLaunching(
     //             drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
