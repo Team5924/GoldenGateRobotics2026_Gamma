@@ -56,8 +56,8 @@ public class Flywheel extends SubsystemBase {
     private final DoubleSupplier velocityRotationsPerSec;
   }
 
-  private final Alert flywheelMotorDisconnected;
-  protected final Alert overheatAlert;
+  private final Alert[] motorDisconnected = new Alert[4];
+  protected final Alert[] overheatAlert = new Alert[4];
 
   @Getter private FlywheelState goalState = FlywheelState.OFF;
   private FlywheelState currentState = FlywheelState.OFF;
@@ -68,10 +68,20 @@ public class Flywheel extends SubsystemBase {
   public Flywheel(FlywheelIO io) {
     this.io = io;
     this.goalState = FlywheelState.OFF;
-    this.flywheelMotorDisconnected =
-        new Alert("Flywheel Motor Disconnected!", Alert.AlertType.kWarning);
 
-    overheatAlert = new Alert("Flywheel motor overheating!", Alert.AlertType.kWarning);
+    for (int i = 0; i < 4; ++i) {
+      int id = switch (i) {
+        case 0 -> Constants.Flywheel.CAN_ID;
+        case 1 -> Constants.Flywheel.FOLLOWER_CAN_ID;
+        case 2 -> Constants.Flywheel.OPPOSER_ONE_CAN_ID;
+        case 3 -> Constants.Flywheel.OPPOSER_TWO_CAN_ID;
+        default -> -1;
+      };
+
+      motorDisconnected[i] =
+          new Alert("Flywheel Motor (id " + id  + ") Disconnected!", Alert.AlertType.kWarning);
+      overheatAlert[i] = new Alert("Flywheel  motor (id " + id + ") overheating!", Alert.AlertType.kWarning);
+    }
   }
 
   @Override
@@ -87,10 +97,12 @@ public class Flywheel extends SubsystemBase {
     Logger.recordOutput("Flywheel/CurrentVelocityRotationsPerSec", inputs.velocityRotationsPerSec);
     Logger.recordOutput("Flywheel/IsAtSetpoint", isAtSetpoint);
 
-    flywheelMotorDisconnected.set(!inputs.motorConnected);
+    for (int i = 0; i < 4; ++i) {
+      motorDisconnected[i].set(!inputs.motorConnected[i]);
+      overheatAlert[i].set(inputs.tempCelsius[i] > Constants.OVERHEAT_THRESHOLD);
+    }
 
     handleCurrentState();
-    overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
   }
 
   public void runVolts(double volts) {

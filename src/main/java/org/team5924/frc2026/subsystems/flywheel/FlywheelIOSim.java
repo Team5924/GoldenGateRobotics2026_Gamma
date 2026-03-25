@@ -43,13 +43,16 @@ public class FlywheelIOSim implements FlywheelIO {
     if (DriverStation.isDisabled()) stop();
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.motorConnected = true;
     inputs.positionRads = sim.getAngularPositionRad();
     inputs.velocityRotationsPerSec = Units.radiansToRotations(sim.getAngularVelocityRadPerSec());
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
     inputs.setpointVelocityRotationsPerSec = setpoint;
-    inputs.tempCelsius = 25.0;
+    
+    for (int i = 0; i < 4; ++i) {
+      inputs.motorConnected[i] = true;
+      inputs.tempCelsius[i] = 25.0;
+    }
   }
 
   @Override
