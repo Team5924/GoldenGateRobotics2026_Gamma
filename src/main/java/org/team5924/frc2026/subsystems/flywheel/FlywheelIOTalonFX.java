@@ -46,10 +46,14 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   /* Hardware */
   private final TalonFX leaderTalon;
   private final TalonFX followerTalon;
+  private final TalonFX opposerOneTalon;
+  private final TalonFX opposerTwoTalon;
 
   /* Configurators */
   private TalonFXConfigurator leaderConfig;
   private TalonFXConfigurator followerConfig;
+  private TalonFXConfigurator opposerOneConfig;
+  private TalonFXConfigurator opposerTwoConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;
@@ -88,11 +92,14 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   public FlywheelIOTalonFX() {
     leaderTalon = new TalonFX(Flywheel.CAN_ID, new CANBus(Flywheel.BUS));
-
     followerTalon = new TalonFX(Flywheel.FOLLOWER_CAN_ID, new CANBus(Flywheel.BUS));
+    opposerOneTalon = new TalonFX(Flywheel.OPPOSER_ONE_CAN_ID, new CANBus(Flywheel.BUS));
+    opposerTwoTalon = new TalonFX(Flywheel.OPPOSER_TWO_CAN_ID, new CANBus(Flywheel.BUS));
 
     leaderConfig = leaderTalon.getConfigurator();
     followerConfig = followerTalon.getConfigurator();
+    opposerOneConfig = opposerOneTalon.getConfigurator();
+    opposerTwoConfig = opposerTwoTalon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     updateSlot0Configs();
@@ -101,7 +108,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     updateMotionMagicConfigs();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[10];
+    StatusCode[] statusArray = new StatusCode[9];
 
     statusArray[0] = leaderConfig.apply(Flywheel.CONFIG);
     statusArray[1] = leaderConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
@@ -110,10 +117,9 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     statusArray[4] = leaderConfig.apply(slot0Configs);
     statusArray[5] = leaderConfig.apply(motionMagicConfigs);
 
-    statusArray[6] = followerConfig.apply(Flywheel.FOLLOWER_CONFIG);
-    statusArray[7] = followerConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[8] = followerConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[9] = followerConfig.apply(Flywheel.FEEDBACK_CONFIGS);
+    statusArray[6] = followerConfig.apply(Flywheel.CONFIG);
+    statusArray[7] = opposerOneConfig.apply(Flywheel.OPPOSER_CONFIG);
+    statusArray[8] = opposerTwoConfig.apply(Flywheel.OPPOSER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;

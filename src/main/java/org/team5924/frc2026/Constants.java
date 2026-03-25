@@ -174,7 +174,7 @@ public final class Constants {
         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
         .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
         .withRotorToSensorRatio(1.0);
-    }
+  }
 
   public final class Hopper {
     public static final int CAN_ID = 50; 
@@ -190,6 +190,7 @@ public final class Constants {
   public final class Indexer {
     public final static int CAN_ID = 51;
     public static final String BUS = "rio";
+
     // controls two rollers, so reduction is weird
     public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
@@ -202,7 +203,6 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive));
   }
-
 
   /* General Subsystems */
   public final class ShooterHood {
@@ -275,6 +275,9 @@ public final class Constants {
     public static final int BEAM_BREAK_ID = 0; // TODO: update later
 
     public static final int FOLLOWER_CAN_ID = 31;
+    public static final int OPPOSER_ONE_CAN_ID = 32;
+    public static final int OPPOSER_TWO_CAN_ID = 33;
+
     public static final double FOLLOWER_SIM_MOI = 0.001;
 
     public static final double EPSILON_VELOCITY = 2.5;
@@ -293,8 +296,16 @@ public final class Constants {
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
   
-    public static final TalonFXConfiguration FOLLOWER_CONFIG = 
-      CONFIG
+    public static final TalonFXConfiguration OPPOSER_CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Coast))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive));

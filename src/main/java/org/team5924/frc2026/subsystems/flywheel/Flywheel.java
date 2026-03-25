@@ -43,11 +43,9 @@ public class Flywheel extends SubsystemBase {
     FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 150)),
     SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 50)),
 
-    // current at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 200)),
     AUTO(() -> 0.0),
 
-    SETPOINT(() -> 0.0),
+    MANUAL_SETPOINT(() -> 0.0),
 
     B4(() -> 4.0),
     B6(() -> 6.0),
@@ -111,12 +109,8 @@ public class Flywheel extends SubsystemBase {
   public void setGoalState(FlywheelState goalState) {
     if (this.goalState.equals(goalState)) return;
 
-    if (goalState.equals(FlywheelState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
-      return;
-
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL -> currentState = FlywheelState.MANUAL;
       case MOVING ->
           DriverStation.reportError(
               "Flywheel: MOVING is an invalid goal state; it is a transition state!!", null);
@@ -135,7 +129,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   private double getTargetVelocityRotationsPerSec() {
-    return goalState == FlywheelState.AUTO || goalState == FlywheelState.SETPOINT
+    return goalState == FlywheelState.AUTO || goalState == FlywheelState.MANUAL_SETPOINT
         ? autoInput
         : goalState.velocityRotationsPerSec.getAsDouble();
   }
@@ -148,7 +142,6 @@ public class Flywheel extends SubsystemBase {
         setVelocity(getTargetVelocityRotationsPerSec());
         if (isAtSetpoint() && goalState != FlywheelState.AUTO) currentState = goalState;
       }
-      case MANUAL -> handleManualState();
       case OFF -> stop();
       case B4, B6, B8, B12 -> runVolts(getTargetVelocityRotationsPerSec());
       case AUTO -> setVelocity(autoInput);
@@ -156,19 +149,8 @@ public class Flywheel extends SubsystemBase {
     }
   }
 
-  private void handleManualState() {
-    if (!goalState.equals(FlywheelState.MANUAL)) return;
-
-    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
-      stop();
-      return;
-    }
-
-    setVelocity(FlywheelState.MANUAL.getVelocityRotationsPerSec().getAsDouble() * input);
-  }
-
   public void updateSetpointState(double change) {
     autoInput = inputs.setpointVelocityRotationsPerSec + change;
-    goalState = FlywheelState.SETPOINT;
+    setGoalState(FlywheelState.MANUAL_SETPOINT);
   }
 }
