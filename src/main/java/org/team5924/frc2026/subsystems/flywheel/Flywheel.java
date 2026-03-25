@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.flywheel;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,7 +26,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
+import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class Flywheel extends SubsystemBase {
@@ -40,7 +43,7 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 150)),
+    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 100)),
     SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 50)),
 
     AUTO(() -> 0.0),
@@ -63,7 +66,11 @@ public class Flywheel extends SubsystemBase {
   private FlywheelState currentState = FlywheelState.OFF;
   private boolean isAtSetpoint = false;
 
-  @Setter private double autoInput = 0.0;
+  private double autoInput = 0.0;
+
+  public void setAutoInput(double inputRads) {
+    autoInput = MathUtil.clamp(inputRads, 0.0, 100.0);
+  }
 
   public Flywheel(FlywheelIO io) {
     this.io = io;
@@ -150,6 +157,7 @@ public class Flywheel extends SubsystemBase {
 
   private void handleCurrentState() {
     isAtSetpoint = isAtSetpoint();
+    RobotState.getInstance().setFlywheelAtSetpoint(isAtSetpoint);
 
     switch (currentState) {
       case MOVING -> {
@@ -158,13 +166,16 @@ public class Flywheel extends SubsystemBase {
       }
       case OFF -> stop();
       case B4, B6, B8, B12 -> runVolts(getTargetVelocityRotationsPerSec());
-      case AUTO -> setVelocity(autoInput);
+      case AUTO -> {
+        setAutoInput(LaunchCalculator.getInstance().getParameters().flywheelSpeed());
+        setVelocity(autoInput);
+      }
       default -> setVelocity(getTargetVelocityRotationsPerSec());
     }
   }
 
   public void updateSetpointState(double change) {
-    autoInput = inputs.setpointVelocityRotationsPerSec + change;
+    setAutoInput(inputs.setpointVelocityRotationsPerSec + change);
     setGoalState(FlywheelState.MANUAL_SETPOINT);
   }
 }

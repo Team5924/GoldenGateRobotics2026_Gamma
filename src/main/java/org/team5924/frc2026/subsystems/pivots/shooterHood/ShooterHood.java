@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,6 +28,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.util.EqualsUtil;
+import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHood extends SubsystemBase {
@@ -47,6 +49,8 @@ public class ShooterHood extends SubsystemBase {
     AUTO_SHOOTING(() -> 0.0),
     NEUTRAL_SHUFFLING(() -> 0.0),
     OPPONENT_SHUFFLING(() -> 0.0),
+
+    MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
     MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
     CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
@@ -70,7 +74,13 @@ public class ShooterHood extends SubsystemBase {
   private double timeSinceLastStateChange = 0.0;
 
   @Setter private double input;
-  @Setter private double autoInput = 0.0;
+  private double autoInput = 0.0;
+
+  public void setAutoInput(double inputRads) {
+    autoInput =
+        MathUtil.clamp(
+            inputRads, Constants.ShooterHood.MIN_POSITION_RADS, Constants.ShooterHood.MAX_POSITION_RADS);
+  }
 
   public ShooterHood(ShooterHoodIO io) {
     this.io = io;
@@ -159,6 +169,10 @@ public class ShooterHood extends SubsystemBase {
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
+      case AUTO -> {
+        setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
+        if (!isAtSetpoint) setPosition(autoInput);
+      }
       default -> {
         if (!isAtSetpoint) setPosition(getTargetRads());
       }

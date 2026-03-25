@@ -153,8 +153,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(120)
-            .withStatorCurrentLimit(120)
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -166,8 +166,8 @@ public final class Constants {
       new SoftwareLimitSwitchConfigs()
         .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
         .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true);
+        .withForwardSoftLimitEnable(false)
+        .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
@@ -219,7 +219,7 @@ public final class Constants {
     public static final double CANCODER_TO_MECHANISM = CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
 
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
+    public static final double EPSILON_RADS = Units.degreesToRadians(0.5);
     public static final double STATE_TIMEOUT = 5.0;
     public static final boolean ENABLE_TIMEOUT = false;
 
