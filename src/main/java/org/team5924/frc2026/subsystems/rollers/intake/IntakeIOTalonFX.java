@@ -27,10 +27,10 @@ public class IntakeIOTalonFX extends GenericRollerIOTalonFX implements IntakeIO 
     follower = new IntakeFollowerIOTalonFX(Intake.FOLLOWER_CAN_ID, Intake.BUS, Intake.CONFIG, Intake.MOTOR_TO_MECHANISM, Intake.CAN_ID);
   }
 
-  @Override
-  public void updateFollowerInputs() {
+  // @Override
+  // public void updateFollowerInputs() {
     // follower.updateInputs(followerInputs);
-  }
+  // }
 
   // @Override
   // public void setFollowerInputs(GenericRollerIOInputs followerInputs) {
