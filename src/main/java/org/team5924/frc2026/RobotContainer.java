@@ -40,10 +40,10 @@ import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
 import org.team5924.frc2026.subsystems.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
-import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
@@ -394,8 +394,13 @@ public class RobotContainer {
 
     driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
     driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
-    driveController.leftTrigger().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.SLOW_LAUNCH)));
-    driveController.rightTrigger().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF)));
+    driveController
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.SLOW_LAUNCH)));
+    driveController
+        .rightTrigger()
+        .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF)));
+    driveController.a().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.B4)));
 
     shooterHood.setDefaultCommand(
         Commands.run(() -> shooterHood.runManual(() -> driveController.getRightY()), shooterHood));

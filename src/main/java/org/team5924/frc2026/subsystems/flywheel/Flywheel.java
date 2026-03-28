@@ -50,7 +50,7 @@ public class Flywheel extends SubsystemBase {
 
     MANUAL_SETPOINT(() -> 0.0),
 
-    B4(() -> 4.0),
+    B4(() -> 2.0),
     B6(() -> 6.0),
     B8(() -> 8.0),
     B12(() -> 12.0);
@@ -120,6 +120,9 @@ public class Flywheel extends SubsystemBase {
 
   /** Sets the velocity in rotations per sec */
   public void setVelocity(double velocity) {
+    if (Math.abs(velocity) < Constants.Flywheel.EPSILON_VELOCITY)
+      stop();
+
     io.setVelocity(velocity);
   }
 
