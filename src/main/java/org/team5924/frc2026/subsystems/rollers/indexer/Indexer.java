@@ -44,8 +44,6 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   }
 
   public void setGoalState(IndexerState goalState) {
-    if (goalState == IndexerState.INDEXING && !isFlywheelReady()) return;
-
     this.goalState = goalState;
     currentState = goalState;
   }
