@@ -132,8 +132,10 @@ public class HopperElevator extends SubsystemBase {
       case MOVING:
         DriverStation.reportError(
             "HopperElevator: MOVING is an invalid goal state; it is a transition state!!", null);
+        return;
       default:
         currentState = HopperElevatorState.MOVING;
+        break;
     }
   }
 }
