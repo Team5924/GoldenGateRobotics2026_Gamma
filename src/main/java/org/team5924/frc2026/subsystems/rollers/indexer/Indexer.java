@@ -36,6 +36,7 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   }
 
   private IndexerState goalState = IndexerState.OFF;
+  private IndexerState currentState = IndexerState.OFF;
 
   public Indexer(IndexerIO indexerIO) {
     super("Indexer", indexerIO);
@@ -43,12 +44,12 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
 
   public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setIndexerState(goalState);
+    currentState = goalState;
   }
 
   @Override
   protected void handleCurrentState() {
-    if (RobotState.getInstance().isLeftFlywheelAtSetpoint())
+    if (RobotState.getInstance().isFlywheelAtSetpoint())
       io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
     else io.stop();
   }

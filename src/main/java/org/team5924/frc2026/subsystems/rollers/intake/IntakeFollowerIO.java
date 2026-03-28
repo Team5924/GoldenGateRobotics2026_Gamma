@@ -1,5 +1,5 @@
 /*
- * IntakeIOTalonFX.java
+ * IntakeFollowerIO.java
  */
 
 /* 
@@ -16,14 +16,6 @@
 
 package org.team5924.frc2026.subsystems.rollers.intake;
 
-import org.team5924.frc2026.Constants.Intake;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIO;
 
-public class IntakeIOTalonFX extends GenericRollerIOTalonFX implements IntakeIO {
-  private final IntakeFollowerIOTalonFX follower;
-
-  public IntakeIOTalonFX() {
-    super(Intake.CAN_ID, Intake.BUS, Intake.CONFIG, Intake.MOTOR_TO_MECHANISM);
-    follower = new IntakeFollowerIOTalonFX();
-  }
-}
+public interface IntakeFollowerIO extends GenericRollerIO {}

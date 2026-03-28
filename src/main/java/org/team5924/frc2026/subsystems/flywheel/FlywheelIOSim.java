@@ -34,9 +34,7 @@ public class FlywheelIOSim implements FlywheelIO {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                gearbox,
-                Constants.GeneralFlywheel.SIM_MOI,
-                Constants.GeneralFlywheel.MOTOR_TO_MECHANISM),
+                gearbox, Constants.Flywheel.SIM_MOI, Constants.Flywheel.MOTOR_TO_MECHANISM),
             gearbox);
   }
 
@@ -45,13 +43,16 @@ public class FlywheelIOSim implements FlywheelIO {
     if (DriverStation.isDisabled()) stop();
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.motorConnected = true;
     inputs.positionRads = sim.getAngularPositionRad();
     inputs.velocityRotationsPerSec = Units.radiansToRotations(sim.getAngularVelocityRadPerSec());
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
     inputs.setpointVelocityRotationsPerSec = setpoint;
-    inputs.tempCelsius = 25.0;
+
+    for (int i = 0; i < 4; ++i) {
+      inputs.motorConnected[i] = true;
+      inputs.tempCelsius[i] = 25.0;
+    }
   }
 
   @Override

@@ -21,17 +21,15 @@ import org.littletonrobotics.junction.AutoLog;
 public interface FlywheelIO {
   @AutoLog
   public static class FlywheelIOInputs {
-    public boolean motorConnected = true;
     public double position = 0.0;
     public double positionRads = 0.0;
     public double velocityRotationsPerSec = 0.0;
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
-    public double tempCelsius = 0.0;
 
-    public double followerSupplyCurrentAmps;
-    public double followerTempCelsius;
+    public boolean[] motorConnected = {true, true, true, true};
+    public double[] tempCelsius = new double[4];
 
     public double setpointVelocityRotationsPerSec;
 
