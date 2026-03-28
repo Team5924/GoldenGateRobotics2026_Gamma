@@ -87,14 +87,14 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = false;
-  private final boolean realVision = false;
-  private final boolean realIntake = false;
-  private final boolean realIntakePivot = false;
-  private final boolean realHopper = false;
+  private final boolean realDrive = true;
+  private final boolean realVision = true;
+  private final boolean realIntake = true;
+  private final boolean realIntakePivot = true;
+  private final boolean realHopper = true;
 
   private final boolean realIndexer = true;
-  private final boolean realShooterHood = false;
+  private final boolean realShooterHood = true;
   private final boolean realFlywheel = true;
 
   // Controller
@@ -350,17 +350,6 @@ public class RobotContainer {
                 intakePivot,
                 intake));
 
-    // manual intake
-    driveController
-        .leftStick()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  intakePivot.setGoalState(IntakePivotState.MANUAL);
-                  intakePivot.setInput(driveController.getLeftY());
-                },
-                intakePivot));
-
     // shooter + indexer
     driveController
         .leftBumper()
@@ -389,11 +378,7 @@ public class RobotContainer {
         .rightTrigger()
         .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF)));
 
-    // shooter hood
-    shooterHood.setDefaultCommand(
-        Commands.run(() -> shooterHood.runManual(() -> driveController.getRightY()), shooterHood));
-
-    // TODO: auto shooting
+    // TODO: auto shooting, hood
   }
 
   /**

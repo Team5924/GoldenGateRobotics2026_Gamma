@@ -63,5 +63,5 @@ public class RobotState {
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
   @Getter @Setter private double yawVelocityRadPerSec = 0.0;
 
-  @Getter @Setter private boolean isFlywheelAtSetpoint = false;
+  @Getter @Setter private boolean isReadyToIndex = false;
 }

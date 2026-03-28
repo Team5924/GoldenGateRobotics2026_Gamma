@@ -80,8 +80,8 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void runManual(DoubleSupplier inputSupplier) {
-    setGoalState(ShooterHoodState.MANUAL);
     setInput(inputSupplier);
+    setGoalState(ShooterHoodState.MANUAL);
   }
 
   public void setAutoInput(double inputRads) {

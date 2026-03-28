@@ -58,7 +58,7 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
 
   private boolean isFlywheelReady() {
     return !Constants.Indexer.REQUIRE_FLYWHEEL_SETPONT
-        || RobotState.getInstance().isFlywheelAtSetpoint();
+        || RobotState.getInstance().isReadyToIndex();
   }
 
   @Override
