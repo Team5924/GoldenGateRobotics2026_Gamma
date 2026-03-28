@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.FieldState;
@@ -78,6 +77,11 @@ public class ShooterHood extends SubsystemBase {
 
   public void setInput(DoubleSupplier inputSupplier) {
     input = inputSupplier.getAsDouble();
+  }
+
+  public void runManual(DoubleSupplier inputSupplier) {
+    setGoalState(ShooterHoodState.MANUAL);
+    setInput(inputSupplier);
   }
 
   public void setAutoInput(double inputRads) {

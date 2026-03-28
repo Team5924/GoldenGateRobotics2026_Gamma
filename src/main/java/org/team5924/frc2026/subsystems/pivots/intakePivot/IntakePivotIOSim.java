@@ -53,7 +53,7 @@ public class IntakePivotIOSim implements IntakePivotIO {
 
   @Override
   public void runCurrent(double volts) {
-    appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
+    appliedVoltage = MathUtil.clamp(volts / 60.0, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
   }
 
