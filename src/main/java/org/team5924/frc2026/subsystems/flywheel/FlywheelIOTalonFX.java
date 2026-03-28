@@ -266,6 +266,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   }
 
   @Override
+  // runs motor at volts
   public void runVolts(double volts) {
     leaderTalon.setControl(voltageOut.withOutput(volts));
   }
