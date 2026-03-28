@@ -92,8 +92,8 @@ public class RobotContainer {
   private final boolean realIntakePivot = false;
   private final boolean realHopper = false;
 
-  private final boolean realIndexer = false;
-  private final boolean realShooterHood = true;
+  private final boolean realIndexer = true;
+  private final boolean realShooterHood = false;
   private final boolean realFlywheel = false;
 
   // Controller

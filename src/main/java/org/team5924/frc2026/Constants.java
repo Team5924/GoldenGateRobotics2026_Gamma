@@ -200,16 +200,14 @@ public final class Constants {
   public final class Indexer {
     public final static int CAN_ID = 51;
     public static final String BUS = "rio";
+    public static final boolean REQUIRE_FLYWHEEL_SETPONT = false;
 
     // controls two rollers, so reduction is weird
     public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
-      GenericRoller.COUNTERCLOCKWISE_CONFIG.clone()
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive));
+      GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
   }
 
   /* General Subsystems */
