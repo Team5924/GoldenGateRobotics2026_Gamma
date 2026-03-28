@@ -52,8 +52,8 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   private final Slot0Configs slot0Configs;
   private final MotionMagicConfigs motionMagicConfigs;
   private double setpointMeters;
-
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("HopperElevator/kP", 40.0);
+  /* Logged Tunable Numbers */
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("HopperElevator/kP", 40.0); //TODO: tune all these
   private final LoggedTunableNumber kI = new LoggedTunableNumber("HopperElevator/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("HopperElevator/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("HopperElevator/kS", 0.2);
@@ -62,12 +62,11 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   private final LoggedTunableNumber kA = new LoggedTunableNumber("HopperElevator/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 100.0);
+      new LoggedTunableNumber("HopperElevator/MotionCruiseVelocity", 100.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 1000.0);
+      new LoggedTunableNumber("HopperElevator/MotionAcceleration", 1000.0);
   private final LoggedTunableNumber motionJerk =
-      new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
-
+      new LoggedTunableNumber("HopperElevator/MotionJerk", 0.0);
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVoltage;
