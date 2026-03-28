@@ -30,7 +30,7 @@ public class ManualShooterCommands {
     return Commands.run(
         () -> {
           hood.setGoalState(ShooterHoodState.MANUAL);
-          hood.setInput(inputSupplier.getAsDouble());
+          hood.setInput(inputSupplier);
         },
         hood);
   }
