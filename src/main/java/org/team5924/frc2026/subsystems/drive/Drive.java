@@ -379,14 +379,22 @@ public class Drive extends SubsystemBase {
   public void followChoreoTrajectory(SwerveSample sample) {
     // Get the current pose of the robot
     Pose2d pose = getPose();
+    
+    double xCorrection = xController.calculate(pose.getX(), sample.x);
+    double finalVx = sample.vx + xCorrection;
+
+    double yCorrection = yController.calculate(pose.getY(), sample.y);
+    double finalVy = sample.vy + yCorrection;
+
+    double headingCorrection = headingController.calculate(pose.getRotation().getRadians(), sample.heading);
+    double finalOmega = sample.omega + headingCorrection;
 
     // Generate the next speeds for the robot
     ChassisSpeeds speeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            sample.vx + xController.calculate(pose.getX(), sample.x),
-            sample.vy + yController.calculate(pose.getY(), sample.y),
-            sample.omega
-                + headingController.calculate(pose.getRotation().getRadians(), sample.heading),
+            finalVx,
+            finalVy,
+            finalOmega,
             pose.getRotation());
 
     // Apply the generated speeds

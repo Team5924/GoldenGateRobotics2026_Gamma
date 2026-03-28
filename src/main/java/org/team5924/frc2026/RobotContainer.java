@@ -17,7 +17,6 @@
 package org.team5924.frc2026;
 
 import choreo.auto.AutoFactory;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -104,7 +103,7 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-    public static AutoFactory autoFactory;
+  public static AutoFactory autoFactory;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -221,7 +220,7 @@ public class RobotContainer {
         new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
 
     // *** OUTDATED AUTO COMMANDS *** Auto commands
-    /* 
+    /*
     // Auto commands
     NamedCommands.registerCommand(
         "Run Shooter",
@@ -376,7 +375,6 @@ public class RobotContainer {
             },
             intakePivot));
 
-
     // shooter
     driveController
         .leftBumper()
@@ -407,7 +405,8 @@ public class RobotContainer {
     driveController
         .rightStick()
         .onTrue(
-            Commands.run(() -> shooterHood.setInput(() -> driveController.getRightY()), shooterHood));
+            Commands.run(
+                () -> shooterHood.setInput(() -> driveController.getRightY()), shooterHood));
 
     // TODO: auto shooting
   }
