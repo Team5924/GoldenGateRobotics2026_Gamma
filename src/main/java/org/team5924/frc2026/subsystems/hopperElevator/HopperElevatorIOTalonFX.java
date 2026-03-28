@@ -85,7 +85,6 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   private double prevReferenceSlopeTimestamp = 0.0;
 
   private final VoltageOut voltageOut;
-  private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
   public HopperElevatorIOTalonFX() {
@@ -162,7 +161,6 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
         closedLoopReferenceSlope);
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    positionOut = new PositionVoltage(0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(100.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
@@ -269,6 +267,11 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   @Override
   public void periodicUpdates() {
     updateLoggedTunableNumbers();
+  }
+
+  @Override
+  public void runVolts(double volts) {
+    talon.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
