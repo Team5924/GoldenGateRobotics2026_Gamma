@@ -125,12 +125,7 @@ public class Robot extends LoggedRobot {
 
     // Reset alert timers
     disabledTimer.restart();
-
-    // Low battery alert
-    if (DriverStation.isEnabled()) {
-      disabledTimer.reset();
-      lowBatteryAlert.set(false);
-    }
+    lowBatteryAlert.set(false);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.

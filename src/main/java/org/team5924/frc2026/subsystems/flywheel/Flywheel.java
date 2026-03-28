@@ -43,8 +43,8 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 100)),
-    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 50)),
+    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 40)),
+    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 25)),
 
     AUTO(() -> 0.0),
 
@@ -79,10 +79,10 @@ public class Flywheel extends SubsystemBase {
     for (int i = 0; i < 4; ++i) {
       int id =
           switch (i) {
-            case 0 -> Constants.Flywheel.CAN_ID;
-            case 1 -> Constants.Flywheel.FOLLOWER_CAN_ID;
-            case 2 -> Constants.Flywheel.OPPOSER_ONE_CAN_ID;
-            case 3 -> Constants.Flywheel.OPPOSER_TWO_CAN_ID;
+            case 0 -> Constants.Flywheel.LEFT_TOP_ID;
+            case 1 -> Constants.Flywheel.LEFT_BOTTOM_ID;
+            case 2 -> Constants.Flywheel.RIGHT_TOP_ID;
+            case 3 -> Constants.Flywheel.RIGHT_BOTTOM_ID;
             default -> -1;
           };
 
@@ -120,7 +120,9 @@ public class Flywheel extends SubsystemBase {
 
   /** Sets the velocity in rotations per sec */
   public void setVelocity(double velocity) {
-    io.setVelocity(velocity);
+    // stop flywheel if velocity close to 0
+    if (Math.abs(velocity) < Constants.Flywheel.EPSILON_VELOCITY) stop();
+    else io.setVelocity(velocity);
   }
 
   public void stop() {
@@ -143,10 +145,14 @@ public class Flywheel extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return EqualsUtil.epsilonEquals(
-        getTargetVelocityRotationsPerSec(),
-        inputs.velocityRotationsPerSec,
-        Constants.Flywheel.EPSILON_VELOCITY);
+    return switch (goalState) {
+      case B4, B6, B8, B12 -> true;
+      default ->
+          EqualsUtil.epsilonEquals(
+              getTargetVelocityRotationsPerSec(),
+              inputs.velocityRotationsPerSec,
+              Constants.Flywheel.EPSILON_VELOCITY);
+    };
   }
 
   private double getTargetVelocityRotationsPerSec() {
@@ -157,7 +163,12 @@ public class Flywheel extends SubsystemBase {
 
   private void handleCurrentState() {
     isAtSetpoint = isAtSetpoint();
-    RobotState.getInstance().setFlywheelAtSetpoint(isAtSetpoint);
+    boolean isFlywheelReady =
+        switch (goalState) {
+          case OFF -> false;
+          default -> isAtSetpoint;
+        };
+    RobotState.getInstance().setFlywheelReady(isFlywheelReady);
 
     switch (currentState) {
       case MOVING -> {
@@ -167,6 +178,7 @@ public class Flywheel extends SubsystemBase {
       case OFF -> stop();
       case B4, B6, B8, B12 -> runVolts(getTargetVelocityRotationsPerSec());
       case AUTO -> {
+        // pass in flywheel speed from launch calculator
         setAutoInput(LaunchCalculator.getInstance().getParameters().flywheelSpeed());
         setVelocity(autoInput);
       }
