@@ -53,8 +53,8 @@ public class IntakePivotIOSim implements IntakePivotIO {
 
   @Override
   public void runCurrent(double amps) {
-    // not converting amps -> volts but its sim so it should be fine
-    appliedVoltage = MathUtil.clamp(amps, -12.0, 12.0);
+    // V = I * R
+    appliedVoltage = MathUtil.clamp(amps * gearbox.rOhms, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
   }
 
