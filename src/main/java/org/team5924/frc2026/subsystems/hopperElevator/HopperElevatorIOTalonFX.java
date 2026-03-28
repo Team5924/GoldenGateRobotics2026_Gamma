@@ -102,7 +102,7 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
     slot0Configs.kG = kG.get();
-    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
+    slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
 
     motionMagicConfigs = new MotionMagicConfigs();
     motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
