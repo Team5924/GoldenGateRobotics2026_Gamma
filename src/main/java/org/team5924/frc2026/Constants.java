@@ -300,7 +300,7 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
 
   public static final FeedbackConfigs FEEDBACK_CONFIGS =
