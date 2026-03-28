@@ -125,6 +125,7 @@ public class Robot extends LoggedRobot {
 
     // Reset alert timers
     disabledTimer.restart();
+    lowBatteryAlert.set(false);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -200,12 +201,6 @@ public class Robot extends LoggedRobot {
       autonomousCommand.cancel();
     }
     updateMatchShift.startPeriodic(0.2);
-
-    // Low battery alert
-    if (DriverStation.isEnabled()) {
-      disabledTimer.reset();
-      lowBatteryAlert.set(false);
-    }
 
     Elastic.selectTab("Teleoperated");
   }

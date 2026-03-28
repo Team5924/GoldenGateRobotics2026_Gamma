@@ -182,13 +182,13 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 closedLoopReferenceSlope)
             .isOK();
 
-    // inputs.cancoderConnected =
-    //     BaseStatusSignal.refreshAll(
-    //             cancoderAbsolutePosition,
-    //             cancoderVelocity,
-    //             cancoderSupplyVoltage,
-    //             cancoderPositionRotations)
-    //         .isOK();
+    inputs.cancoderConnected =
+        BaseStatusSignal.refreshAll(
+                cancoderAbsolutePosition,
+                cancoderVelocity,
+                cancoderSupplyVoltage,
+                cancoderPositionRotations)
+            .isOK();
 
     inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
     inputs.positionRads = Units.rotationsToRadians(inputs.position);
@@ -215,10 +215,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
 
-    // inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
-    // inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
-    // inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
-    // inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
+    inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
+    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
+    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
+    inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
     inputs.positionCancoder = Units.radiansToRotations(inputs.cancoderPositionRotations);
   }

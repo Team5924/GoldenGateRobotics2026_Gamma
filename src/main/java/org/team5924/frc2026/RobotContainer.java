@@ -373,11 +373,6 @@ public class RobotContainer {
                 flywheel,
                 indexer));
 
-    // shooter off
-    driveController
-        .rightTrigger()
-        .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF)));
-
     // TODO: auto shooting, hood
   }
 

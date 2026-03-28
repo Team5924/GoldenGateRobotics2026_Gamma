@@ -120,7 +120,7 @@ public class Flywheel extends SubsystemBase {
 
   /** Sets the velocity in rotations per sec */
   public void setVelocity(double velocity) {
-    if (Math.abs(velocity) < Constants.Flywheel.EPSILON_VELOCITY) setGoalState(FlywheelState.OFF);
+    if (Math.abs(velocity) < Constants.Flywheel.EPSILON_VELOCITY) stop();
 
     io.setVelocity(velocity);
   }
