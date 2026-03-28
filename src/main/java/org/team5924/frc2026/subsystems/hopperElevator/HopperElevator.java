@@ -87,11 +87,12 @@ public class HopperElevator extends SubsystemBase {
   }
 
   /* Checks if elevator is at setpoint */
+  @SuppressWarnings("unused")
   public boolean isAtSetpoint() {
     return (!Constants.HopperElevator.ENABLE_TIMEOUT
             || timeSinceLastStateChange > Constants.HopperElevator.STATE_TIMEOUT)
         && EqualsUtil.epsilonEquals(
-            inputs.setpointMeters, inputs.positionRads, Constants.HopperElevator.EPSILON_METERS);
+            inputs.setpointMeters, inputs.positionMeters, Constants.HopperElevator.EPSILON_METERS);
   }
 
   private void handleCurrentState() {
