@@ -129,6 +129,8 @@ public class HopperElevator extends SubsystemBase {
         && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
     this.goalState = goalState;
     switch (goalState) {
+      case STOW, EXTENDED, MANUAL: 
+        currentState = goalState;
       case MOVING:
         DriverStation.reportError(
             "HopperElevator: MOVING is an invalid goal state; it is a transition state!!", null);
@@ -136,6 +138,8 @@ public class HopperElevator extends SubsystemBase {
       default:
         currentState = HopperElevatorState.MOVING;
         break;
+
     }
+    lastStateChange = FieldState.getInstance().getTime();
   }
 }
