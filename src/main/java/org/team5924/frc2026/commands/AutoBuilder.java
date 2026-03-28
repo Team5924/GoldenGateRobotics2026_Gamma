@@ -98,8 +98,7 @@ public class AutoBuilder {
 
   private Command shootersOn(double timeout) {
     return Commands.parallel(
-            Commands.run(
-                () -> shooterHood.setGoalState(ShooterHoodState.AUTO_SHOOTING), shooterHood),
+            Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.AUTO), shooterHood),
             Commands.run(() -> flywheel.setGoalState(FlywheelState.AUTO), flywheel))
         .withTimeout(timeout);
   }

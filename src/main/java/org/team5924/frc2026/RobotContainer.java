@@ -288,7 +288,7 @@ public class RobotContainer {
     configureDriveBindings();
 
     configureDefaultCommands();
-    
+
     configureLeftBumperBindings();
     configureRightBumperBindings();
 
@@ -381,7 +381,7 @@ public class RobotContainer {
                 },
                 intakePivot,
                 intake));
-    }
+  }
 
   private void configureLeftBumperBindings() {
     // [left bumper pressed] -> run flywheel and indexer
