@@ -43,8 +43,8 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 100)),
-    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 50)),
+    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 35)),
+    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 25)),
 
     AUTO(() -> 0.0),
 
@@ -120,8 +120,7 @@ public class Flywheel extends SubsystemBase {
 
   /** Sets the velocity in rotations per sec */
   public void setVelocity(double velocity) {
-    if (Math.abs(velocity) < Constants.Flywheel.EPSILON_VELOCITY)
-      stop();
+    if (Math.abs(velocity) < Constants.Flywheel.EPSILON_VELOCITY) setGoalState(FlywheelState.OFF);
 
     io.setVelocity(velocity);
   }
