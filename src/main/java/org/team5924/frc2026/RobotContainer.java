@@ -43,6 +43,7 @@ import org.team5924.frc2026.subsystems.flywheel.Flywheel;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
@@ -86,14 +87,14 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = true;
-  private final boolean realVision = true;
-  private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
-  private final boolean realHopper = true;
+  private final boolean realDrive = false;
+  private final boolean realVision = false;
+  private final boolean realIntake = false;
+  private final boolean realIntakePivot = false;
+  private final boolean realHopper = false;
 
-  private final boolean realIndexer = true;
-  private final boolean realShooterHood = true;
+  private final boolean realIndexer = false;
+  private final boolean realShooterHood = false;
   private final boolean realFlywheel = true;
 
   // Controller
@@ -360,36 +361,41 @@ public class RobotContainer {
                 },
                 intakePivot));
 
-    // shooter
-    driveController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-                    () -> {
-                      flywheel.setGoalState(Flywheel.FlywheelState.B4);
-                      // indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                    },
-                    flywheel)
-                .andThen(Commands.waitSeconds(0.5))
-                .andThen(
-                    Commands.runOnce(
-                        () -> {
-                          // flywheel.setGoalState(Flywheel.FlywheelState.B4);
-                          indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                        },
-                        // flywheel,
-                        indexer)));
+    // // shooter
+    // driveController
+    //     .leftBumper()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () -> {
+    //                   flywheel.setGoalState(Flywheel.FlywheelState.B4);
+    //                   // indexer.setGoalState(Indexer.IndexerState.INDEXING);
+    //                 },
+    //                 flywheel)
+    //             .andThen(Commands.waitSeconds(0.5))
+    //             .andThen(
+    //                 Commands.runOnce(
+    //                     () -> {
+    //                       // flywheel.setGoalState(Flywheel.FlywheelState.B4);
+    //                       indexer.setGoalState(Indexer.IndexerState.INDEXING);
+    //                     },
+    //                     // flywheel,
+    //                     indexer)));
 
-    driveController
-        .leftBumper()
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  flywheel.setGoalState(Flywheel.FlywheelState.OFF);
-                  indexer.setGoalState(Indexer.IndexerState.OFF);
-                },
-                flywheel,
-                indexer));
+    // driveController
+    //     .leftBumper()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               flywheel.setGoalState(Flywheel.FlywheelState.OFF);
+    //               indexer.setGoalState(Indexer.IndexerState.OFF);
+    //             },
+    //             flywheel,
+    //             indexer));
+
+    driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
+    driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
+    driveController.leftTrigger().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.SLOW_LAUNCH)));
+    driveController.rightTrigger().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF)));
 
     shooterHood.setDefaultCommand(
         Commands.run(() -> shooterHood.runManual(() -> driveController.getRightY()), shooterHood));
