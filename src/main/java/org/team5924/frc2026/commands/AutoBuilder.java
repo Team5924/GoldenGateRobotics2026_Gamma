@@ -22,16 +22,22 @@ import java.util.Set;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.Constants.ShooterHood;
+
+import org.team5924.frc2026.RobotContainer;
 import org.team5924.frc2026.commands.drive.DriveToPose;
 import org.team5924.frc2026.subsystems.drive.Drive;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
   private final Drive drive;
-  private final ShooterHood shooter;
+  private final ShooterHood shooterHood;
+  private final Flywheel flywheel;
   // private final Climb climb;
   private final Intake intake;
 
@@ -55,7 +61,7 @@ public class AutoBuilder {
         shootersOff(),
         RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-    ), Set.of(drive, shooter));
+    ), Set.of(drive, shooterHood, flywheel));
   }
 
   public Command scorePickupAndClimbAuto() {
@@ -74,7 +80,7 @@ public class AutoBuilder {
         shootersOff(),
         RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-        ), Set.of(drive, shooter, intake));  
+        ), Set.of(drive, shooterHood, flywheel, intake));  
   }
 
   private Command startToHub(String startingPosition) {
@@ -89,15 +95,15 @@ public class AutoBuilder {
 
   private Command shootersOn(double timeout) {
     return Commands.parallel(
-            Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
-            Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
+            Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.AUTO_SHOOTING), shooterHood),
+            Commands.run(() -> flywheel.setGoalState(FlywheelState.AUTO), flywheel)
           ).withTimeout(timeout); 
   }
 
   private Command shootersOff() {
     return Commands.parallel(
-            Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
-            Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood),
+            Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF), flywheel)
           );
   }
 

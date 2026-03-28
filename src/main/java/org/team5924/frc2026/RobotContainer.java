@@ -254,7 +254,7 @@ public class RobotContainer {
     startingPosition.addOption("Right", "Right");
     startingPosition.addOption("Left", "Left");
     AutoBuilder.setStartingPosition(startingPosition::get);
-    var autoBuilder = new AutoBuilder(drive, shooterHood, intake);
+    var autoBuilder = new AutoBuilder(drive, shooterHood, flywheel, intake);
 
     autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
