@@ -200,7 +200,7 @@ public final class Constants {
   public final class Indexer {
     public final static int CAN_ID = 51;
     public static final String BUS = "rio";
-    public static final boolean REQUIRE_FLYWHEEL_SETPONT = false;
+    public static final boolean REQUIRE_FLYWHEEL_SETPONT = true;
 
     // controls two rollers, so reduction is weird
     public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;

@@ -93,7 +93,7 @@ public class RobotContainer {
   private final boolean realIntakePivot = false;
   private final boolean realHopper = false;
 
-  private final boolean realIndexer = false;
+  private final boolean realIndexer = true;
   private final boolean realShooterHood = false;
   private final boolean realFlywheel = true;
 
@@ -361,47 +361,55 @@ public class RobotContainer {
                 },
                 intakePivot));
 
-    // // shooter
-    // driveController
-    //     .leftBumper()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () -> {
-    //                   flywheel.setGoalState(Flywheel.FlywheelState.B4);
-    //                   // indexer.setGoalState(Indexer.IndexerState.INDEXING);
-    //                 },
-    //                 flywheel)
-    //             .andThen(Commands.waitSeconds(0.5))
-    //             .andThen(
-    //                 Commands.runOnce(
-    //                     () -> {
-    //                       // flywheel.setGoalState(Flywheel.FlywheelState.B4);
-    //                       indexer.setGoalState(Indexer.IndexerState.INDEXING);
-    //                     },
-    //                     // flywheel,
-    //                     indexer)));
-
-    // driveController
-    //     .leftBumper()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               flywheel.setGoalState(Flywheel.FlywheelState.OFF);
-    //               indexer.setGoalState(Indexer.IndexerState.OFF);
-    //             },
-    //             flywheel,
-    //             indexer));
-
-    driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
-    driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
+    // shooter + indexer
     driveController
-        .leftTrigger()
-        .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.SLOW_LAUNCH)));
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH);
+                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                },
+                flywheel,
+                //     indexer)
+                // .andThen(Commands.waitSeconds(0.5))
+                // .andThen(
+                //     Commands.runOnce(
+                //         () -> {
+                //           // flywheel.setGoalState(Flywheel.FlywheelState.B4);
+                //         },
+                //         // flywheel,
+                indexer));
+
+    driveController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  flywheel.setGoalState(Flywheel.FlywheelState.OFF);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                },
+                flywheel,
+                indexer));
+
+    // // manual shooter
+    // driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
+    // driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
+
+    // // launching
+    // driveController
+    //     .leftTrigger()
+    //     .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.SLOW_LAUNCH)));
+
+    // shooter off
     driveController
         .rightTrigger()
         .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF)));
-    driveController.a().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.B4)));
 
+    // // voltage shooter
+    // driveController.a().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.B4)));
+
+    // shooter hood
     shooterHood.setDefaultCommand(
         Commands.run(() -> shooterHood.runManual(() -> driveController.getRightY()), shooterHood));
 

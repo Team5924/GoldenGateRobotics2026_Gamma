@@ -44,16 +44,21 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   }
 
   public void setGoalState(IndexerState goalState) {
+    if (goalState == IndexerState.INDEXING && !isFlywheelReady()) return;
+
     this.goalState = goalState;
     currentState = goalState;
   }
 
   @Override
   protected void handleCurrentState() {
-    if (!Constants.Indexer.REQUIRE_FLYWHEEL_SETPONT
-        || RobotState.getInstance().isFlywheelAtSetpoint())
-      io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
+    if (isFlywheelReady()) io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
     else io.stop();
+  }
+
+  private boolean isFlywheelReady() {
+    return !Constants.Indexer.REQUIRE_FLYWHEEL_SETPONT
+        || RobotState.getInstance().isFlywheelAtSetpoint();
   }
 
   @Override
