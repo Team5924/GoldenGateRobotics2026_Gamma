@@ -26,6 +26,7 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.FieldState;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -119,6 +120,8 @@ public class HopperElevator extends SubsystemBase {
       io.stop();
       return;
     }
+
+    io.runVolts(IntakePivotState.MANUAL.getRads().getAsDouble() * input);
   }
 
   public void setGoalState(HopperElevatorState goalState) {
