@@ -26,7 +26,6 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
@@ -39,15 +38,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.Constants.ShooterHood;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   /* Hardware */
   private final TalonFX talon;
-  private final CANcoder cancoder;
+  // private final CANcoder cancoder;
 
   /* Configurators */
   private final TalonFXConfigurator talonConfig;
@@ -80,10 +76,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final StatusSignal<Current> torqueCurrent;
   private final StatusSignal<Temperature> tempCelsius;
 
-  private final StatusSignal<Angle> cancoderAbsolutePosition;
-  private final StatusSignal<AngularVelocity> cancoderVelocity;
-  private final StatusSignal<Voltage> cancoderSupplyVoltage;
-  private final StatusSignal<Angle> cancoderPositionRotations;
+  // private final StatusSignal<Angle> cancoderAbsolutePosition;
+  // private final StatusSignal<AngularVelocity> cancoderVelocity;
+  // private final StatusSignal<Voltage> cancoderSupplyVoltage;
+  // private final StatusSignal<Angle> cancoderPositionRotations;
 
   private final StatusSignal<Double> closedLoopReferenceSlope;
   private double prevClosedLoopReferenceSlope = 0.0;
@@ -95,7 +91,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   public ShooterHoodIOTalonFX() {
     talon = new TalonFX(ShooterHood.CAN_ID, new CANBus(ShooterHood.BUS));
-    cancoder = new CANcoder(ShooterHood.CANCODER_ID, new CANBus(ShooterHood.BUS));
+    // cancoder = new CANcoder(ShooterHood.CANCODER_ID, new CANBus(ShooterHood.BUS));
 
     talonConfig = talon.getConfigurator();
 
@@ -113,21 +109,21 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     statusArray[2] = talonConfig.apply(motionMagicConfigs);
     statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = talonConfig.apply(ShooterHood.SOFTWARE_LIMIT_CONFIGS);
-    statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
-    statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
+    // statusArray[5] = talonConfig.apply(ShooterHood.SOFTWARE_LIMIT_CONFIGS);
+    // statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
+    // statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
 
-    boolean isErrorPresent = false;
-    for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
+    // boolean isErrorPresent = false;
+    // for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
 
-    if (isErrorPresent)
-      Elastic.sendNotification(
-          new Notification(
-              NotificationLevel.WARNING,
-              "Shooter Hood Configs",
-              "Error in applying Shooter Hood configs!"));
+    // if (isErrorPresent)
+    //   Elastic.sendNotification(
+    //       new Notification(
+    //           NotificationLevel.WARNING,
+    //           "Shooter Hood Configs",
+    //           "Error in applying Shooter Hood configs!"));
 
-    Logger.recordOutput("ShooterHood/InitConfReport", statusArray);
+    // Logger.recordOutput("ShooterHood/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
     position = talon.getPosition();
@@ -137,10 +133,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     torqueCurrent = talon.getTorqueCurrent();
     tempCelsius = talon.getDeviceTemp();
 
-    cancoderAbsolutePosition = cancoder.getAbsolutePosition();
-    cancoderVelocity = cancoder.getVelocity();
-    cancoderSupplyVoltage = cancoder.getSupplyVoltage();
-    cancoderPositionRotations = cancoder.getPosition();
+    // cancoderAbsolutePosition = cancoder.getAbsolutePosition();
+    // cancoderVelocity = cancoder.getVelocity();
+    // cancoderSupplyVoltage = cancoder.getSupplyVoltage();
+    // cancoderPositionRotations = cancoder.getPosition();
 
     closedLoopReferenceSlope = talon.getClosedLoopReferenceSlope();
 
@@ -152,20 +148,20 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         supplyCurrent,
         torqueCurrent,
         tempCelsius,
-        cancoderAbsolutePosition,
-        cancoderVelocity,
-        cancoderSupplyVoltage,
-        cancoderPositionRotations,
+        // cancoderAbsolutePosition,
+        // cancoderVelocity,
+        // cancoderSupplyVoltage,
+        // cancoderPositionRotations,
         closedLoopReferenceSlope);
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     positionOut = new PositionVoltage(0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(100.0).withSlot(0);
 
-    BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
+    // BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 
     // this assumes that the shooter hood is starting at the bottom position
-    cancoder.setPosition(0.0);
+    // cancoder.setPosition(0.0);
     talon.setPosition(0.0);
   }
 
@@ -182,13 +178,13 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.cancoderConnected =
-        BaseStatusSignal.refreshAll(
-                cancoderAbsolutePosition,
-                cancoderVelocity,
-                cancoderSupplyVoltage,
-                cancoderPositionRotations)
-            .isOK();
+    // inputs.cancoderConnected =
+    //     BaseStatusSignal.refreshAll(
+    //             cancoderAbsolutePosition,
+    //             cancoderVelocity,
+    //             cancoderSupplyVoltage,
+    //             cancoderPositionRotations)
+    //         .isOK();
 
     inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
     inputs.positionRads = Units.rotationsToRadians(inputs.position);
@@ -215,10 +211,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
 
-    inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
-    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
-    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
-    inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
+    // inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
+    // inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
+    // inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
+    // inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
     inputs.positionCancoder = Units.radiansToRotations(inputs.cancoderPositionRotations);
   }

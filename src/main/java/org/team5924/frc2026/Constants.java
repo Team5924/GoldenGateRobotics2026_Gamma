@@ -219,7 +219,7 @@ public final class Constants {
     public static final int CAN_ID = 34;
 
     /* CANCoder */
-    public static final int CANCODER_ID = 5; // TODO: set to something else
+    public static final int CANCODER_ID = 35; // TODO: set to something else
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     // spur = hood driving gear, mechanism = shooter hood gear
@@ -252,9 +252,8 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
-
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
