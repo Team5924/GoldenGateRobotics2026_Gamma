@@ -29,6 +29,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -184,8 +186,8 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
             .isOK();
 
     inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
-    inputs.positionRads = position.getValueAsDouble();
-    inputs.velocityRadsPerSec = velocity.getValueAsDouble();
+    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.appliedVolts = appliedVoltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
