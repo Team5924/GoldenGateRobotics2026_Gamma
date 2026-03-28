@@ -357,9 +357,12 @@ public final class Constants {
 
       public static final FeedbackConfigs FEEDBACK_CONFIGS = // Update these configs
         new FeedbackConfigs()
-          .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+          .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
           .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
-          .withRotorToSensorRatio(1.0);
+          .withRotorToSensorRatio(1.0)
+          .withFeedbackRemoteSensorID(CANCODER_ID)
+          .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
+
       public static final MagnetSensorConfigs CANCODER_CONFIGS =
         new MagnetSensorConfigs()
           .withAbsoluteSensorDiscontinuityPoint(1.0)
