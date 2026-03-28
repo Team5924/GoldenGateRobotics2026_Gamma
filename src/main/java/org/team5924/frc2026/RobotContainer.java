@@ -358,7 +358,6 @@ public class RobotContainer {
             },
             intakePivot));
 
-
     // shooter
     driveController
         .leftBumper()
@@ -389,7 +388,8 @@ public class RobotContainer {
     driveController
         .rightStick()
         .onTrue(
-            Commands.run(() -> shooterHood.setInput(() -> driveController.getRightY()), shooterHood));
+            Commands.run(
+                () -> shooterHood.setInput(() -> driveController.getRightY()), shooterHood));
 
     // TODO: auto shooting
   }

@@ -34,6 +34,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -308,5 +309,52 @@ public final class Constants {
         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
         .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
         .withRotorToSensorRatio(1.0);
+  }
+  public final class HopperElevator {
+    /*Motor */
+    public static final int CAN_ID = 0; // Update value
+    public static final String BUS = "rio";
+    public static final double SIM_MOI = 0.001;
+
+    /* Cancoder */
+    public static final int CANCODER_ID = 0; //Update value
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // Update value
+    public static final double PULLEY_RADIUS_METERS = Units.inchesToMeters(1.23); // Update value
+
+    public static final double CANCODER_TO_MECHANISM = 1.67;
+    public static final double MOTOR_TO_MECHANISM = 1.67;
+
+    public static final double EPSILON_RADS = Units.degreesToRadians(0.5);
+    public static final double STATE_TIMEOUT = 5.0;
+    public static final boolean ENABLE_TIMEOUT = false;
+
+    public static final double MIN_POSITION_ROTATIONS = 0.0 - Units.radiansToRotations(EPSILON_RADS);
+    public static final double MAX_POSITION_ROTATIONS = 33.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
+
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
+    
+     public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+      public static final FeedbackConfigs FEEDBACK_CONFIGS = // Update these configs
+        new FeedbackConfigs()
+          .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+          .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
+          .withRotorToSensorRatio(1.0);
+      public static final MagnetSensorConfigs CANCODER_CONFIGS =
+        new MagnetSensorConfigs()
+          .withAbsoluteSensorDiscontinuityPoint(1.0)
+          .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+          .withMagnetOffset(0.0); // Update value
+      
   }
 }
