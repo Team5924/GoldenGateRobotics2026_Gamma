@@ -112,7 +112,7 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[7];
+    StatusCode[] statusArray = new StatusCode[8];
 
     statusArray[0] = talonConfig.apply(Constants.HopperElevator.CONFIG);
     statusArray[1] = talonConfig.apply(slot0Configs);
@@ -121,6 +121,7 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[5] = talonConfig.apply(Constants.HopperElevator.FEEDBACK_CONFIGS);
     statusArray[6] = cancoder.getConfigurator().apply(Constants.HopperElevator.CANCODER_CONFIGS);
+    statusArray[7] = talonConfig.apply(Constants.HopperElevator.SOFTWARE_LIMIT_CONFIGS);
     boolean isErrorPresent = false;
     for (StatusCode status : statusArray) if (!status.isOK()) isErrorPresent = true;
 
@@ -128,10 +129,10 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
       Elastic.sendNotification(
           new Notification(
               NotificationLevel.WARNING,
-              "Shooter Hood Configs",
-              "Error in applying Shooter Hood configs!"));
+              "Hopper Elevator Configs",
+              "Error in applying Hopper Elevator configs!"));
 
-    Logger.recordOutput("ShooterHood/InitConfReport", statusArray);
+    Logger.recordOutput("HopperElevator/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
     position = talon.getPosition();
