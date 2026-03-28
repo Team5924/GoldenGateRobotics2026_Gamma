@@ -79,7 +79,9 @@ public class ShooterHood extends SubsystemBase {
   public void setAutoInput(double inputRads) {
     autoInput =
         MathUtil.clamp(
-            inputRads, Constants.ShooterHood.MIN_POSITION_RADS, Constants.ShooterHood.MAX_POSITION_RADS);
+            inputRads,
+            Constants.ShooterHood.MIN_POSITION_RADS,
+            Constants.ShooterHood.MAX_POSITION_RADS);
   }
 
   public ShooterHood(ShooterHoodIO io) {

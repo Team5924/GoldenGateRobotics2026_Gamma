@@ -1,5 +1,5 @@
 /*
- * IntakeIOTalonFX.java
+ * IntakeFollowerIOTalonFX.java
  */
 
 /* 
@@ -16,14 +16,21 @@
 
 package org.team5924.frc2026.subsystems.rollers.intake;
 
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import org.team5924.frc2026.Constants.Intake;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
 
-public class IntakeIOTalonFX extends GenericRollerIOTalonFX implements IntakeIO {
-  private final IntakeFollowerIOTalonFX follower;
+public class IntakeFollowerIOTalonFX extends GenericRollerIOTalonFX implements IntakeFollowerIO {
+  public IntakeFollowerIOTalonFX() {
+    super(Intake.FOLLOWER_CAN_ID, Intake.BUS, Intake.CONFIG, Intake.MOTOR_TO_MECHANISM);
 
-  public IntakeIOTalonFX() {
-    super(Intake.CAN_ID, Intake.BUS, Intake.CONFIG, Intake.MOTOR_TO_MECHANISM);
-    follower = new IntakeFollowerIOTalonFX();
+    talon.setControl(new Follower(Intake.CAN_ID, MotorAlignmentValue.Opposed));
   }
+
+  @Override
+  public void runVolts(double volts) {}
+
+  @Override
+  public void stop() {}
 }

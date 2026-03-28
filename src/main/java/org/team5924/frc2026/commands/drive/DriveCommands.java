@@ -273,10 +273,7 @@ public class DriveCommands {
                   0.0,
                   1.0);
           Translation2d launcherToRobot =
-              LauncherConstants.robotToLauncher
-                  .getTranslation()
-                  .toTranslation2d()
-                  .unaryMinus();
+              LauncherConstants.robotToLauncher.getTranslation().toTranslation2d().unaryMinus();
           ChassisSpeeds fieldRelativeSpeedsWithOffset =
               GeomUtil.transformVelocity(
                   new ChassisSpeeds(
