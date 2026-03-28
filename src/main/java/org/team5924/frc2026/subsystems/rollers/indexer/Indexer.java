@@ -50,15 +50,14 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
 
   @Override
   protected void handleCurrentState() {
-    // double checks if the flywheel is ready before running volts to motor, stops motor if not
-    // ready
+    // only run indexer when flywheel is ready
     if (isFlywheelReady()) io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
     else io.stop();
   }
 
   private boolean isFlywheelReady() {
     if (Constants.Indexer.REQUIRE_FLYWHEEL_SETPOINT)
-      return RobotState.getInstance().isReadyToIndex();
+      return RobotState.getInstance().isFlywheelReady();
 
     return true;
   }

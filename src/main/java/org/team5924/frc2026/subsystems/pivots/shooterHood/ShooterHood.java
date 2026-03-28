@@ -44,11 +44,6 @@ public class ShooterHood extends SubsystemBase {
     // voltage speed at which to rotate the hood
     MANUAL((new LoggedTunableNumber("ShooterHood/Manual", 1))),
 
-    // using a double supplier of 0.0 because these will be auto-aim-calculated values
-    AUTO_SHOOTING(() -> 0.0),
-    NEUTRAL_SHUFFLING(() -> 0.0),
-    OPPONENT_SHUFFLING(() -> 0.0),
-
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
     MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
@@ -140,7 +135,7 @@ public class ShooterHood extends SubsystemBase {
 
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL, AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING -> currentState = goalState;
+      case MANUAL -> currentState = goalState;
       case MOVING ->
           DriverStation.reportError(
               "Shooter Hood: MOVING is an invalid goal state; it is a transition state!!", null);
@@ -174,12 +169,10 @@ public class ShooterHood extends SubsystemBase {
         setPosition(getTargetRads());
         if (isAtSetpoint() && goalState != ShooterHoodState.AUTO) currentState = goalState;
       }
-      case AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING -> {
-        showNotImplementedAlert = true; // TODO: handle this sometime
-      }
       case MANUAL -> handleManualState();
       case OFF -> stop();
       case AUTO -> {
+        // pass in hood angle from launch calculator
         setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
         if (!isAtSetpoint) setPosition(autoInput);
       }
