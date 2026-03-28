@@ -91,7 +91,7 @@ public class HopperElevator extends SubsystemBase {
     return (!Constants.HopperElevator.ENABLE_TIMEOUT
             || timeSinceLastStateChange > Constants.HopperElevator.STATE_TIMEOUT)
         && EqualsUtil.epsilonEquals(
-            inputs.setpointMeters, inputs.positionRads, Constants.HopperElevator.EPSILON_RADS);
+            inputs.setpointMeters, inputs.positionRads, Constants.HopperElevator.EPSILON_METERS);
   }
 
   private void handleCurrentState() {

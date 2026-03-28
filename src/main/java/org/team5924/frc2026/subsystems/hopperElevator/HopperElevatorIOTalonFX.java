@@ -39,6 +39,7 @@ import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
+import org.team5924.frc2026.util.ElevatorUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class HopperElevatorIOTalonFX implements HopperElevatorIO {
@@ -194,8 +195,8 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     inputs.velMetersPerSecond = getVelocity();
 
     inputs.motionMagicVelocityTarget =
-        rotationsToMeters(talon.getClosedLoopReferenceSlope().getValue());
-    inputs.motionMagicPositionTarget = rotationsToMeters(talon.getClosedLoopReference().getValue());
+        ElevatorUtil.rotationsToMeters(talon.getClosedLoopReferenceSlope().getValue());
+    inputs.motionMagicPositionTarget = ElevatorUtil.rotationsToMeters(talon.getClosedLoopReference().getValue());
 
     inputs.setpointMeters = setpointMeters;
 
@@ -276,32 +277,19 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   @Override
   public void setHeight(double heightMeters) {
     setpointMeters = heightMeters;
-    talon.setControl(motionMagicCurrent.withPosition(metersToRotations(heightMeters)));
+    talon.setControl(motionMagicCurrent.withPosition(ElevatorUtil.metersToRotations(heightMeters)));
   }
 
-  private double metersToRotations(double height) { // Double check the math here
-    return height
-        * Constants.HopperElevator.MOTOR_TO_MECHANISM
-        / (2 * Math.PI * Constants.HopperElevator.PULLEY_RADIUS_METERS);
-  }
-
-  public double rotationsToMeters(double rotations) {
-    return (rotations
-        * 2
-        * Math.PI
-        * Constants.HopperElevator.PULLEY_RADIUS_METERS
-        / Constants.HopperElevator.MOTOR_TO_MECHANISM);
-  }
 
   public void stop() {
     talon.stopMotor();
   }
 
   private double getHeight() {
-    return rotationsToMeters(talon.getPosition().getValueAsDouble());
+    return ElevatorUtil.rotationsToMeters(talon.getPosition().getValueAsDouble());
   }
 
   private double getVelocity() {
-    return rotationsToMeters(talon.getVelocity().getValueAsDouble());
+    return ElevatorUtil.rotationsToMeters(talon.getVelocity().getValueAsDouble());
   }
 }

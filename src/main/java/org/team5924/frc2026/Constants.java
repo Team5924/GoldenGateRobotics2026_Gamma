@@ -16,7 +16,9 @@
 
 package org.team5924.frc2026;
 
+import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperElevatorState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
+import org.team5924.frc2026.util.ElevatorUtil;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -324,16 +326,17 @@ public final class Constants {
     public static final double CANCODER_TO_MECHANISM = 1.67;
     public static final double MOTOR_TO_MECHANISM = 1.67;
 
-    public static final double EPSILON_RADS = Units.degreesToRadians(0.5);
+    public static final double EPSILON_METERS = Units.inchesToMeters(0.2);
     public static final double STATE_TIMEOUT = 5.0;
     public static final boolean ENABLE_TIMEOUT = false;
 
-    public static final double MIN_POSITION_ROTATIONS = 0.0 - Units.radiansToRotations(EPSILON_RADS);
-    public static final double MAX_POSITION_ROTATIONS = 33.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
+    public static final double MIN_POSITION_ROTATIONS = 0.0 - ElevatorUtil.metersToRotations(EPSILON_METERS);
+    public static final double MAX_POSITION_ROTATIONS = 
+      ElevatorUtil.metersToRotations(HopperElevatorState.EXTENDED.getHeightMeters().getAsDouble() + EPSILON_METERS);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
-    
+
      public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
@@ -344,6 +347,13 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+      public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+        new SoftwareLimitSwitchConfigs()
+            .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
+            .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false);
 
       public static final FeedbackConfigs FEEDBACK_CONFIGS = // Update these configs
         new FeedbackConfigs()
