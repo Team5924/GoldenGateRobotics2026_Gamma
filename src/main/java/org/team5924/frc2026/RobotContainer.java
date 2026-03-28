@@ -327,7 +327,7 @@ public class RobotContainer {
     hopper.setDefaultCommand(
         Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
 
-    /* ### intake ### */
+    /* ### intake + intake pivot ### */
     driveController
         .rightBumper()
         .onTrue(
@@ -371,14 +371,6 @@ public class RobotContainer {
                   indexer.setGoalState(Indexer.IndexerState.INDEXING);
                 },
                 flywheel,
-                //     indexer)
-                // .andThen(Commands.waitSeconds(0.5))
-                // .andThen(
-                //     Commands.runOnce(
-                //         () -> {
-                //           // flywheel.setGoalState(Flywheel.FlywheelState.B4);
-                //         },
-                //         // flywheel,
                 indexer));
 
     driveController
@@ -392,22 +384,10 @@ public class RobotContainer {
                 flywheel,
                 indexer));
 
-    // // manual shooter
-    // driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
-    // driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
-
-    // // launching
-    // driveController
-    //     .leftTrigger()
-    //     .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.SLOW_LAUNCH)));
-
     // shooter off
     driveController
         .rightTrigger()
         .onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF)));
-
-    // // voltage shooter
-    // driveController.a().onTrue(Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.B4)));
 
     // shooter hood
     shooterHood.setDefaultCommand(
