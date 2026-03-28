@@ -93,8 +93,8 @@ public class RobotContainer {
   private final boolean realHopper = false;
 
   private final boolean realIndexer = true;
-  private final boolean realShooterHood = false;
-  private final boolean realFlywheel = false;
+  private final boolean realShooterHood = true;
+  private final boolean realFlywheel = true;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -365,12 +365,20 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             Commands.runOnce(
-                () -> {
-                  flywheel.setGoalState(Flywheel.FlywheelState.B4);
-                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                },
-                flywheel,
-                indexer));
+                    () -> {
+                      flywheel.setGoalState(Flywheel.FlywheelState.B4);
+                      // indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                    },
+                    flywheel)
+                .andThen(Commands.waitSeconds(0.5))
+                .andThen(
+                    Commands.runOnce(
+                        () -> {
+                          // flywheel.setGoalState(Flywheel.FlywheelState.B4);
+                          indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                        },
+                        // flywheel,
+                        indexer)));
 
     driveController
         .leftBumper()
