@@ -79,10 +79,10 @@ public class Flywheel extends SubsystemBase {
     for (int i = 0; i < 4; ++i) {
       int id =
           switch (i) {
-            case 0 -> Constants.Flywheel.CAN_ID;
-            case 1 -> Constants.Flywheel.FOLLOWER_CAN_ID;
-            case 2 -> Constants.Flywheel.OPPOSER_ONE_CAN_ID;
-            case 3 -> Constants.Flywheel.OPPOSER_TWO_CAN_ID;
+            case 0 -> Constants.Flywheel.LEFT_TOP_ID;
+            case 1 -> Constants.Flywheel.LEFT_BOTTOM_ID;
+            case 2 -> Constants.Flywheel.RIGHT_TOP_ID;
+            case 3 -> Constants.Flywheel.RIGHT_BOTTOM_ID;
             default -> -1;
           };
 

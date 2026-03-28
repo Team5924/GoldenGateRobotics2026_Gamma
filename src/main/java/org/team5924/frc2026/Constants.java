@@ -219,7 +219,7 @@ public final class Constants {
     public static final int CAN_ID = 34;
 
     /* CANCoder */
-    public static final int CANCODER_ID = 36;
+    public static final int CANCODER_ID = 5; // TODO: set to something else
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     // spur = hood driving gear, mechanism = shooter hood gear
@@ -279,11 +279,11 @@ public final class Constants {
   }
 
   public final class Flywheel {
-    public static final int CAN_ID = 30;
+    public static final int LEFT_TOP_ID = 30;
 
-    public static final int FOLLOWER_CAN_ID = 31;
-    public static final int OPPOSER_ONE_CAN_ID = 32;
-    public static final int OPPOSER_TWO_CAN_ID = 33;
+    public static final int LEFT_BOTTOM_ID = 31;
+    public static final int RIGHT_TOP_ID = 32;
+    public static final int RIGHT_BOTTOM_ID = 33;
 
     public static final double FOLLOWER_SIM_MOI = 0.001;
 

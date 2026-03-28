@@ -366,7 +366,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  flywheel.setGoalState(Flywheel.FlywheelState.B8);
+                  flywheel.setGoalState(Flywheel.FlywheelState.B4);
                   indexer.setGoalState(Indexer.IndexerState.INDEXING);
                 },
                 flywheel,
