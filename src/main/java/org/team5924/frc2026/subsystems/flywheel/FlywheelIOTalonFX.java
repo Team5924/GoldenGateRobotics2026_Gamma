@@ -62,11 +62,11 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private double setpointVelocityRotationsPerSec;
 
   /* Gains  */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Flywheel/kP", 0.5);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Flywheel/kP", 0.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("Flywheel/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Flywheel/kD", 0.0);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.25);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.0705);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.365);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.123);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
@@ -92,10 +92,10 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final MotionMagicVelocityVoltage motionMagicVelocity;
 
   public FlywheelIOTalonFX() {
-    leaderTalon = new TalonFX(Flywheel.CAN_ID, new CANBus(Flywheel.BUS));
-    followerTalon = new TalonFX(Flywheel.FOLLOWER_CAN_ID, new CANBus(Flywheel.BUS));
-    opposerOneTalon = new TalonFX(Flywheel.OPPOSER_ONE_CAN_ID, new CANBus(Flywheel.BUS));
-    opposerTwoTalon = new TalonFX(Flywheel.OPPOSER_TWO_CAN_ID, new CANBus(Flywheel.BUS));
+    leaderTalon = new TalonFX(Flywheel.LEFT_TOP_ID, new CANBus(Flywheel.BUS));
+    followerTalon = new TalonFX(Flywheel.LEFT_BOTTOM_ID, new CANBus(Flywheel.BUS));
+    opposerOneTalon = new TalonFX(Flywheel.RIGHT_TOP_ID, new CANBus(Flywheel.BUS));
+    opposerTwoTalon = new TalonFX(Flywheel.RIGHT_BOTTOM_ID, new CANBus(Flywheel.BUS));
 
     leaderConfig = leaderTalon.getConfigurator();
     followerConfig = followerTalon.getConfigurator();
@@ -132,9 +132,9 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     Logger.recordOutput("Flywheel/InitConfReport", statusArray);
 
-    followerTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Aligned));
-    opposerOneTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Opposed));
-    opposerTwoTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Opposed));
+    followerTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Aligned));
+    opposerOneTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Opposed));
+    opposerTwoTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
     position = leaderTalon.getPosition();

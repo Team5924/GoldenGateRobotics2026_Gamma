@@ -91,8 +91,8 @@ public class RobotContainer {
   private final boolean realIntake = true;
   private final boolean realIntakePivot = true;
   private final boolean realHopper = true;
-  private final boolean realIndexer = true;
 
+  private final boolean realIndexer = true;
   private final boolean realShooterHood = true;
   private final boolean realFlywheel = true;
 
@@ -285,6 +285,17 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    configureDriveBindings();
+
+    configureDefaultCommands();
+    
+    configureLeftBumperBindings();
+    configureRightBumperBindings();
+
+    // TODO: auto shooting, hood
+  }
+
+  private void configureDriveBindings() {
     // Default command, normal field-relative drive
     if (Constants.currentMode == Constants.Mode.SIM) {
       drive.setDefaultCommand(
@@ -338,12 +349,16 @@ public class RobotContainer {
 
     // [driver] Reset gyro to 0° when B button is pressed
     driveController.b().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+  }
 
+  private void configureDefaultCommands() {
     // ### hopper on by default
     hopper.setDefaultCommand(
         Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
+  }
 
-    /* ### intake ### */
+  private void configureRightBumperBindings() {
+    // [right bumper pressed] -> deploy intake pivot, run intake
     driveController
         .rightBumper()
         .onTrue(
@@ -355,9 +370,10 @@ public class RobotContainer {
                 intakePivot,
                 intake));
 
+    // [right bumper released] -> stow intake pivot, stop running intake
     driveController
         .rightBumper()
-        .onTrue(
+        .onFalse(
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.STOW);
@@ -365,28 +381,22 @@ public class RobotContainer {
                 },
                 intakePivot,
                 intake));
+    }
 
-    // manual intake
-    intakePivot.setDefaultCommand(
-        Commands.run(
-            () -> {
-              intakePivot.setGoalState(IntakePivotState.MANUAL);
-              intakePivot.setInput(operatorController.getLeftX());
-            },
-            intakePivot));
-
-    // shooter
+  private void configureLeftBumperBindings() {
+    // [left bumper pressed] -> run flywheel and indexer
     driveController
         .leftBumper()
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  flywheel.setGoalState(Flywheel.FlywheelState.B8);
+                  flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH);
                   indexer.setGoalState(Indexer.IndexerState.INDEXING);
                 },
                 flywheel,
                 indexer));
 
+    // [left bumper released] -> turn off flywheel and indexer
     driveController
         .leftBumper()
         .onFalse(

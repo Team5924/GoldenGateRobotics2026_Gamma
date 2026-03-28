@@ -23,7 +23,7 @@ import edu.wpi.first.math.util.Units;
 
 public class LauncherConstants {
   // TODO: update to be more accurate
-  public static Transform3d robotToLauncher =
+  public static final Transform3d robotToLauncher =
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(5.764), Units.inchesToMeters(0.0), Units.inchesToMeters(21.203)),

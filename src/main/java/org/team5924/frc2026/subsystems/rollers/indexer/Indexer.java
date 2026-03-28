@@ -19,6 +19,7 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
@@ -49,9 +50,16 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
 
   @Override
   protected void handleCurrentState() {
-    if (RobotState.getInstance().isFlywheelAtSetpoint())
-      io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
+    // only run indexer when flywheel is ready
+    if (isFlywheelReady()) io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
     else io.stop();
+  }
+
+  private boolean isFlywheelReady() {
+    if (Constants.Indexer.REQUIRE_FLYWHEEL_SETPOINT)
+      return RobotState.getInstance().isFlywheelReady();
+
+    return true;
   }
 
   @Override
