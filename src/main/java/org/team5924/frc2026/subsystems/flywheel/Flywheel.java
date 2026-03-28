@@ -50,7 +50,7 @@ public class Flywheel extends SubsystemBase {
 
     MANUAL_SETPOINT(() -> 0.0),
 
-    B4(() -> 2.0),
+    B4(() -> 4.0),
     B6(() -> 6.0),
     B8(() -> 8.0),
     B12(() -> 12.0);
