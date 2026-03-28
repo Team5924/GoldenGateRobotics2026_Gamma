@@ -43,7 +43,7 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 35)),
+    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 40)),
     SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 25)),
 
     AUTO(() -> 0.0),

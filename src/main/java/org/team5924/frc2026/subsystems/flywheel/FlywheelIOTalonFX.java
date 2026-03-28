@@ -65,8 +65,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final LoggedTunableNumber kP = new LoggedTunableNumber("Flywheel/kP", 0.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("Flywheel/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Flywheel/kD", 0.0);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.38);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.127);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.365);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.123);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
