@@ -227,10 +227,10 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
             Elastic.sendNotification(
                 new Notification(
                     NotificationLevel.WARNING,
-                    "IntakePivot Slot 0 Configs",
-                    "Error in periodically updating intakePivot Slot0 configs!"));
+                    "HopperElevator Slot 0 Configs",
+                    "Error in periodically updating hopperElevator Slot0 configs!"));
 
-            Logger.recordOutput("IntakePivot/UpdateSlot0Report", statusCode);
+            Logger.recordOutput("HopperElevator/UpdateSlot0Report", statusCode);
           }
         },
         kP,
@@ -253,10 +253,10 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
             Elastic.sendNotification(
                 new Notification(
                     NotificationLevel.WARNING,
-                    "IntakePivot Motion Magic Configs",
-                    "Error in periodically updating intakePivot MotionMagic configs!"));
+                    "HopperElevator Motion Magic Configs",
+                    "Error in periodically updating hopperElevator MotionMagic configs!"));
 
-            Logger.recordOutput("IntakePivot/UpdateStatusCodeReport", statusCode);
+            Logger.recordOutput("HopperElevator/UpdateStatusCodeReport", statusCode);
           }
         },
         motionAcceleration,
