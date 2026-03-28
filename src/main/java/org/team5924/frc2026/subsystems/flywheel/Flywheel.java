@@ -147,10 +147,11 @@ public class Flywheel extends SubsystemBase {
   public boolean isAtSetpoint() {
     return switch (goalState) {
       case B4, B6, B8, B12 -> true;
-      default -> EqualsUtil.epsilonEquals(
-        getTargetVelocityRotationsPerSec(),
-        inputs.velocityRotationsPerSec,
-        Constants.Flywheel.EPSILON_VELOCITY);
+      default ->
+          EqualsUtil.epsilonEquals(
+              getTargetVelocityRotationsPerSec(),
+              inputs.velocityRotationsPerSec,
+              Constants.Flywheel.EPSILON_VELOCITY);
     };
   }
 
@@ -162,14 +163,15 @@ public class Flywheel extends SubsystemBase {
 
   private void handleCurrentState() {
     if (currentState == FlywheelState.AUTO) {
-        setAutoInput(LaunchCalculator.getInstance().getParameters().flywheelSpeed());
+      setAutoInput(LaunchCalculator.getInstance().getParameters().flywheelSpeed());
     }
 
     isAtSetpoint = isAtSetpoint();
-    boolean isReadyToIndex = switch (goalState) {
-      case OFF -> false;
-      default -> isAtSetpoint;
-    };
+    boolean isReadyToIndex =
+        switch (goalState) {
+          case OFF -> false;
+          default -> isAtSetpoint;
+        };
     RobotState.getInstance().setReadyToIndex(isReadyToIndex);
 
     switch (currentState) {
