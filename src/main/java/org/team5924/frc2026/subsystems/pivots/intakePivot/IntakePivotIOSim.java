@@ -27,6 +27,7 @@ public class IntakePivotIOSim implements IntakePivotIO {
   private final DCMotorSim sim;
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
+  private double setpoint = 0.0;
 
   public IntakePivotIOSim() {
     sim =
@@ -38,28 +39,35 @@ public class IntakePivotIOSim implements IntakePivotIO {
 
   @Override
   public void updateInputs(IntakePivotIOInputs inputs) {
-    if (DriverStation.isDisabled()) runVolts(0.0);
+    if (DriverStation.isDisabled()) runCurrent(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.intakePivotPositionRads = sim.getAngularPositionRad();
-    inputs.intakePivotVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
-    inputs.intakePivotAppliedVoltage = appliedVoltage;
-    inputs.intakePivotSupplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.motorConnected = true;
+    inputs.positionRads = sim.getAngularPositionRad();
+    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.appliedVoltage = appliedVoltage;
+    inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.tempCelsius = 25.0;
+    inputs.positionRads = setpoint;
   }
 
   @Override
-  public void runVolts(double volts) {
+  public void runCurrent(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
   }
 
   @Override
   public void setPosition(double rads) {
+    rads =
+        MathUtil.clamp(
+            rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
+    setpoint = rads;
     sim.setAngle(rads);
   }
 
   @Override
   public void stop() {
-    runVolts(0.0);
+    runCurrent(0.0);
   }
 }

@@ -1,5 +1,5 @@
 /*
- * GenericRollerSystemIOSim.java
+ * FlywheelIOSim.java
  */
 
 /* 
@@ -14,35 +14,45 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.generic;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
 
-public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
-  protected final DCMotorSim sim;
-  protected final DCMotor gearbox;
+public class FlywheelIOSim implements FlywheelIO {
+  private final DCMotorSim sim;
+  private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
+  private double setpoint;
 
-  public GenericRollerSystemIOSim(DCMotor motorModel, double reduction, double moi) {
-    gearbox = motorModel;
+  public FlywheelIOSim() {
     sim =
-        new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                gearbox, Constants.Flywheel.SIM_MOI, Constants.Flywheel.MOTOR_TO_MECHANISM),
+            gearbox);
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
-    if (DriverStation.isDisabled()) runVolts(0.0);
+  public void updateInputs(FlywheelIOInputs inputs) {
+    if (DriverStation.isDisabled()) stop();
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
     inputs.positionRads = sim.getAngularPositionRad();
-    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.velocityRotationsPerSec = Units.radiansToRotations(sim.getAngularVelocityRadPerSec());
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.setpointVelocityRotationsPerSec = setpoint;
+
+    for (int i = 0; i < 4; ++i) {
+      inputs.motorConnected[i] = true;
+      inputs.tempCelsius[i] = 25.0;
+    }
   }
 
   @Override
@@ -52,7 +62,14 @@ public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
   }
 
   @Override
+  public void setVelocity(double velocity) {
+    setpoint = velocity;
+    sim.setAngularVelocity(Units.rotationsToRadians(setpoint));
+  }
+
+  @Override
   public void stop() {
+    setpoint = 0.0;
     runVolts(0.0);
   }
 }

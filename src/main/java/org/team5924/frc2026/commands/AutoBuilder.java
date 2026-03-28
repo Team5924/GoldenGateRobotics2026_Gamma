@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotContainer;
-import org.team5924.frc2026.subsystems.SuperShooter;
-import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
+import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.Constants.ShooterHood;
+import org.team5924.frc2026.commands.drive.DriveToPose;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
@@ -31,8 +31,7 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 @RequiredArgsConstructor
 public class AutoBuilder {
   private final Drive drive;
-  private final SuperShooter superShooterLeft;
-  private final SuperShooter superShooterRight;
+  private final ShooterHood shooter;
   // private final Climb climb;
   private final Intake intake;
 
@@ -56,7 +55,7 @@ public class AutoBuilder {
         shootersOff(),
         RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-    ), Set.of(drive, superShooterLeft, superShooterRight));
+    ), Set.of(drive, shooter));
   }
 
   public Command scorePickupAndClimbAuto() {
@@ -75,7 +74,7 @@ public class AutoBuilder {
         shootersOff(),
         RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-        ), Set.of(drive, superShooterLeft, superShooterRight, intake));  
+        ), Set.of(drive, shooter, intake));  
   }
 
   private Command startToHub(String startingPosition) {

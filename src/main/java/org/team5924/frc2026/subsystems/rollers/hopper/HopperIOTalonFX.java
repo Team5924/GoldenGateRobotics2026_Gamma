@@ -1,5 +1,5 @@
 /*
- * ShooterRollerIO.java
+ * HopperIOTalonFX.java
  */
 
 /* 
@@ -14,8 +14,13 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.shooterRoller;
+package org.team5924.frc2026.subsystems.rollers.hopper;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
+import org.team5924.frc2026.Constants.Hopper;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
 
-public interface ShooterRollerIO extends GenericRollerSystemIO {}
+public class HopperIOTalonFX extends GenericRollerIOTalonFX implements HopperIO {
+  public HopperIOTalonFX() {
+    super(Hopper.CAN_ID, Hopper.BUS, Hopper.CONFIG, Hopper.MOTOR_TO_MECHANISM);
+  }
+}

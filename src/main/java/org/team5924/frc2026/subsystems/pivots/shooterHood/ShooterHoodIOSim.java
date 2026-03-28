@@ -27,13 +27,13 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
   private final DCMotorSim sim;
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
+  private double setpoint = 0.0;
 
-  public ShooterHoodIOSim(boolean isLeft) {
+  public ShooterHoodIOSim() {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                isLeft ? Constants.ShooterHoodLeft.REDUCTION : Constants.ShooterHoodRight.REDUCTION,
-                isLeft ? Constants.ShooterHoodLeft.SIM_MOI : Constants.ShooterHoodRight.SIM_MOI),
+                gearbox, Constants.ShooterHood.SIM_MOI, Constants.ShooterHood.MOTOR_TO_MECHANISM),
             gearbox);
   }
 
@@ -42,16 +42,28 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.shooterHoodPositionRads = sim.getAngularPositionRad();
-    inputs.shooterHoodVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
-    inputs.shooterHoodAppliedVoltage = appliedVoltage;
-    inputs.shooterHoodSupplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.motorConnected = true;
+    inputs.positionRads = sim.getAngularPositionRad();
+    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.appliedVoltage = appliedVoltage;
+    inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.setpointRads = setpoint;
+    inputs.tempCelsius = 25.0;
   }
 
   @Override
   public void runVolts(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
+  }
+
+  @Override
+  public void setPosition(double rads) {
+    rads =
+        MathUtil.clamp(
+            rads, Constants.ShooterHood.MIN_POSITION_RADS, Constants.ShooterHood.MAX_POSITION_RADS);
+    setpoint = rads;
+    sim.setAngle(rads);
   }
 
   @Override
