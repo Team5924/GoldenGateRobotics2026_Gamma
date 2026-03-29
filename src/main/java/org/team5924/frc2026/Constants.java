@@ -36,7 +36,6 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
