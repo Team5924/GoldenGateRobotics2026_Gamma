@@ -203,16 +203,14 @@ public final class Constants {
   public final class Indexer {
     public final static int CAN_ID = 51;
     public static final String BUS = "rio";
+    public static final boolean REQUIRE_FLYWHEEL_SETPOINT = true;
 
     // controls two rollers, so reduction is weird
     public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
-      GenericRoller.COUNTERCLOCKWISE_CONFIG.clone()
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive));
+      GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
   }
 
   /* General Subsystems */
@@ -222,7 +220,7 @@ public final class Constants {
     public static final int CAN_ID = 34;
 
     /* CANCoder */
-    public static final int CANCODER_ID = 36;
+    public static final int CANCODER_ID = 35; // TODO: set to something else
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     // spur = hood driving gear, mechanism = shooter hood gear
@@ -255,9 +253,8 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
-
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
@@ -282,16 +279,16 @@ public final class Constants {
   }
 
   public final class Flywheel {
-    public static final int CAN_ID = 30;
+    public static final int LEFT_TOP_ID = 30;
 
-    public static final int FOLLOWER_CAN_ID = 31;
-    public static final int OPPOSER_ONE_CAN_ID = 32;
-    public static final int OPPOSER_TWO_CAN_ID = 33;
+    public static final int LEFT_BOTTOM_ID = 31;
+    public static final int RIGHT_TOP_ID = 32;
+    public static final int RIGHT_BOTTOM_ID = 33;
 
     public static final double FOLLOWER_SIM_MOI = 0.001;
 
     public static final double EPSILON_VELOCITY = 2.5;
-    public static final double MOTOR_TO_MECHANISM = 15.0 / 26.0;
+    public static final double MOTOR_TO_MECHANISM = 1.0;
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
 
@@ -303,7 +300,7 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
 
   public static final FeedbackConfigs FEEDBACK_CONFIGS =
