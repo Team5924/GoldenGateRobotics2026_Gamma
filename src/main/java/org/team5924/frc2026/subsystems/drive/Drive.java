@@ -311,6 +311,9 @@ public class Drive extends SubsystemBase {
     RobotState.getInstance().setOdometryPose(getPose());
     Logger.recordOutput("RobotState/OdometryPose", getPose());
 
+    RobotState.getInstance().setOdometryGyroPose(new Pose2d(getPose().getTranslation(), gyroInputs.yawPosition));
+    Logger.recordOutput("RobotState/OdometryGyroPose", RobotState.getInstance().getOdometryGyroPose());
+
     // prevents error spam
     if (!gyroInputs.connected && wasGyroConnected) {
       Elastic.sendNotification(gyroDisconnectedNotification);
