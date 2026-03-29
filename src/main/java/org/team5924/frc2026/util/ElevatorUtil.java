@@ -11,7 +11,7 @@ public class ElevatorUtil {
       * Constants.HopperElevator.MOTOR_TO_MECHANISM
       / (2 * Math.PI * Constants.HopperElevator.PULLEY_RADIUS_METERS);
   }
-
+  // conversion from motor Rotations to Meters
   public static double rotationsToMeters(double rotations) {
     return (rotations
       * 2
