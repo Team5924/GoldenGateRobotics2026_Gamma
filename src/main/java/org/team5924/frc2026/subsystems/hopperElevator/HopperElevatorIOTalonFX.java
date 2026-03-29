@@ -269,7 +269,7 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
         motionCruiseVelocity,
         motionJerk);
   }
-
+  //updates LoggedTunables periodically
   @Override
   public void periodicUpdates() {
     updateLoggedTunableNumbers();
