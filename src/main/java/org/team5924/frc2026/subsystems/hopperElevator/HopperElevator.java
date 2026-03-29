@@ -52,7 +52,7 @@ public class HopperElevator extends SubsystemBase {
 
     STOW(new LoggedTunableNumber("HopperElevator/StowHeightMeters", 0.0)),
     EXTENDED(new LoggedTunableNumber("HopperElevator/ExtendedHeightMeters", 0.0)),
-    MANUAL(new LoggedTunableNumber("HopperElevator/ManualVolts", 0.0)),
+    MANUAL(new LoggedTunableNumber("HopperElevator/ManualVolts", 1.0)),
     MOVING(() -> 0.0);
 
     private final DoubleSupplier heightMeters;
@@ -131,6 +131,7 @@ public class HopperElevator extends SubsystemBase {
     switch (goalState) {
       case STOW, EXTENDED, MANUAL: 
         currentState = goalState;
+        break;
       case MOVING:
         DriverStation.reportError(
             "HopperElevator: MOVING is an invalid goal state; it is a transition state!!", null);
