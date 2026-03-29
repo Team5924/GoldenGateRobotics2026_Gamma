@@ -179,7 +179,8 @@ public class Flywheel extends SubsystemBase {
       case B4, B6, B8, B12 -> runVolts(getTargetVelocityRotationsPerSec());
       case AUTO -> {
         // pass in flywheel speed from launch calculator
-        setAutoInput(LaunchCalculator.getInstance().getParameters().flywheelSpeed());
+        if (LaunchCalculator.getInstance().getParameters().isValid())
+          setAutoInput(LaunchCalculator.getInstance().getParameters().flywheelSpeed());
         setVelocity(autoInput);
       }
       default -> setVelocity(getTargetVelocityRotationsPerSec());
