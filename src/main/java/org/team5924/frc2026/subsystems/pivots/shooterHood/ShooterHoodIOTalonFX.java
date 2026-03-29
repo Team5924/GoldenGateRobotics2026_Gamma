@@ -145,7 +145,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     closedLoopReferenceSlope = talon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0,
+        50.0,
         position,
         velocity,
         appliedVoltage,
@@ -158,9 +158,11 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         cancoderPositionRotations,
         closedLoopReferenceSlope);
 
+    talon.optimizeBusUtilization();
+
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     positionOut = new PositionVoltage(0).withEnableFOC(true).withSlot(0);
-    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(100.0).withSlot(0);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 

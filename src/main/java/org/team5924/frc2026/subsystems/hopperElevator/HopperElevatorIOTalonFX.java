@@ -26,6 +26,7 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.util.Units;
@@ -149,7 +150,7 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     closedLoopReferenceSlope = talon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0,
+        50.0,
         position,
         velocity,
         appliedVoltage,
@@ -162,8 +163,11 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
         cancoderPositionRotations,
         closedLoopReferenceSlope);
 
+    talon.optimizeBusUtilization();
+    cancoder.optimizeBusUtilization();
+
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(100.0).withSlot(0);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 

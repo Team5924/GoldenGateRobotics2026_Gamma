@@ -43,7 +43,7 @@ public abstract class GenericRollerIOTalonFX implements GenericRollerIO {
   private final StatusSignal<Temperature> tempCelsius;
 
   // Single shot for voltage mode, robot loop will call continuously
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0.0);
   private final NeutralOut neutralOut = new NeutralOut();
 
   public GenericRollerIOTalonFX(int id, String bus, TalonFXConfiguration config, double reduction) {

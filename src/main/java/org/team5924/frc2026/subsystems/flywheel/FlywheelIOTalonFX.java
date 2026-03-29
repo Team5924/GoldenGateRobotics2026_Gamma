@@ -26,6 +26,7 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.math.util.Units;
@@ -45,16 +46,16 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
   /* Hardware */
-  private final TalonFX leaderTalon;
-  private final TalonFX followerTalon;
-  private final TalonFX opposerOneTalon;
-  private final TalonFX opposerTwoTalon;
+  private final TalonFX leftTopTalon;
+  private final TalonFX leftBottomTalon;
+  private final TalonFX rightTopTalon;
+  private final TalonFX rightBottomTalon;
 
   /* Configurators */
-  private final TalonFXConfigurator leaderConfig;
-  private final TalonFXConfigurator followerConfig;
-  private final TalonFXConfigurator opposerOneConfig;
-  private final TalonFXConfigurator opposerTwoConfig;
+  private final TalonFXConfigurator leftTopConfig;
+  private final TalonFXConfigurator leftBottomConfig;
+  private final TalonFXConfigurator rightTopConfig;
+  private final TalonFXConfigurator rightBottomConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;
@@ -92,15 +93,15 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final MotionMagicVelocityVoltage motionMagicVelocity;
 
   public FlywheelIOTalonFX() {
-    leaderTalon = new TalonFX(Flywheel.LEFT_TOP_ID, new CANBus(Flywheel.BUS));
-    followerTalon = new TalonFX(Flywheel.LEFT_BOTTOM_ID, new CANBus(Flywheel.BUS));
-    opposerOneTalon = new TalonFX(Flywheel.RIGHT_TOP_ID, new CANBus(Flywheel.BUS));
-    opposerTwoTalon = new TalonFX(Flywheel.RIGHT_BOTTOM_ID, new CANBus(Flywheel.BUS));
+    leftTopTalon = new TalonFX(Flywheel.LEFT_TOP_ID, new CANBus(Flywheel.BUS));
+    leftBottomTalon = new TalonFX(Flywheel.LEFT_BOTTOM_ID, new CANBus(Flywheel.BUS));
+    rightTopTalon = new TalonFX(Flywheel.RIGHT_TOP_ID, new CANBus(Flywheel.BUS));
+    rightBottomTalon = new TalonFX(Flywheel.RIGHT_BOTTOM_ID, new CANBus(Flywheel.BUS));
 
-    leaderConfig = leaderTalon.getConfigurator();
-    followerConfig = followerTalon.getConfigurator();
-    opposerOneConfig = opposerOneTalon.getConfigurator();
-    opposerTwoConfig = opposerTwoTalon.getConfigurator();
+    leftTopConfig = leftTopTalon.getConfigurator();
+    leftBottomConfig = leftBottomTalon.getConfigurator();
+    rightTopConfig = rightTopTalon.getConfigurator();
+    rightBottomConfig = rightBottomTalon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     updateSlot0Configs();
@@ -111,16 +112,16 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[9];
 
-    statusArray[0] = leaderConfig.apply(Flywheel.CONFIG);
-    statusArray[1] = leaderConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[2] = leaderConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[3] = leaderConfig.apply(Flywheel.FEEDBACK_CONFIGS);
-    statusArray[4] = leaderConfig.apply(slot0Configs);
-    statusArray[5] = leaderConfig.apply(motionMagicConfigs);
+    statusArray[0] = leftTopConfig.apply(Flywheel.CONFIG);
+    statusArray[1] = leftTopConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[2] = leftTopConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[3] = leftTopConfig.apply(Flywheel.FEEDBACK_CONFIGS);
+    statusArray[4] = leftTopConfig.apply(slot0Configs);
+    statusArray[5] = leftTopConfig.apply(motionMagicConfigs);
 
-    statusArray[6] = followerConfig.apply(Flywheel.CONFIG);
-    statusArray[7] = opposerOneConfig.apply(Flywheel.CONFIG);
-    statusArray[8] = opposerTwoConfig.apply(Flywheel.CONFIG);
+    statusArray[6] = leftBottomConfig.apply(Flywheel.CONFIG);
+    statusArray[7] = rightTopConfig.apply(Flywheel.CONFIG);
+    statusArray[8] = rightBottomConfig.apply(Flywheel.CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -132,26 +133,26 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     Logger.recordOutput("Flywheel/InitConfReport", statusArray);
 
-    followerTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Aligned));
-    opposerOneTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Opposed));
-    opposerTwoTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Opposed));
+    leftBottomTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Aligned));
+    rightTopTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Opposed));
+    rightBottomTalon.setControl(new Follower(Flywheel.LEFT_TOP_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
-    position = leaderTalon.getPosition();
-    velocity = leaderTalon.getVelocity();
-    appliedVoltage = leaderTalon.getMotorVoltage();
-    supplyCurrent = leaderTalon.getSupplyCurrent();
-    torqueCurrent = leaderTalon.getTorqueCurrent();
+    position = leftTopTalon.getPosition();
+    velocity = leftTopTalon.getVelocity();
+    appliedVoltage = leftTopTalon.getMotorVoltage();
+    supplyCurrent = leftTopTalon.getSupplyCurrent();
+    torqueCurrent = leftTopTalon.getTorqueCurrent();
 
-    tempCelsius.add(leaderTalon.getDeviceTemp());
-    tempCelsius.add(followerTalon.getDeviceTemp());
-    tempCelsius.add(opposerOneTalon.getDeviceTemp());
-    tempCelsius.add(opposerTwoTalon.getDeviceTemp());
+    tempCelsius.add(leftTopTalon.getDeviceTemp());
+    tempCelsius.add(leftBottomTalon.getDeviceTemp());
+    tempCelsius.add(rightTopTalon.getDeviceTemp());
+    tempCelsius.add(rightBottomTalon.getDeviceTemp());
 
-    closedLoopReferenceSlope = leaderTalon.getClosedLoopReferenceSlope();
+    closedLoopReferenceSlope = leftTopTalon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0,
+        50.0,
         position,
         velocity,
         appliedVoltage,
@@ -162,10 +163,12 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         tempCelsius.get(2),
         tempCelsius.get(3));
 
+    ParentDevice.optimizeBusUtilizationForAll(leftTopTalon, leftBottomTalon, rightBottomTalon, rightTopTalon);
+
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
 
-    leaderTalon.setPosition(0.0);
+    leftTopTalon.setPosition(0.0);
   }
 
   @Override
@@ -198,7 +201,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     }
 
     inputs.motionMagicVelocityTarget =
-        motorPositionToRads(leaderTalon.getClosedLoopReferenceSlope().getValueAsDouble());
+        motorPositionToRads(leftTopTalon.getClosedLoopReferenceSlope().getValueAsDouble());
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
     double timeDiff = currentTime - prevReferenceSlopeTimestamp;
@@ -238,7 +241,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         () -> {
           updateSlot0Configs();
 
-          StatusCode statusCode = leaderConfig.apply(slot0Configs);
+          StatusCode statusCode = leftTopConfig.apply(slot0Configs);
           if (!statusCode.isOK()) {
             Logger.recordOutput("Flywheel/UpdateSlot0Report", statusCode);
           }
@@ -255,7 +258,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         () -> {
           updateMotionMagicConfigs();
 
-          StatusCode statusCode = leaderConfig.apply(motionMagicConfigs);
+          StatusCode statusCode = leftTopConfig.apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
             Logger.recordOutput("Flywheel/UpdateStatusCodeReport", statusCode);
           }
@@ -268,19 +271,19 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   @Override
   // runs motor at volts
   public void runVolts(double volts) {
-    leaderTalon.setControl(voltageOut.withOutput(volts));
+    leftTopTalon.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
   public void setVelocity(double velocityRotationsPerSec) {
     setpointVelocityRotationsPerSec = velocityRotationsPerSec;
-    leaderTalon.setControl(motionMagicVelocity.withVelocity(setpointVelocityRotationsPerSec));
+    leftTopTalon.setControl(motionMagicVelocity.withVelocity(setpointVelocityRotationsPerSec));
   }
 
   @Override
   public void stop() {
     setpointVelocityRotationsPerSec = 0.0;
-    leaderTalon.stopMotor();
+    leftTopTalon.stopMotor();
   }
 
   private double radsToMotorPosition(double rads) {
