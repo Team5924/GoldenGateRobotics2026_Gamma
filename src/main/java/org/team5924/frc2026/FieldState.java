@@ -26,8 +26,7 @@ public class FieldState {
   private static FieldState instance;
 
   public static FieldState getInstance() {
-    if (instance == null) instance = new FieldState();
-    return instance;
+    return (instance == null) ? instance = new FieldState() : instance;
   }
 
   /** returns the current match time in seconds */
@@ -53,10 +52,13 @@ public class FieldState {
     130, 105, 80, 55, 30, 0
   };
 
-  @Getter private volatile MatchShift currentMatchShift = MatchShift.NONE;
+  @Getter private MatchShift currentMatchShift = MatchShift.NONE;
 
-  private Alliance autoWinner;
-  private boolean hasAutoWinner;
+  private boolean isAutoWinner = false; // is robot alliance the alliance winner
+  private boolean hasAutoWinner = false;
+
+  private boolean isBlue = false;
+  private boolean hasAlliance = false;
 
   private MatchShift calculateCurrentMatchShift() {
     double time = getTime();
@@ -65,30 +67,87 @@ public class FieldState {
       return MatchShift.AUTO;
     }
 
+    for (int i = 1; i < matchShiftTimes.length; ++i) {
+      if (time > matchShiftTimes[i]) return MatchShift.values()[i];
+    }
+
     return MatchShift.INVALID;
   }
 
   public void updateCurrentMatchShift() {
-    Logger.recordMetadata(
-        "FieldState/MatchShift", (currentMatchShift = calculateCurrentMatchShift()).toString());
+    currentMatchShift = calculateCurrentMatchShift();
+    Logger.recordMetadata("FieldState/MatchShift", currentMatchShift.toString());
+  }
+
+  /**
+   * updates alliance
+   *
+   * @return hasAlliance q
+   */
+  public boolean updateAlliance() {
+    Optional<Alliance> optionalAlliance = DriverStation.getAlliance();
+    if (optionalAlliance.isEmpty()) {
+      return hasAlliance = false;
+    }
+
+    isBlue = optionalAlliance.get().equals(Alliance.Blue);
+    return true;
+  }
+
+  /**
+   * updates isAutoWinner
+   *
+   * @return hasAutoWinner
+   */
+  public boolean updateIsAutoWinner() {
+    if (!hasAlliance) return hasAutoWinner = false;
+
+    String gameData = DriverStation.getGameSpecificMessage();
+
+    hasAutoWinner = true;
+
+    if (gameData.isEmpty()) return hasAutoWinner = false;
+
+    switch (gameData.charAt(0)) {
+      case 'R' -> {
+        isAutoWinner = !isBlue;
+      }
+      case 'B' -> {
+        isAutoWinner = isBlue;
+      }
+      default -> {
+        return hasAutoWinner = false;
+      }
+    }
+
+    return true;
   }
 
   public boolean isHubActive() {
-    Optional<Alliance> optionalAlliance = DriverStation.getAlliance();
-    Alliance alliance = optionalAlliance.isPresent() ? optionalAlliance.get() : Alliance.Blue;
+    updateCurrentMatchShift();
 
     switch (currentMatchShift) {
-      case AUTO, TRANSITION, END_GAME -> {
+      case AUTO, TRANSITION, END_GAME, NONE, INVALID -> {
+        // for these states, always assume active hub
         return true;
       }
-      case NONE, INVALID -> {
-        return true;
-      } // allow shooting on error?
-      case SHIFT_ONE, SHIFT_TWO -> {
-        return (false);
-      }
-      default -> {
-        return false;
+      default -> { // conditionally active states
+        // if no alliance or auto winner, update
+        //      -> assume hub is active in the case of persisting invalid data
+        if (!hasAlliance || !hasAutoWinner) {
+          if (updateAlliance()) { // try to update alliance
+            // if valid -> try to update auto winner
+            if (!updateIsAutoWinner()) return true; // auto winner invalid
+          } else {
+            return true; // alliance invalid
+          }
+        }
+
+        return switch (currentMatchShift) {
+          case SHIFT_ONE, SHIFT_THREE ->  !isAutoWinner;
+          case SHIFT_TWO, SHIFT_FOUR ->  isAutoWinner;
+          default -> true;
+        };
       }
     }
   }
