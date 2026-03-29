@@ -129,7 +129,7 @@ public class HopperElevator extends SubsystemBase {
         && Math.abs(input) <= Constants.JOYSTICK_DEADZONE) return;
     this.goalState = goalState;
     switch (goalState) {
-      case STOW, EXTENDED, MANUAL: 
+      case STOW, EXTENDED, MANUAL:
         currentState = goalState;
         break;
       case MOVING:
@@ -139,7 +139,6 @@ public class HopperElevator extends SubsystemBase {
       default:
         currentState = HopperElevatorState.MOVING;
         break;
-
     }
     lastStateChange = FieldState.getInstance().getTime();
   }

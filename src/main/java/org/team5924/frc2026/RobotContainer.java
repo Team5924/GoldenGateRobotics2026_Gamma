@@ -271,7 +271,7 @@ public class RobotContainer {
     configureDriveBindings();
 
     configureDefaultCommands();
-    
+
     configureLeftBumperBindings();
     configureRightBumperBindings();
 
@@ -364,7 +364,7 @@ public class RobotContainer {
                 },
                 intakePivot,
                 intake));
-    }
+  }
 
   private void configureLeftBumperBindings() {
     // [left bumper pressed] -> run flywheel and indexer
@@ -390,7 +390,7 @@ public class RobotContainer {
                 },
                 flywheel,
                 indexer));
-    }
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

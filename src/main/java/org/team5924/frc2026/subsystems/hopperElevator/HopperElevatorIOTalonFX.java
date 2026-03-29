@@ -24,12 +24,10 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -56,7 +54,8 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   private final MotionMagicConfigs motionMagicConfigs;
   private double setpointMeters;
   /* Logged Tunable Numbers */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("HopperElevator/kP", 40.0); //TODO: tune all these
+  private final LoggedTunableNumber kP =
+      new LoggedTunableNumber("HopperElevator/kP", 40.0); // TODO: tune all these
   private final LoggedTunableNumber kI = new LoggedTunableNumber("HopperElevator/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("HopperElevator/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("HopperElevator/kS", 0.2);
@@ -150,7 +149,7 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     closedLoopReferenceSlope = talon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0,
+        50.0,
         position,
         velocity,
         appliedVoltage,
@@ -163,8 +162,11 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
         cancoderPositionRotations,
         closedLoopReferenceSlope);
 
+    talon.optimizeBusUtilization();
+    cancoder.optimizeBusUtilization();
+
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(100.0).withSlot(0);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 
@@ -199,7 +201,8 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
 
     inputs.motionMagicVelocityTarget =
         ElevatorUtil.rotationsToMeters(talon.getClosedLoopReferenceSlope().getValue());
-    inputs.motionMagicPositionTarget = ElevatorUtil.rotationsToMeters(talon.getClosedLoopReference().getValue());
+    inputs.motionMagicPositionTarget =
+        ElevatorUtil.rotationsToMeters(talon.getClosedLoopReference().getValue());
 
     inputs.setpointMeters = setpointMeters;
 
@@ -266,7 +269,7 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
         motionCruiseVelocity,
         motionJerk);
   }
-
+  //updates LoggedTunables periodically
   @Override
   public void periodicUpdates() {
     updateLoggedTunableNumbers();
@@ -282,7 +285,6 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     setpointMeters = heightMeters;
     talon.setControl(motionMagicCurrent.withPosition(ElevatorUtil.metersToRotations(heightMeters)));
   }
-
 
   public void stop() {
     talon.stopMotor();

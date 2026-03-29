@@ -173,7 +173,8 @@ public class ShooterHood extends SubsystemBase {
       case OFF -> stop();
       case AUTO -> {
         // pass in hood angle from launch calculator
-        setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
+        if (LaunchCalculator.getInstance().getParameters().isValid())
+          setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
         if (!isAtSetpoint) setPosition(autoInput);
       }
       default -> {

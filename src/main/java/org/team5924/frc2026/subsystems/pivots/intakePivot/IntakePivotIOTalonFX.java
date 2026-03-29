@@ -140,7 +140,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     closedLoopReferenceSlope = talon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0,
+        50.0,
         position,
         velocity,
         appliedVoltage,
@@ -149,9 +149,11 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         tempCelsius,
         closedLoopReferenceSlope);
 
+    talon.optimizeBusUtilization();
+
     currentOut = new TorqueCurrentFOC(0.0);
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
-    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(0.0);
 
     // assuming intake pivot starts stowed
     talon.setPosition(
