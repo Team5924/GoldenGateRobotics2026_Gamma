@@ -163,7 +163,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         tempCelsius.get(2),
         tempCelsius.get(3));
 
-    ParentDevice.optimizeBusUtilizationForAll(leftTopTalon, leftBottomTalon, rightBottomTalon, rightTopTalon);
+    ParentDevice.optimizeBusUtilizationForAll(
+        leftTopTalon, leftBottomTalon, rightBottomTalon, rightTopTalon);
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
