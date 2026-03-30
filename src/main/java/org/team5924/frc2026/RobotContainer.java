@@ -88,13 +88,13 @@ public class RobotContainer {
   // Real/IO implementation
   private final boolean realDrive = true;
   private final boolean realVision = true;
-  private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
-  private final boolean realHopper = true;
+  private final boolean realIntake = false;
+  private final boolean realIntakePivot = false;
+  private final boolean realHopper = false;
 
-  private final boolean realIndexer = true;
-  private final boolean realShooterHood = true;
-  private final boolean realFlywheel = true;
+  private final boolean realIndexer = false;
+  private final boolean realShooterHood = false;
+  private final boolean realFlywheel = false;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -298,22 +298,18 @@ public class RobotContainer {
     // [driver] SLOW MODE YIPE
     driveController
         .y()
-        .onTrue(
+        .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
                 () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // [driver] 0-DEGREE MODE
     driveController
-        .a()
-        .onTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> Rotation2d.kZero));
+        .rightTrigger()
+        .whileTrue(
+            DriveCommands.joystickDriveWhileLaunching(
+                drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
