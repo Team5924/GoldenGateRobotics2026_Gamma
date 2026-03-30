@@ -28,6 +28,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -58,12 +59,13 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 250.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 100.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 5.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.0);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
       new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 90.0);
@@ -101,6 +103,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
     slot0Configs = new Slot0Configs();
     updateSlot0Configs();
+    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
+    slot0Configs.GravityArmPositionOffset = Constants.ShooterHood.BOTTOM_POSITION;
 
     motionMagicConfigs = new MotionMagicConfigs();
     updateMotionMagicConfigs();
@@ -237,6 +241,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
+    slot0Configs.kG = kG.get();
   }
 
   private void updateMotionMagicConfigs() {
@@ -261,7 +266,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         kD,
         kS,
         kV,
-        kA);
+        kA,
+        kG);
 
     LoggedTunableNumber.ifChanged(
         hashCode() + 1,

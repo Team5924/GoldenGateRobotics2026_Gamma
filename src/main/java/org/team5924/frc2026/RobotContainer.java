@@ -49,6 +49,7 @@ import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
@@ -86,15 +87,15 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = true;
-  private final boolean realVision = true;
-  private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
-  private final boolean realHopper = true;
+  private final boolean realDrive = false;
+  private final boolean realVision = false;
+  private final boolean realIntake = false;
+  private final boolean realIntakePivot = false;
+  private final boolean realHopper = false;
 
-  private final boolean realIndexer = true;
+  private final boolean realIndexer = false;
   private final boolean realShooterHood = true;
-  private final boolean realFlywheel = true;
+  private final boolean realFlywheel = false;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -274,6 +275,26 @@ public class RobotContainer {
 
     configureLeftBumperBindings();
     configureRightBumperBindings();
+
+    driveController
+        .rightStick()
+        .onChange(
+            (Commands.runOnce(
+                () -> shooterHood.runManual(driveController.getRightX()), shooterHood)));
+
+    driveController
+        .rightTrigger()
+        .onTrue(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
+    driveController
+        .rightTrigger()
+        .onFalse(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.ZERO), shooterHood));
+
+    driveController
+        .leftTrigger()
+        .onTrue(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
+    driveController
+        .leftTrigger()
+        .onFalse(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.ZERO), shooterHood));
 
     // TODO: auto shooting, hood
   }

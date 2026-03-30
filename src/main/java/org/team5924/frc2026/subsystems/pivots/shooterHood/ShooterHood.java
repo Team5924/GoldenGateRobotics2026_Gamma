@@ -46,8 +46,8 @@ public class ShooterHood extends SubsystemBase {
 
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
-    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
-    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
+    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(40))),
+    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(20))),
     AUTO(() -> 0.0),
 
     // in-between state
@@ -70,12 +70,12 @@ public class ShooterHood extends SubsystemBase {
   private double input;
   private double autoInput = 0.0;
 
-  public void setInput(DoubleSupplier inputSupplier) {
-    input = inputSupplier.getAsDouble();
+  public void setInput(double input) {
+    this.input = input;
   }
 
-  public void runManual(DoubleSupplier inputSupplier) {
-    setInput(inputSupplier);
+  public void runManual(double input) {
+    setInput(input);
     setGoalState(ShooterHoodState.MANUAL);
   }
 
