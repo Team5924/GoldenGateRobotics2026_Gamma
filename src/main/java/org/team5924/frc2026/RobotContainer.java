@@ -53,6 +53,7 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOSim;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOTalonFX;
@@ -86,14 +87,14 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = true;
-  private final boolean realVision = true;
+  private final boolean realDrive = false;
+  private final boolean realVision = false;
   private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
-  private final boolean realHopper = true;
+  private final boolean realIntakePivot = false;
 
+  private final boolean realHopper = true;
   private final boolean realIndexer = true;
-  private final boolean realShooterHood = true;
+  private final boolean realShooterHood = false;
   private final boolean realFlywheel = true;
 
   // Controller
@@ -270,7 +271,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureDriveBindings();
 
-    configureDefaultCommands();
+    // configureDefaultCommands();
 
     configureLeftBumperBindings();
     configureRightBumperBindings();
@@ -375,9 +376,11 @@ public class RobotContainer {
                 () -> {
                   flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH);
                   indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                  hopper.setGoalState(HopperState.ON);
                 },
                 flywheel,
-                indexer));
+                indexer,
+                hopper));
 
     // [left bumper released] -> turn off flywheel and indexer
     driveController
@@ -387,9 +390,11 @@ public class RobotContainer {
                 () -> {
                   flywheel.setGoalState(Flywheel.FlywheelState.OFF);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
+                  hopper.setGoalState(HopperState.OFF);
                 },
                 flywheel,
-                indexer));
+                indexer,
+                hopper));
   }
 
   /**
