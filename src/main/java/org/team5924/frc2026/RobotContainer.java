@@ -87,14 +87,14 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = false;
-  private final boolean realVision = false;
+  private final boolean realDrive = true;
+  private final boolean realVision = true;
   private final boolean realIntake = true;
   private final boolean realIntakePivot = false;
 
   private final boolean realHopper = true;
   private final boolean realIndexer = true;
-  private final boolean realShooterHood = false;
+  private final boolean realShooterHood = true;
   private final boolean realFlywheel = true;
 
   // Controller
