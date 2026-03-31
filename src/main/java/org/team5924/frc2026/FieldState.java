@@ -29,9 +29,9 @@ public class FieldState {
     return instance;
   }
 
-  /** returns the current match time in seconds */
+  /** returns the current time in seconds (counting up) */
   public double getTime() {
-    return DriverStation.getMatchTime();
+    return ((double) Logger.getTimestamp() * 1.0E-6);
   }
 
   public enum MatchShift {
@@ -61,7 +61,7 @@ public class FieldState {
   private boolean hasAlliance = true;
 
   private MatchShift calculateCurrentMatchShift() {
-    double time = getTime();
+    double time = DriverStation.getMatchTime();
 
     if (DriverStation.isAutonomousEnabled()) {
       return MatchShift.AUTO;
@@ -80,7 +80,7 @@ public class FieldState {
 
   public void logData() {
     Logger.recordOutput("FieldState/isHubActive", isHubActive());
-    Logger.recordOutput("FieldState/MatchTime", getTime());
+    Logger.recordOutput("FieldState/MatchTime", DriverStation.getMatchTime());
     Logger.recordOutput("FieldState/MatchShift", currentMatchShift.toString());
     Logger.recordOutput("FieldState/isAutoWinner", isAutoWinner);
     Logger.recordOutput("FieldState/hasAutoWinner", hasAutoWinner);
