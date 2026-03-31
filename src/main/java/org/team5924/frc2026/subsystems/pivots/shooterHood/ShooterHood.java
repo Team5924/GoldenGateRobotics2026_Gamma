@@ -119,7 +119,7 @@ public class ShooterHood extends SubsystemBase {
     Logger.recordOutput("ShooterHood/TimeSinceLastStateChange", timeSinceLastStateChange);
   }
 
-  public void runVolts(double volts) {
+  public void runCurrent(double volts) {
     io.runCurrent(volts);
   }
 
@@ -196,6 +196,6 @@ public class ShooterHood extends SubsystemBase {
       return;
     }
 
-    runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
+    runCurrent(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }
 }
