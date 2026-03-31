@@ -27,7 +27,6 @@ import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -61,18 +60,18 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 0.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 250.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD",7.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.0);
-  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 3.5);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 5.5);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 30.0);
+      new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 300.0);
+      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 100.0);
   private final LoggedTunableNumber motionJerk =
       new LoggedTunableNumber("ShooterHood/MotionJerk", 0.0);
 
@@ -106,7 +105,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
     slot0Configs = new Slot0Configs();
     updateSlot0Configs();
-    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
+    slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
     slot0Configs.GravityArmPositionOffset = Constants.ShooterHood.BOTTOM_POSITION;
 
     motionMagicConfigs = new MotionMagicConfigs();

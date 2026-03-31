@@ -42,12 +42,13 @@ public class ShooterHood extends SubsystemBase {
     ZERO(() -> 0.0),
 
     // current speed at which to rotate the hood
-    MANUAL((new LoggedTunableNumber("ShooterHood/ManualCurrent", 4))),
+    MANUAL((new LoggedTunableNumber("ShooterHood/ManualCurrent", 12))),
 
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
-    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(40))),
-    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(20))),
+    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(40.0))),
+    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(20.0))),
+    BOTTOM(new LoggedTunableNumber("ShooterHood/BottomAngle", Math.toRadians(5.0))),
     AUTO(() -> 0.0),
 
     // in-between state

@@ -269,7 +269,7 @@ public final class Constants {
       new FeedbackConfigs()
         .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
