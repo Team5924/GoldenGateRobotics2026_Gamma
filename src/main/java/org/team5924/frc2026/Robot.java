@@ -53,7 +53,11 @@ public class Robot extends LoggedRobot {
           AlertType.kWarning);
 
   private final Notifier updateMatchShift =
-      new Notifier(FieldState.getInstance()::updateCurrentMatchShift);
+      new Notifier(
+          () -> {
+            MatchState.getInstance().updateCurrentMatchShift();
+            MatchState.getInstance().logData();
+          });
 
   public Robot() {
     // Record metadata
