@@ -23,15 +23,15 @@ import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 
 public class FieldState {
-  private static FieldState instance;
+  private static FieldState instance = new FieldState();
 
-  public static FieldState getInstance() {
-    return (instance == null) ? instance = new FieldState() : instance;
+  public static synchronized FieldState getInstance() {
+    return instance;
   }
 
   /** returns the current match time in seconds */
   public double getTime() {
-    return ((double) Logger.getTimestamp() * 1.0E-6);
+    return DriverStation.getMatchTime();
   }
 
   public enum MatchShift {
@@ -52,13 +52,13 @@ public class FieldState {
     130, 105, 80, 55, 30, 0
   };
 
-  @Getter private MatchShift currentMatchShift = MatchShift.NONE;
+  @Getter private volatile MatchShift currentMatchShift = MatchShift.NONE;
 
   private boolean isAutoWinner = false; // is robot alliance the alliance winner
-  private boolean hasAutoWinner = false;
+  private boolean hasAutoWinner = true;
 
-  private boolean isBlue = false;
-  private boolean hasAlliance = false;
+  private boolean isBlue = true;
+  private boolean hasAlliance = true;
 
   private MatchShift calculateCurrentMatchShift() {
     double time = getTime();
@@ -76,13 +76,22 @@ public class FieldState {
 
   public void updateCurrentMatchShift() {
     currentMatchShift = calculateCurrentMatchShift();
-    Logger.recordMetadata("FieldState/MatchShift", currentMatchShift.toString());
+  }
+
+  public void logData() {
+    Logger.recordOutput("FieldState/isHubActive", isHubActive());
+    Logger.recordOutput("FieldState/MatchTime", getTime());
+    Logger.recordOutput("FieldState/MatchShift", currentMatchShift.toString());
+    Logger.recordOutput("FieldState/isAutoWinner", isAutoWinner);
+    Logger.recordOutput("FieldState/hasAutoWinner", hasAutoWinner);
+    Logger.recordOutput("FieldState/isBlue", isBlue);
+    Logger.recordOutput("FieldState/hasAlliance", hasAlliance);
   }
 
   /**
    * updates alliance
    *
-   * @return hasAlliance q
+   * @return hasAlliance
    */
   public boolean updateAlliance() {
     Optional<Alliance> optionalAlliance = DriverStation.getAlliance();
@@ -91,7 +100,7 @@ public class FieldState {
     }
 
     isBlue = optionalAlliance.get().equals(Alliance.Blue);
-    return true;
+    return hasAlliance = true;
   }
 
   /**
@@ -144,8 +153,8 @@ public class FieldState {
         }
 
         return switch (currentMatchShift) {
-          case SHIFT_ONE, SHIFT_THREE ->  !isAutoWinner;
-          case SHIFT_TWO, SHIFT_FOUR ->  isAutoWinner;
+          case SHIFT_ONE, SHIFT_THREE -> !isAutoWinner;
+          case SHIFT_TWO, SHIFT_FOUR -> isAutoWinner;
           default -> true;
         };
       }
