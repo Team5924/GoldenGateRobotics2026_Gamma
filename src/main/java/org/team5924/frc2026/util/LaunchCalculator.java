@@ -434,7 +434,9 @@ public class LaunchCalculator {
                     -1.0,
                     1.0)));
     Rotation2d driveAngle =
-        fieldToHubAngle.plus(hubAngle).plus(robotToLauncher.getRotation().toRotation2d());
+        fieldToHubAngle
+            .plus(hubAngle)
+            .plus(robotToLauncher.getRotation().toRotation2d().plus(new Rotation2d(Math.PI)));
     return driveAngle;
   }
 
