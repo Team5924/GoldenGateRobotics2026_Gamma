@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.FieldState;
+import org.team5924.frc2026.MatchState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -118,7 +118,7 @@ public class IntakePivot extends SubsystemBase {
       default -> currentState = IntakePivotState.MOVING;
     }
 
-    lastStateChange = FieldState.getInstance().getTime();
+    lastStateChange = MatchState.getInstance().getTime();
   }
 
   @SuppressWarnings({"unused"})
@@ -130,7 +130,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   private void handleCurrentState() {
-    timeSinceLastStateChange = FieldState.getInstance().getTime() - lastStateChange;
+    timeSinceLastStateChange = MatchState.getInstance().getTime() - lastStateChange;
     isAtSetpoint = isAtSetpoint();
 
     switch (currentState) {

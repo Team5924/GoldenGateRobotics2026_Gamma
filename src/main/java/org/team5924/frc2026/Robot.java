@@ -55,8 +55,8 @@ public class Robot extends LoggedRobot {
   private final Notifier updateMatchShift =
       new Notifier(
           () -> {
-            FieldState.getInstance().updateCurrentMatchShift();
-            FieldState.getInstance().logData();
+            MatchState.getInstance().updateCurrentMatchShift();
+            MatchState.getInstance().logData();
           });
 
   public Robot() {
