@@ -407,19 +407,7 @@ public class RobotContainer {
                 },
                 flywheel,
                 indexer));
-
-    shooterHood.setDefaultCommand(
-        Commands.runOnce(
-            () -> shooterHood.setGoalState(ShooterHood.ShooterHoodState.MANUAL), shooterHood));
-
-    driveController
-        .rightStick()
-        .onTrue(
-            Commands.run(
-                () -> shooterHood.setInput(() -> driveController.getRightY()), shooterHood));
-
-    // TODO: auto shooting
-  }
+    }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

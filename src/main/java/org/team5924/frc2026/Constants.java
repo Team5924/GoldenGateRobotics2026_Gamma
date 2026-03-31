@@ -16,7 +16,9 @@
 
 package org.team5924.frc2026;
 
+import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperElevatorState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
+import org.team5924.frc2026.util.ElevatorUtil;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -305,5 +307,63 @@ public final class Constants {
         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
         .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
         .withRotorToSensorRatio(1.0);
+  }
+  public final class HopperElevator {
+    /*Motor */
+    public static final int CAN_ID = 0; // Update value
+    public static final String BUS = "rio";
+    public static final double SIM_MOI = 0.001;
+
+    /* Cancoder */
+    public static final int CANCODER_ID = 0; //Update value
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // Update value
+    public static final double PULLEY_RADIUS_METERS = Units.inchesToMeters(1.23); // Update value
+
+    public static final double CANCODER_TO_MECHANISM = 1.67;
+    public static final double MOTOR_TO_MECHANISM = 1.67;
+
+    public static final double EPSILON_METERS = Units.inchesToMeters(0.2);
+    public static final double STATE_TIMEOUT = 5.0;
+    public static final boolean ENABLE_TIMEOUT = false;
+
+    public static final double MIN_POSITION_ROTATIONS = 0.0 - ElevatorUtil.metersToRotations(EPSILON_METERS);
+    public static final double MAX_POSITION_ROTATIONS = 
+      ElevatorUtil.metersToRotations(HopperElevatorState.EXTENDED.getHeightMeters().getAsDouble() + EPSILON_METERS);
+
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
+
+     public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+      public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+        new SoftwareLimitSwitchConfigs()
+            .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
+            .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false);
+
+      public static final FeedbackConfigs FEEDBACK_CONFIGS = // Update these configs
+        new FeedbackConfigs()
+          .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+          .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
+          .withRotorToSensorRatio(1.0)
+          .withFeedbackRemoteSensorID(CANCODER_ID)
+          .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
+
+      public static final MagnetSensorConfigs CANCODER_CONFIGS =
+        new MagnetSensorConfigs()
+          .withAbsoluteSensorDiscontinuityPoint(1.0)
+          .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+          .withMagnetOffset(0.0); // Update value
+      
   }
 }
