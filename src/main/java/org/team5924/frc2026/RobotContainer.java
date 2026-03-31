@@ -276,25 +276,40 @@ public class RobotContainer {
     configureLeftBumperBindings();
     configureRightBumperBindings();
 
-    driveController
-        .rightStick()
-        .onChange(
-            (Commands.runOnce(
-                () -> shooterHood.runManual(driveController.getRightX()), shooterHood)));
+    shooterHood.setDefaultCommand(
+        (Commands.run(
+            () -> shooterHood.runManual(() -> -driveController.getRightY()), shooterHood)));
 
     driveController
         .rightTrigger()
-        .onTrue(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
-    driveController
-        .rightTrigger()
-        .onFalse(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.ZERO), shooterHood));
+        .onTrue(
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
+    // driveController
+    //     .rightTrigger()
+    //     .onFalse(
+    //         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
 
     driveController
         .leftTrigger()
-        .onTrue(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
+        .onTrue(
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
+    // driveController
+    //     .leftTrigger()
+    //     .onFalse(
+    //         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
+
     driveController
-        .leftTrigger()
-        .onFalse(Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.ZERO), shooterHood));
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.ZERO), shooterHood));
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
+    // driveController
+    //     .y()
+    //     .onFalse(
+    //         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
 
     // TODO: auto shooting, hood
   }

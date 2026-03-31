@@ -24,7 +24,9 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -59,18 +61,18 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 100.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 0.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 5.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.0);
-  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 0.0);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 3.5);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 30.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 900.0);
+      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 300.0);
   private final LoggedTunableNumber motionJerk =
       new LoggedTunableNumber("ShooterHood/MotionJerk", 0.0);
 
@@ -91,9 +93,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double prevClosedLoopReferenceSlope = 0.0;
   private double prevReferenceSlopeTimestamp = 0.0;
 
-  private final VoltageOut voltageOut;
+  private final TorqueCurrentFOC currentOut;
   private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
+  private final NeutralOut neutralOut;
 
   public ShooterHoodIOTalonFX() {
     talon = new TalonFX(ShooterHood.CAN_ID, new CANBus(ShooterHood.BUS));
@@ -164,9 +167,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
     talon.optimizeBusUtilization();
 
-    voltageOut = new VoltageOut(0.0).withEnableFOC(true);
+    currentOut = new TorqueCurrentFOC(0.0);
     positionOut = new PositionVoltage(0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0).withSlot(0);
+    neutralOut = new NeutralOut().withUpdateFreqHz(0.0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 
@@ -285,8 +289,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   @Override
-  public void runVolts(double volts) {
-    talon.setControl(voltageOut.withOutput(volts));
+  public void runCurrent(double volts) {
+    talon.setControl(currentOut.withOutput(volts));
   }
 
   @Override
@@ -308,7 +312,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   @Override
   public void stop() {
-    talon.stopMotor();
+    talon.setControl(neutralOut);
   }
 
   private double clampRads(double rads) {

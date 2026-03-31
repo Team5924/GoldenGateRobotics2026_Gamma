@@ -41,8 +41,8 @@ public class ShooterHood extends SubsystemBase {
     OFF(() -> 0.0),
     ZERO(() -> 0.0),
 
-    // voltage speed at which to rotate the hood
-    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", 1))),
+    // current speed at which to rotate the hood
+    MANUAL((new LoggedTunableNumber("ShooterHood/ManualCurrent", 4))),
 
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
@@ -74,9 +74,11 @@ public class ShooterHood extends SubsystemBase {
     this.input = input;
   }
 
-  public void runManual(double input) {
-    setInput(input);
-    setGoalState(ShooterHoodState.MANUAL);
+  public void runManual(DoubleSupplier inputSupplier) {
+    // if (goalState != ShooterHoodState.OFF && goalState != ShooterHoodState.MANUAL) return;
+    setInput(inputSupplier.getAsDouble());
+
+    if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(ShooterHoodState.MANUAL);
   }
 
   public void setAutoInput(double inputRads) {
@@ -117,7 +119,7 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void runVolts(double volts) {
-    io.runVolts(volts);
+    io.runCurrent(volts);
   }
 
   public void setPosition(double rads) {
