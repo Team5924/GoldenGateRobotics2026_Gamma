@@ -60,7 +60,12 @@ public class MatchState {
   private boolean isBlue = true;
   private boolean hasAlliance = true;
 
+  private double lastShiftUpdateTime = 0.0;
+
+  private final double UPDATE_TIME_THRESHOLD = 1.0;
+
   private MatchShift calculateCurrentMatchShift() {
+    lastShiftUpdateTime = getTime();
     double time = DriverStation.getMatchTime();
 
     if (DriverStation.isAutonomousEnabled()) {
@@ -133,7 +138,7 @@ public class MatchState {
   }
 
   public boolean isHubActive() {
-    updateCurrentMatchShift();
+    if (getTime() - lastShiftUpdateTime > UPDATE_TIME_THRESHOLD) updateCurrentMatchShift();
 
     switch (currentMatchShift) {
       case AUTO, TRANSITION, END_GAME, NONE, INVALID -> {
