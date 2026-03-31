@@ -89,11 +89,13 @@ public class RobotContainer {
   // Real/IO implementation
   private final boolean realDrive = true;
   private final boolean realVision = true;
+
   private final boolean realIntake = true;
-  private final boolean realIntakePivot = false;
+  private final boolean realIntakePivot = true;
 
   private final boolean realHopper = true;
   private final boolean realIndexer = true;
+
   private final boolean realShooterHood = true;
   private final boolean realFlywheel = true;
 
@@ -271,7 +273,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureDriveBindings();
 
-    // configureDefaultCommands();
+    configureDefaultCommands();
 
     configureLeftBumperBindings();
     configureRightBumperBindings();
