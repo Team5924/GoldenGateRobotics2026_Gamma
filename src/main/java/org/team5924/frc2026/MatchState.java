@@ -55,10 +55,10 @@ public class MatchState {
   @Getter private volatile MatchShift currentMatchShift = MatchShift.NONE;
 
   private boolean isAutoWinner = false; // is robot alliance the alliance winner
-  private boolean hasAutoWinner = true;
+  private boolean hasAutoWinner = false;
 
-  private boolean isBlue = true;
-  private boolean hasAlliance = true;
+  private boolean isBlue = false;
+  private boolean hasAlliance = false;
 
   private double lastShiftUpdateTime = 0.0;
 
