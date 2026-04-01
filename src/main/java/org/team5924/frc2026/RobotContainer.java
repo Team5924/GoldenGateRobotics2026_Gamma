@@ -128,17 +128,17 @@ public class RobotContainer {
                     new ModuleIO() {},
                     (pose) -> {});
 
-         // TODO: uncommment once we receive measurements
+        // TODO: uncommment once we receive measurements
         vision =
             realVision
                 ? new Vision(
                     drive::addVisionMeasurement,
                     new VisionIOPhotonVision(
                         VisionConstants.FRONT_NAME, VisionConstants.FRONT_TRANSFORM))
-                    // new VisionIOPhotonVision(
-                    //     VisionConstants.LEFT_NAME, VisionConstants.LEFT_TRANSFORM),
-                    // new VisionIOPhotonVision(
-                    //     VisionConstants.RIGHT_NAME, VisionConstants.RIGHT_TRANSFORM))
+                // new VisionIOPhotonVision(
+                //     VisionConstants.LEFT_NAME, VisionConstants.LEFT_TRANSFORM),
+                // new VisionIOPhotonVision(
+                //     VisionConstants.RIGHT_NAME, VisionConstants.RIGHT_TRANSFORM))
                 : null;
 
         intake = realIntake ? new Intake(new IntakeIOTalonFX()) : new Intake(new IntakeIO() {});
@@ -173,7 +173,7 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
-        
+
         // TODO: uncommment once we receive measurements
         vision =
             new Vision(
@@ -183,16 +183,16 @@ public class RobotContainer {
                     VisionConstants.FRONT_TRANSFORM,
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
                     driveSimulation::getSimulatedDriveTrainPose));
-                // new VisionIOPhotonVisionSim(
-                //     VisionConstants.LEFT_NAME,
-                //     VisionConstants.LEFT_TRANSFORM,
-                //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                //     driveSimulation::getSimulatedDriveTrainPose),
-                // new VisionIOPhotonVisionSim(
-                //     VisionConstants.RIGHT_NAME,
-                //     VisionConstants.RIGHT_TRANSFORM,
-                //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                //     driveSimulation::getSimulatedDriveTrainPose));
+        // new VisionIOPhotonVisionSim(
+        //     VisionConstants.LEFT_NAME,
+        //     VisionConstants.LEFT_TRANSFORM,
+        //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+        //     driveSimulation::getSimulatedDriveTrainPose),
+        // new VisionIOPhotonVisionSim(
+        //     VisionConstants.RIGHT_NAME,
+        //     VisionConstants.RIGHT_TRANSFORM,
+        //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+        //     driveSimulation::getSimulatedDriveTrainPose));
 
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());

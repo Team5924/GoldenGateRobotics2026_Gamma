@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,9 +44,12 @@ public class IntakePivot extends SubsystemBase {
     MOVING(() -> 0.0),
 
     DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0)),
-    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 2.05)),
-    PHYSICAL_STOW(() -> 2.1),
-    SHOOTING(new LoggedTunableNumber("IntakePivot/ShootingRads", 1.5)),
+    STOW(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(180.0 - 47.933))),
+
+    // for testing
+    CENTER(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(120.0))),
+
+    SHOOTING(new LoggedTunableNumber("IntakePivot/ShootingRads", Units.degreesToRadians(90.0))),
 
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("IntakePivot/OperatorCurrent", 12.5));

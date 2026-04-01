@@ -147,7 +147,7 @@ public final class Constants {
     public static final double SIM_MOI = 0.001;
 
     public static final double MOTOR_TO_MECHANISM =
-      (4.0 / 1.0) * (4.0 / 1.0) * (54.0 / 20.0) * (32.0 / 12.0);
+      (9.0 / 1.0) * (5.0 / 1.0) * (44.0 / 30.0) * (32.0 / 12.0);
 
     public static final double EPSILON_RADS = Units.degreesToRadians(5.0); // 0.035 rads
     public static final double STATE_TIMEOUT = 5.0;

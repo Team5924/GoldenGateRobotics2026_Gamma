@@ -34,21 +34,17 @@ public class VisionConstants {
   public static final Transform3d FRONT_TRANSFORM =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(-1.601),
-              Units.inchesToMeters(0.0),
-              Units.inchesToMeters(0.0)),
+              Units.inchesToMeters(-1.601), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
           new Rotation3d(
               Units.degreesToRadians(0.0),
               Units.degreesToRadians(-55.0),
               Units.degreesToRadians(0.0)));
 
-    // TODO: update left and right measurements once we get values
+  // TODO: update left and right measurements once we get values
   public static final Transform3d LEFT_TRANSFORM =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(0.0),
-              Units.inchesToMeters(0.0),
-              Units.inchesToMeters(0.0)),
+              Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
           new Rotation3d(
               Units.degreesToRadians(0.0),
               Units.degreesToRadians(0.0),
@@ -57,9 +53,7 @@ public class VisionConstants {
   public static final Transform3d RIGHT_TRANSFORM =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(0.0),
-              Units.inchesToMeters(0.0),
-              Units.inchesToMeters(0.0)),
+              Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
           new Rotation3d(
               Units.degreesToRadians(0.0),
               Units.degreesToRadians(0.0),
