@@ -53,6 +53,7 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOSim;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOTalonFX;
@@ -88,11 +89,13 @@ public class RobotContainer {
   // Real/IO implementation
   private final boolean realDrive = true;
   private final boolean realVision = true;
+
   private final boolean realIntake = true;
   private final boolean realIntakePivot = true;
-  private final boolean realHopper = true;
 
+  private final boolean realHopper = true;
   private final boolean realIndexer = true;
+
   private final boolean realShooterHood = true;
   private final boolean realFlywheel = true;
 
@@ -298,40 +301,27 @@ public class RobotContainer {
 
   private void configureDriveBindings() {
     // Default command, normal field-relative drive
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -driveController.getRawAxis(0),
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getRawAxis(2)));
-    } else {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getLeftX(),
-              () -> -driveController.getRightX()));
-    }
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
     // [driver] SLOW MODE YIPE
     driveController
         .y()
-        .onTrue(
+        .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
                 () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // [driver] 0-DEGREE MODE
     driveController
-        .a()
-        .onTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> Rotation2d.kZero));
+        .rightTrigger()
+        .whileTrue(
+            DriveCommands.joystickDriveWhileLaunching(
+                drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -393,9 +383,11 @@ public class RobotContainer {
                 () -> {
                   flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH);
                   indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                  hopper.setGoalState(HopperState.ON);
                 },
                 flywheel,
-                indexer));
+                indexer,
+                hopper));
 
     // [left bumper released] -> turn off flywheel and indexer
     driveController
@@ -405,9 +397,11 @@ public class RobotContainer {
                 () -> {
                   flywheel.setGoalState(Flywheel.FlywheelState.OFF);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
+                  hopper.setGoalState(HopperState.OFF);
                 },
                 flywheel,
-                indexer));
+                indexer,
+                hopper));
   }
 
   /**
