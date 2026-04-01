@@ -1,5 +1,5 @@
 /*
- * ShooterHoodIO.java
+ * HopperElevatorIO.java
  */
 
 /* 
@@ -14,27 +14,33 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.pivots.shooterHood;
+package org.team5924.frc2026.subsystems.hopperElevator;
 
+import lombok.Getter;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ShooterHoodIO {
+public interface HopperElevatorIO {
   @AutoLog
-  public static class ShooterHoodIOInputs {
+  @Getter
+  public static class HopperElevatorIOInputs {
     public boolean motorConnected = true;
+
     public double position = 0.0;
     public double positionRads = 0.0;
-    public double positionCancoder = 0.0;
     public double velocityRadsPerSec = 0.0;
-    public double appliedVoltage = 0.0;
+    public double appliedVolts = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
     public double tempCelsius = 0.0;
 
+    public double positionMeters = 0.0;
+    public double velMetersPerSecond = 0.0;
+
     public double motionMagicVelocityTarget = 0.0;
     public double motionMagicPositionTarget = 0.0;
 
-    public double setpointRads = 0.0;
+    public double setpointMeters = 0.0;
+
     public double acceleration = 0.0;
 
     public boolean cancoderConnected = true;
@@ -44,36 +50,13 @@ public interface ShooterHoodIO {
     public double cancoderPositionRotations = 0.0;
   }
 
-  /**
-   * Updates the inputs object with the latest data from hardware
-   *
-   * @param inputs Inputs to update
-   */
-  public default void updateInputs(ShooterHoodIOInputs inputs) {}
+  public default void updateInputs(HopperElevatorIOInputs inputs) {}
 
-  /** Updates that are be called in shooter hood periodic */
   public default void periodicUpdates() {}
 
-  /**
-   * Sets the subsystem motor to the specified voltage
-   *
-   * @param volts number of volts
-   */
   public default void runVolts(double volts) {}
 
-  /**
-   * Sets the turret motor to a specified angle
-   *
-   * @param rads target angle
-   */
-  public default void setPosition(double rads) {}
+  public default void setHeight(double heightMeters) {}
 
-  /** Holds the turret motor at a set position */
-  public default void holdPosition(double rads) {}
-
-  /** stops the motor */
-  default void stop() {}
-
-  /** Sets the shooter hood position to specified rads from center */
-  default void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {}
+  public default void stop() {}
 }

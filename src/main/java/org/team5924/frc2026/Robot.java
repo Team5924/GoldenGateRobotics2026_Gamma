@@ -19,12 +19,12 @@ package org.team5924.frc2026;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,6 +37,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.LaunchCalculator;
 
 public class Robot extends LoggedRobot {
   private static final double LOW_BATTERY_VOLTAGE = 11.0;
@@ -50,6 +51,13 @@ public class Robot extends LoggedRobot {
       new Alert(
           "Battery voltage is very low, turn off the robot or replace the battery to avoid damage.",
           AlertType.kWarning);
+
+  private final Notifier updateMatchShift =
+      new Notifier(
+          () -> {
+            MatchState.getInstance().updateCurrentMatchShift();
+            MatchState.getInstance().logData();
+          });
 
   public Robot() {
     // Record metadata
@@ -114,13 +122,14 @@ public class Robot extends LoggedRobot {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Camera stream for Elastic
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
 
     // Silence joystick alerts
     DriverStation.silenceJoystickConnectionWarning(true);
 
     // Reset alert timers
     disabledTimer.restart();
+    lowBatteryAlert.set(false);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -144,11 +153,6 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
 
-    // Low battery alert
-    if (DriverStation.isEnabled()) {
-      disabledTimer.reset();
-      lowBatteryAlert.set(false);
-    }
     double batteryVoltage = RobotController.getBatteryVoltage();
     if (batteryVoltage > 0.0
         && batteryVoltage <= LOW_BATTERY_VOLTAGE
@@ -158,12 +162,15 @@ public class Robot extends LoggedRobot {
     } else {
       lowBatteryAlert.set(false);
     }
+
+    LaunchCalculator.getInstance().clearLaunchingParameters();
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
     robotContainer.resetSimulationField();
+    updateMatchShift.stop();
   }
 
   /** This function is called periodically when disabled. */
@@ -179,6 +186,8 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
     }
+
+    updateMatchShift.startPeriodic(0.2);
   }
 
   /** This function is called periodically during autonomous. */
@@ -195,6 +204,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    updateMatchShift.startPeriodic(0.2);
 
     Elastic.selectTab("Teleoperated");
   }

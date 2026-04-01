@@ -134,7 +134,11 @@ public class Drive extends SubsystemBase {
           "Gyro Disconnected",
           "Disconnected gyro, using kinematics as fallback.");
 
+  private final Notification gyroOverheatNotification =
+      new Notification(NotificationLevel.WARNING, "Motor Overheat", "Motor Overheat Imminent");
+
   private boolean wasGyroConnected = true;
+  private boolean wasOverheating = false;
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
@@ -295,6 +299,7 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
+    RobotState.getInstance().setRobotVelocity(getChassisSpeeds());
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
@@ -304,13 +309,23 @@ public class Drive extends SubsystemBase {
 
     // Update RobotState
     RobotState.getInstance().setOdometryPose(getPose());
-    RobotState.getInstance().setEstimatedPose(getPose());
+    Logger.recordOutput("RobotState/OdometryPose", getPose());
+
     RobotState.getInstance().setRobotChassisSpeeds(getChassisSpeeds());
 
     // prevents error spam
     if (!gyroInputs.connected && wasGyroConnected) {
       Elastic.sendNotification(gyroDisconnectedNotification);
     }
+
+    boolean isOverheating = (gyroInputs.temperature > Constants.OVERHEAT_THRESHOLD);
+
+    // prevents error spam
+    if (isOverheating && !wasOverheating) {
+      Elastic.sendNotification(gyroOverheatNotification);
+    }
+    wasOverheating = isOverheating;
+
     wasGyroConnected = gyroInputs.connected;
   }
 
@@ -344,6 +359,8 @@ public class Drive extends SubsystemBase {
       modules[i].runSetpoint(setpointStates[i]);
     }
 
+    RobotState.getInstance().setRobotSetpointVelocity(discreteSpeeds);
+
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
@@ -372,6 +389,7 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       modules[i].runCharacterization(output);
     }
+    RobotState.getInstance().setRobotSetpointVelocity(new ChassisSpeeds());
   }
 
   /** Stops the drive. */

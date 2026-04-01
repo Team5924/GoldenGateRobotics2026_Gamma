@@ -1,5 +1,5 @@
 /*
- * ShooterHoodIOTalonFX.java
+ * HopperElevatorIOTalonFX.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.pivots.shooterHood;
+package org.team5924.frc2026.subsystems.hopperElevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -24,55 +24,51 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.MathUtil;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.Constants.ShooterHood;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
+import org.team5924.frc2026.util.ElevatorUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
-public class ShooterHoodIOTalonFX implements ShooterHoodIO {
-  /* Hardware */
+public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   private final TalonFX talon;
   private final CANcoder cancoder;
 
   /* Configurators */
   private final TalonFXConfigurator talonConfig;
 
-  /* Configs */
+  /* Configs  */
   private final Slot0Configs slot0Configs;
   private final MotionMagicConfigs motionMagicConfigs;
-  private double setpointRads;
-
-  /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 250.0);
-  private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 5.0);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.0);
+  private double setpointMeters;
+  /* Logged Tunable Numbers */
+  private final LoggedTunableNumber kP =
+      new LoggedTunableNumber("HopperElevator/kP", 40.0); // TODO: tune all these
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("HopperElevator/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("HopperElevator/kD", 0.0);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("HopperElevator/kS", 0.2);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("HopperElevator/kV", 0.0);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("HopperElevator/kG", 2.8);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("HopperElevator/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("HopperElevator/MotionCruiseVelocity", 100.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 900.0);
+      new LoggedTunableNumber("HopperElevator/MotionAcceleration", 1000.0);
   private final LoggedTunableNumber motionJerk =
-      new LoggedTunableNumber("ShooterHood/MotionJerk", 0.0);
-
-  /* Status Signals */
+      new LoggedTunableNumber("HopperElevator/MotionJerk", 0.0);
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVoltage;
@@ -90,44 +86,52 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double prevReferenceSlopeTimestamp = 0.0;
 
   private final VoltageOut voltageOut;
-  private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
-  public ShooterHoodIOTalonFX() {
-    talon = new TalonFX(ShooterHood.CAN_ID, new CANBus(ShooterHood.BUS));
-    cancoder = new CANcoder(ShooterHood.CANCODER_ID, new CANBus(ShooterHood.BUS));
-
+  public HopperElevatorIOTalonFX() {
+    talon = new TalonFX(Constants.HopperElevator.CAN_ID, new CANBus(Constants.HopperElevator.BUS));
+    cancoder =
+        new CANcoder(
+            Constants.HopperElevator.CANCODER_ID, new CANBus(Constants.HopperElevator.BUS));
     talonConfig = talon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
-    updateSlot0Configs();
+    slot0Configs.kP = kP.get();
+    slot0Configs.kI = kI.get();
+    slot0Configs.kD = kD.get();
+    slot0Configs.kS = kS.get();
+    slot0Configs.kV = kV.get();
+    slot0Configs.kA = kA.get();
+    slot0Configs.kG = kG.get();
+    slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
 
     motionMagicConfigs = new MotionMagicConfigs();
-    updateMotionMagicConfigs();
+    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+    motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+    motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[8];
 
-    statusArray[0] = talonConfig.apply(ShooterHood.CONFIG);
+    statusArray[0] = talonConfig.apply(Constants.HopperElevator.CONFIG);
     statusArray[1] = talonConfig.apply(slot0Configs);
     statusArray[2] = talonConfig.apply(motionMagicConfigs);
     statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = talonConfig.apply(ShooterHood.SOFTWARE_LIMIT_CONFIGS);
-    statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
-    statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
-
+    statusArray[5] = talonConfig.apply(Constants.HopperElevator.FEEDBACK_CONFIGS);
+    statusArray[6] = cancoder.getConfigurator().apply(Constants.HopperElevator.CANCODER_CONFIGS);
+    statusArray[7] = talonConfig.apply(Constants.HopperElevator.SOFTWARE_LIMIT_CONFIGS);
     boolean isErrorPresent = false;
-    for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
+    for (StatusCode status : statusArray) if (!status.isOK()) isErrorPresent = true;
 
     if (isErrorPresent)
       Elastic.sendNotification(
           new Notification(
               NotificationLevel.WARNING,
-              "Shooter Hood Configs",
-              "Error in applying Shooter Hood configs!"));
+              "Hopper Elevator Configs",
+              "Error in applying Hopper Elevator configs!"));
 
-    Logger.recordOutput("ShooterHood/InitConfReport", statusArray);
+    Logger.recordOutput("HopperElevator/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
     position = talon.getPosition();
@@ -159,20 +163,20 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         closedLoopReferenceSlope);
 
     talon.optimizeBusUtilization();
+    cancoder.optimizeBusUtilization();
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    positionOut = new PositionVoltage(0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 
-    // this assumes that the shooter hood is starting at the bottom position
+    // assume elevator is fully stowed at robot turn on
     cancoder.setPosition(0.0);
     talon.setPosition(0.0);
   }
 
   @Override
-  public void updateInputs(ShooterHoodIOInputs inputs) {
+  public void updateInputs(HopperElevatorIOInputs inputs) {
     inputs.motorConnected =
         BaseStatusSignal.refreshAll(
                 position,
@@ -184,29 +188,23 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.cancoderConnected =
-        BaseStatusSignal.refreshAll(
-                cancoderAbsolutePosition,
-                cancoderVelocity,
-                cancoderSupplyVoltage,
-                cancoderPositionRotations)
-            .isOK();
-
     inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
-    inputs.positionRads = Units.rotationsToRadians(inputs.position);
-
+    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
-    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
+    inputs.appliedVolts = appliedVoltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
 
-    inputs.motionMagicVelocityTarget =
-        motorPositionToRads(talon.getClosedLoopReferenceSlope().getValueAsDouble());
-    inputs.motionMagicPositionTarget =
-        motorPositionToRads(talon.getClosedLoopReference().getValueAsDouble());
+    inputs.positionMeters = getHeight();
+    inputs.velMetersPerSecond = getVelocity();
 
-    inputs.setpointRads = setpointRads;
+    inputs.motionMagicVelocityTarget =
+        ElevatorUtil.rotationsToMeters(talon.getClosedLoopReferenceSlope().getValue());
+    inputs.motionMagicPositionTarget =
+        ElevatorUtil.rotationsToMeters(talon.getClosedLoopReference().getValue());
+
+    inputs.setpointMeters = setpointMeters;
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
     double timeDiff = currentTime - prevReferenceSlopeTimestamp;
@@ -216,44 +214,29 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     }
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
-
-    inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
-    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
-    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
-    inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
-
-    inputs.positionCancoder = Units.radiansToRotations(inputs.cancoderPositionRotations);
-  }
-
-  @Override
-  public void periodicUpdates() {
-    updateLoggedTunableNumbers();
-  }
-
-  private void updateSlot0Configs() {
-    slot0Configs.kP = kP.get();
-    slot0Configs.kI = kI.get();
-    slot0Configs.kD = kD.get();
-    slot0Configs.kS = kS.get();
-    slot0Configs.kV = kV.get();
-    slot0Configs.kA = kA.get();
-  }
-
-  private void updateMotionMagicConfigs() {
-    motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
-    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
-    motionMagicConfigs.MotionMagicJerk = motionJerk.get();
   }
 
   private void updateLoggedTunableNumbers() {
     LoggedTunableNumber.ifChanged(
         hashCode(),
         () -> {
-          updateSlot0Configs();
+          slot0Configs.kP = kP.get();
+          slot0Configs.kI = kI.get();
+          slot0Configs.kD = kD.get();
+          slot0Configs.kS = kS.get();
+          slot0Configs.kV = kV.get();
+          slot0Configs.kG = kG.get();
+          slot0Configs.kA = kA.get();
 
           StatusCode statusCode = talon.getConfigurator().apply(slot0Configs);
           if (!statusCode.isOK()) {
-            Logger.recordOutput("ShooterHood/UpdateSlot0Report", statusCode);
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "HopperElevator Slot 0 Configs",
+                    "Error in periodically updating hopperElevator Slot0 configs!"));
+
+            Logger.recordOutput("HopperElevator/UpdateSlot0Report", statusCode);
           }
         },
         kP,
@@ -261,21 +244,36 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         kD,
         kS,
         kV,
+        kG,
         kA);
 
     LoggedTunableNumber.ifChanged(
         hashCode() + 1,
         () -> {
-          updateMotionMagicConfigs();
+          motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+          motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+          motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
           StatusCode statusCode = talon.getConfigurator().apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
-            Logger.recordOutput("ShooterHood/UpdateStatusCodeReport", statusCode);
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "HopperElevator Motion Magic Configs",
+                    "Error in periodically updating hopperElevator MotionMagic configs!"));
+
+            Logger.recordOutput("HopperElevator/UpdateStatusCodeReport", statusCode);
           }
         },
         motionAcceleration,
         motionCruiseVelocity,
         motionJerk);
+  }
+
+  // updates LoggedTunables periodically
+  @Override
+  public void periodicUpdates() {
+    updateLoggedTunableNumbers();
   }
 
   @Override
@@ -284,36 +282,20 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   @Override
-  public void setPosition(double rads) {
-    if (!DriverStation.isEnabled()) {
-      stop();
-      return;
-    }
-
-    setpointRads = clampRads(rads);
-    talon.setControl(motionMagicCurrent.withPosition(radsToMotorPosition(setpointRads)));
+  public void setHeight(double heightMeters) {
+    setpointMeters = heightMeters;
+    talon.setControl(motionMagicCurrent.withPosition(ElevatorUtil.metersToRotations(heightMeters)));
   }
 
-  /* Unused but nice to have */
-  @Override
-  public void holdPosition(double rads) {
-    talon.setControl(positionOut.withPosition(radsToMotorPosition(rads)));
-  }
-
-  @Override
   public void stop() {
     talon.stopMotor();
   }
 
-  private double clampRads(double rads) {
-    return MathUtil.clamp(rads, ShooterHood.MIN_POSITION_RADS, ShooterHood.MAX_POSITION_RADS);
+  private double getHeight() {
+    return ElevatorUtil.rotationsToMeters(talon.getPosition().getValueAsDouble());
   }
 
-  private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads);
-  }
-
-  private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition);
+  private double getVelocity() {
+    return ElevatorUtil.rotationsToMeters(talon.getVelocity().getValueAsDouble());
   }
 }

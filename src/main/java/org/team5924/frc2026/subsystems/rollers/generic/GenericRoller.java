@@ -1,5 +1,5 @@
 /*
- * GenericRollerSystem.java
+ * GenericRoller.java
  */
 
 /* 
@@ -21,11 +21,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
+import org.team5924.frc2026.Constants;
 
-public abstract class GenericRollerSystem<State extends GenericRollerSystem.VoltageState>
+public abstract class GenericRoller<State extends GenericRoller.VoltageState>
     extends SubsystemBase {
   public interface VoltageState {
     DoubleSupplier getVoltageSupplier();
@@ -41,25 +39,20 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
 
   protected final String name;
 
-  protected final GenericRollerSystemIO io;
-  protected final GenericRollerSystemIOInputsAutoLogged inputs =
-      new GenericRollerSystemIOInputsAutoLogged();
+  protected final GenericRollerIO io;
+  protected final GenericRollerIOInputsAutoLogged inputs = new GenericRollerIOInputsAutoLogged();
 
-  protected final Alert disconnected;
-  protected final Notification disconnectedNotification;
-  protected boolean wasMotorConnected = true;
+  protected final Alert disconnectedAlert;
+  protected final Alert overheatAlert;
 
   protected final Timer stateTimer = new Timer();
 
-  public GenericRollerSystem(String name, GenericRollerSystemIO io) {
+  public GenericRoller(String name, GenericRollerIO io) {
     this.name = name;
     this.io = io;
 
-    disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
-
-    disconnectedNotification =
-        new Notification(
-            NotificationLevel.WARNING, name + " Warning", name + " motor disconnected!");
+    disconnectedAlert = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
+    overheatAlert = new Alert(name + " motor overheating!", Alert.AlertType.kWarning);
 
     stateTimer.start();
   }
@@ -68,7 +61,8 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(name, inputs);
-    disconnected.set(!inputs.motorConnected);
+    disconnectedAlert.set(!inputs.motorConnected);
+    overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
 
     if (getGoalState() != lastState) {
       stateTimer.reset();
@@ -76,12 +70,7 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
     }
 
     handleCurrentState();
-    Logger.recordOutput("Rollers/" + name + "Goal", getGoalState().toString());
-
-    if (!inputs.motorConnected && wasMotorConnected) {
-      Elastic.sendNotification(disconnectedNotification);
-    }
-    wasMotorConnected = inputs.motorConnected;
+    Logger.recordOutput("Rollers/" + name + "/Goal", getGoalState().toString());
   }
 
   protected void handleCurrentState() {

@@ -1,5 +1,5 @@
 /*
- * IntakeIOSim.java
+ * HopperIOSim.java
  */
 
 /* 
@@ -14,18 +14,15 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.intake;
+package org.team5924.frc2026.subsystems.rollers.hopper;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOSim;
 
-public class IntakeIOSim extends GenericRollerIOSim implements IntakeIO {
-  public IntakeIOSim() {
+public class HopperIOSim extends GenericRollerIOSim implements HopperIO {
+  public HopperIOSim() {
     super(
-        DCMotor.getKrakenX60Foc(1), Constants.Intake.SIM_MOI, Constants.Intake.MOTOR_TO_MECHANISM);
+        DCMotor.getKrakenX60Foc(1), Constants.Hopper.SIM_MOI, Constants.Hopper.MOTOR_TO_MECHANISM);
   }
-
-  // @Override
-  // public void updateFollowerInputs() {}
 }
