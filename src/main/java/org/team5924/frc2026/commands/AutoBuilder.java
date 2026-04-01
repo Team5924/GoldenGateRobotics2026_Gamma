@@ -56,11 +56,11 @@ public class AutoBuilder {
         () ->
             Commands.sequence(
                 startToHub(startingPositionSupplier.get()),
-                shootersOn(1.0), // TODO: Edit timout
-                shootersOff(),
+                shooterOn(1.0), // TODO: Edit timout
+                shooterOff(),
                 RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
                 // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-                ),
+            ),
         Set.of(drive, shooterHood, flywheel));
   }
 
@@ -73,16 +73,39 @@ public class AutoBuilder {
         () ->
             Commands.sequence(
                 startToHub(startingPositionSupplier.get()),
-                shootersOn(1.0), // TODO: edit timeouts
-                shootersOff(),
+                shooterOn(1.0), // TODO: edit timeouts
+                shooterOff(),
                 RobotContainer.autoFactory.trajectoryCmd("HubToDepot"),
                 intakeSequence(),
                 RobotContainer.autoFactory.trajectoryCmd("DepotToHub"),
-                shootersOn(1.0),
-                shootersOff(),
+                shooterOn(1.0),
+                shooterOff(),
                 RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
                 // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
+            ),
+        Set.of(drive, shooterHood, flywheel, intake));
+  }
+
+  public Command doubleSwipe() {
+    return Commands.defer(
+        () -> 
+            Commands.sequence(
+                RobotContainer.autoFactory.resetOdometry("Swipe1"),
+                Commands.deadline(
+                    RobotContainer.autoFactory.trajectoryCmd("Swipe1"),
+                    Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
                 ),
+                Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake),
+                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOff(),
+                Commands.deadline(
+                    RobotContainer.autoFactory.trajectoryCmd("Swipe2"),
+                    Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
+                ),
+                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOff(),
+                RobotContainer.autoFactory.trajectoryCmd("PostSwipe")
+            ), 
         Set.of(drive, shooterHood, flywheel, intake));
   }
 
@@ -96,14 +119,14 @@ public class AutoBuilder {
     }
   }
 
-  private Command shootersOn(double timeout) {
+  private Command shooterOn(double timeout) {
     return Commands.parallel(
             Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.AUTO), shooterHood),
             Commands.run(() -> flywheel.setGoalState(FlywheelState.AUTO), flywheel))
         .withTimeout(timeout);
   }
 
-  private Command shootersOff() {
+  private Command shooterOff() {
     return Commands.parallel(
         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood),
         Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF), flywheel));
