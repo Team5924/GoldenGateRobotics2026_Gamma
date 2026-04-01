@@ -310,17 +310,17 @@ public final class Constants {
   }
   public final class HopperElevator {
     /*Motor */
-    public static final int CAN_ID = 0; // Update value
+    public static final int CAN_ID = 0; // TODO: Update value
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
 
     /* Cancoder */
-    public static final int CANCODER_ID = 0; //Update value
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // Update value
-    public static final double PULLEY_RADIUS_METERS = Units.inchesToMeters(1.23); // Update value
+    public static final int CANCODER_ID = 0; // TODO: Update value
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
+    public static final double PULLEY_RADIUS_METERS = Units.inchesToMeters(0.460); // TODO: Update value
 
-    public static final double CANCODER_TO_MECHANISM = 1.67;
-    public static final double MOTOR_TO_MECHANISM = 1.67;
+    public static final double MOTOR_TO_MECHANISM = (20.0 / 12.0) * (18.0 / 18.0);
+    public static final double CANCODER_TO_MECHANISM = (20.0 / 12.0) * (18.0 / 18.0); // TODO: double check
 
     public static final double EPSILON_METERS = Units.inchesToMeters(0.2);
     public static final double STATE_TIMEOUT = 5.0;
