@@ -60,7 +60,7 @@ public class AutoBuilder {
                 shooterOff(),
                 RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
                 // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-            ),
+                ),
         Set.of(drive, shooterHood, flywheel));
   }
 
@@ -82,30 +82,27 @@ public class AutoBuilder {
                 shooterOff(),
                 RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
                 // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-            ),
+                ),
         Set.of(drive, shooterHood, flywheel, intake));
   }
 
   public Command doubleSwipe() {
     return Commands.defer(
-        () -> 
+        () ->
             Commands.sequence(
                 RobotContainer.autoFactory.resetOdometry("Swipe1"),
                 Commands.deadline(
                     RobotContainer.autoFactory.trajectoryCmd("Swipe1"),
-                    Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
-                ),
+                    Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)),
                 Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake),
                 shooterOn(1.0), // TODO: Edit Timeout values
                 shooterOff(),
                 Commands.deadline(
                     RobotContainer.autoFactory.trajectoryCmd("Swipe2"),
-                    Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
-                ),
+                    Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)),
                 shooterOn(1.0), // TODO: Edit Timeout values
                 shooterOff(),
-                RobotContainer.autoFactory.trajectoryCmd("PostSwipe")
-            ), 
+                RobotContainer.autoFactory.trajectoryCmd("PostSwipe")),
         Set.of(drive, shooterHood, flywheel, intake));
   }
 
