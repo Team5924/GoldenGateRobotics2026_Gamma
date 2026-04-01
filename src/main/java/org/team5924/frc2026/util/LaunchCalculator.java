@@ -221,18 +221,19 @@ public class LaunchCalculator {
     // timeOfFlightMap.put(1.88, 1.09);
     // timeOfFlightMap.put(1.38, 0.90);
 
-    // {
-    //   passingHoodAngleMap.put(5.46, Rotation2d.fromDegrees(38.0));
-    //   passingHoodAngleMap.put(6.62, Rotation2d.fromDegrees(38.0));
-    //   passingHoodAngleMap.put(7.80, Rotation2d.fromDegrees(38.0));
+    // TODO: update; these are just to prevent a bug when passing maps have no values
+    {
+      passingHoodAngleMap.put(5.46, Rotation2d.fromDegrees(38.0));
+      passingHoodAngleMap.put(6.62, Rotation2d.fromDegrees(38.0));
+      passingHoodAngleMap.put(7.80, Rotation2d.fromDegrees(38.0));
 
-    //   passingFlywheelSpeedMap.put(5.46, 160.0);
-    //   passingFlywheelSpeedMap.put(6.62, 180.0);
-    //   passingFlywheelSpeedMap.put(7.80, 200.0);
+      passingFlywheelSpeedMap.put(5.46, 160.0);
+      passingFlywheelSpeedMap.put(6.62, 180.0);
+      passingFlywheelSpeedMap.put(7.80, 200.0);
 
-    //   passingTimeOfFlightMap.put(passingMinDistance, 0.0);
-    //   passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
-    // }
+      passingTimeOfFlightMap.put(passingMinDistance, 0.0);
+      passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
+    }
     // } else {
     //   // Full field maps
 
