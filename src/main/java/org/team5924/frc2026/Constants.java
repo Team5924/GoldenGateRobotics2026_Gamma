@@ -212,7 +212,7 @@ public final class Constants {
     public static final double PULLEY_RADIUS_METERS = Units.inchesToMeters(0.460); // TODO: Update value
 
     public static final double MOTOR_TO_MECHANISM = (20.0 / 12.0) * (18.0 / 18.0);
-    public static final double CANCODER_TO_MECHANISM = MOTOR_TO_MECHANISM; // TODO: double check
+    public static final double CANCODER_TO_MECHANISM = MOTOR_TO_MECHANISM; // 1.67
 
     public static final double EPSILON_METERS = Units.inchesToMeters(0.2);
     public static final double STATE_TIMEOUT = 5.0;
