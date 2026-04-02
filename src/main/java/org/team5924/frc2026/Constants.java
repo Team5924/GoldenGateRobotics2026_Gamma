@@ -28,14 +28,15 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -223,20 +224,23 @@ public final class Constants {
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     // spur = hood driving gear, mechanism = shooter hood gear
-    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 17.0);
-    public static final double CANCODER_TO_SPUR = 1.0;
-    public static final double SPUR_TO_MECHANISM = (222.0 / 18.0);
+    public static final double MOTOR_TO_SHAFT = 20.0 / 12.0;
+    public static final double SHAFT_TO_CANCODER = 1.0;
+    public static final double SHAFT_TO_MECHANISM = 160.0 / 10.0;
 
-    public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
-    public static final double CANCODER_TO_MECHANISM = CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
-    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
+    public static final double MOTOR_TO_CANCODER = MOTOR_TO_SHAFT * SHAFT_TO_CANCODER;
+    public static final double CANCODER_TO_MECHANISM = SHAFT_TO_MECHANISM / SHAFT_TO_CANCODER;
+    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SHAFT * SHAFT_TO_MECHANISM;
 
     public static final double EPSILON_RADS = Units.degreesToRadians(0.5);
     public static final double STATE_TIMEOUT = 5.0;
     public static final boolean ENABLE_TIMEOUT = false;
 
     public static final double MIN_POSITION_ROTATIONS = 0.0 - Units.radiansToRotations(EPSILON_RADS);
-    public static final double MAX_POSITION_ROTATIONS = 33.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
+    public static final double MAX_POSITION_ROTATIONS = 40.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
+
+    // position from ground at the bottom
+    public static final double BOTTOM_POSITION = Units.degreesToRotations(6.144);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
@@ -252,7 +256,7 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
@@ -302,11 +306,14 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
 
-  public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      new FeedbackConfigs()
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
-        .withRotorToSensorRatio(1.0);
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+        new FeedbackConfigs()
+          .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+          .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
+          .withRotorToSensorRatio(1.0);
+
+    public static final TorqueCurrentConfigs TORQUE_CURRENT_CONFIGS =
+        new TorqueCurrentConfigs().withPeakReverseTorqueCurrent(0.0);
   }
   public final class HopperElevator {
     /*Motor */
