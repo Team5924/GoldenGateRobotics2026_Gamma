@@ -100,8 +100,8 @@ public class RobotContainer {
   private final boolean realHopperElevator = false;
   private final boolean realIndexer = false;
 
-  private final boolean realShooterHood = false;
-  private final boolean realFlywheel = true;
+  private final boolean realShooterHood = true;
+  private final boolean realFlywheel = false;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -299,8 +299,8 @@ public class RobotContainer {
     configureLeftBumperBindings();
     // configureRightBumperBindings();
 
-    configureFlywheelTuningBindings();
-    // configureShooterHoodTuningBindings();
+    // configureFlywheelTuningBindings();
+    configureShooterHoodTuningBindings();
     // configureIntakePivotTuningBindings();
     // configureHopperElevatorTuningBindings();
 
@@ -310,7 +310,7 @@ public class RobotContainer {
   private void configureShooterHoodTuningBindings() {
     shooterHood.setDefaultCommand(
         (Commands.run(
-            () -> shooterHood.runManual(() -> -driveController.getRightY()), shooterHood)));
+            () -> shooterHood.runManual(() -> driveController.getRightY()), shooterHood)));
 
     driveController
         .rightBumper()
