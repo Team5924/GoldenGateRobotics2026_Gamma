@@ -93,15 +93,15 @@ public class RobotContainer {
   private final boolean realDrive = false;
   private final boolean realVision = false;
 
-  private final boolean realIntake = false;
-  private final boolean realIntakePivot = false;
+  private final boolean realIntake = true;
+  private final boolean realIntakePivot = true;
 
-  private final boolean realHopper = false;
+  private final boolean realHopper = true;
   private final boolean realHopperElevator = false;
-  private final boolean realIndexer = false;
+  private final boolean realIndexer = true;
 
-  private final boolean realShooterHood = true;
-  private final boolean realFlywheel = false;
+  private final boolean realShooterHood = false;
+  private final boolean realFlywheel = true;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -294,13 +294,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureDriveBindings();
 
-    configureDefaultCommands();
+    // configureDefaultCommands();
 
     configureLeftBumperBindings();
-    // configureRightBumperBindings();
+    configureRightBumperBindings();
 
     // configureFlywheelTuningBindings();
-    configureShooterHoodTuningBindings();
+    // configureShooterHoodTuningBindings();
     // configureIntakePivotTuningBindings();
     // configureHopperElevatorTuningBindings();
 
