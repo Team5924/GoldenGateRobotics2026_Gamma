@@ -47,7 +47,7 @@ public class IntakePivot extends SubsystemBase {
     STOW(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(180.0 - 47.933))),
 
     // for testing
-    CENTER(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(120.0))),
+    CENTER(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(60.0))),
 
     SHOOTING(new LoggedTunableNumber("IntakePivot/ShootingRads", Units.degreesToRadians(90.0))),
 
