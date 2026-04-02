@@ -136,7 +136,7 @@ public final class Constants {
     public static final int CAN_ID = 41;
     public static final int FOLLOWER_CAN_ID = 42;
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
+    public static final double MOTOR_TO_MECHANISM = 30.0 / 12.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG = GenericRoller.CLOCKWISE_CONFIG.clone();
@@ -194,7 +194,7 @@ public final class Constants {
   public final class Hopper {
     public static final int CAN_ID = 50; 
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_MECHANISM = (16.0 / 12.0) * (24.0 / 16.0);
+    public static final double MOTOR_TO_MECHANISM = 36.0 / 14.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
@@ -206,7 +206,7 @@ public final class Constants {
     public static final boolean REQUIRE_FLYWHEEL_SETPOINT = true;
 
     // controls two rollers, so reduction is weird
-    public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
+    public static final double MOTOR_TO_MECHANISM = (30.0 / 12.0) * (36.0 / 36.0) * (18.0 / 18.0);
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
@@ -270,7 +270,7 @@ public final class Constants {
       new FeedbackConfigs()
         .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder) // TODO: change to Synced if no work
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
@@ -315,6 +315,7 @@ public final class Constants {
     public static final TorqueCurrentConfigs TORQUE_CURRENT_CONFIGS =
         new TorqueCurrentConfigs().withPeakReverseTorqueCurrent(0.0);
   }
+
   public final class HopperElevator {
     /*Motor */
     public static final int CAN_ID = 0; // TODO: Update value
@@ -327,7 +328,7 @@ public final class Constants {
     public static final double PULLEY_RADIUS_METERS = Units.inchesToMeters(0.460); // TODO: Update value
 
     public static final double MOTOR_TO_MECHANISM = (20.0 / 12.0) * (18.0 / 18.0);
-    public static final double CANCODER_TO_MECHANISM = (20.0 / 12.0) * (18.0 / 18.0); // TODO: double check
+    public static final double CANCODER_TO_MECHANISM = 1.0; // TODO: double check
 
     public static final double EPSILON_METERS = Units.inchesToMeters(0.2);
     public static final double STATE_TIMEOUT = 5.0;
