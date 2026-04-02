@@ -76,7 +76,6 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void runManual(DoubleSupplier inputSupplier) {
-    // if (goalState != ShooterHoodState.OFF && goalState != ShooterHoodState.MANUAL) return;
     setInput(inputSupplier.getAsDouble());
 
     if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(ShooterHoodState.MANUAL);

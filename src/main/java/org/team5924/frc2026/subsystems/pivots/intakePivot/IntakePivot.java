@@ -27,6 +27,7 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.MatchState;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -56,6 +57,12 @@ public class IntakePivot extends SubsystemBase {
 
     /** rads are measured from stow position (+ is down) */
     private final DoubleSupplier rads;
+  }
+
+  public void runManual(DoubleSupplier inputSupplier) {
+    setInput(inputSupplier.getAsDouble());
+
+    if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(IntakePivotState.MANUAL);
   }
 
   private final Alert motorDisconnected;

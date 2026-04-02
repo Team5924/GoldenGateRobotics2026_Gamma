@@ -27,6 +27,7 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.MatchState;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -67,6 +68,12 @@ public class HopperElevator extends SubsystemBase {
     this.motorDisconnected =
         new Alert("HopperElevator Motor Disconnected!", Alert.AlertType.kWarning);
     overheatAlert = new Alert("HopperElevator motor overheating!", Alert.AlertType.kWarning);
+  }
+
+  public void runManual(DoubleSupplier inputSupplier) {
+    setInput(inputSupplier.getAsDouble());
+
+    if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(HopperElevatorState.MANUAL);
   }
 
   @Override

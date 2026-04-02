@@ -43,6 +43,10 @@ import org.team5924.frc2026.subsystems.flywheel.Flywheel;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
+import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator;
+import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperElevatorState;
+import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIO;
+import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
@@ -76,28 +80,27 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
-
   private final Vision vision;
-
   private final Intake intake;
   private final IntakePivot intakePivot;
   private final Hopper hopper;
+  private final HopperElevator hopperElevator;
   private final Indexer indexer;
-
   private final ShooterHood shooterHood;
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = true;
-  private final boolean realVision = true;
+  private final boolean realDrive = false;
+  private final boolean realVision = false;
 
-  private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
+  private final boolean realIntake = false;
+  private final boolean realIntakePivot = false;
 
-  private final boolean realHopper = true;
-  private final boolean realIndexer = true;
+  private final boolean realHopper = false;
+  private final boolean realHopperElevator= false;
+  private final boolean realIndexer = false;
 
-  private final boolean realShooterHood = true;
+  private final boolean realShooterHood = false;
   private final boolean realFlywheel = false;
 
   // Controller
@@ -149,8 +152,10 @@ public class RobotContainer {
                 : new IntakePivot(new IntakePivotIO() {});
         hopper = realHopper ? new Hopper(new HopperIOTalonFX()) : new Hopper(new HopperIO() {});
 
+        hopperElevator = realHopperElevator ? new HopperElevator(new HopperElevatorIOTalonFX()) : new HopperElevator(new HopperElevatorIO() {});
         indexer =
             realIndexer ? new Indexer(new IndexerIOTalonFX()) : new Indexer(new IndexerIO() {});
+
         shooterHood =
             realShooterHood
                 ? new ShooterHood(new ShooterHoodIOTalonFX())
@@ -288,6 +293,14 @@ public class RobotContainer {
     configureLeftBumperBindings();
     configureRightBumperBindings();
 
+    configureFlywheelTuningBindings();
+    configureShooterHoodTuningBindings();
+
+    // TODO: auto shooting, hood
+  }
+
+  
+  private void configureShooterHoodTuningBindings() {
     shooterHood.setDefaultCommand(
         (Commands.run(
             () -> shooterHood.runManual(() -> -driveController.getRightY()), shooterHood)));
@@ -296,19 +309,11 @@ public class RobotContainer {
         .rightTrigger()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
-    // driveController
-    //     .rightTrigger()
-    //     .onFalse(
-    //         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
 
     driveController
         .leftTrigger()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
-    // driveController
-    //     .leftTrigger()
-    //     .onFalse(
-    //         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
 
     driveController
         .rightBumper()
@@ -318,12 +323,65 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
-    // driveController
-    //     .y()
-    //     .onFalse(
-    //         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
+  }
 
-    // TODO: auto shooting, hood
+  
+  private void configureIntakePivotTuningBindings() {
+    intakePivot.setDefaultCommand(
+        (Commands.run(
+            () -> intakePivot.runManual(() -> -driveController.getRightY()), intakePivot)));
+
+    driveController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER), intakePivot));
+
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN), intakePivot));
+
+    driveController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW), intakePivot));
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
+  }
+
+  
+  private void configureHopperElevatorTuningBindings() {
+    hopperElevator.setDefaultCommand(
+        (Commands.run(
+            () -> hopperElevator.runManual(() -> -driveController.getRightY()), hopperElevator)));
+
+    driveController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.CENTER), hopperElevator));
+
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.EXTENDED), hopperElevator));
+
+    driveController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.STOW), hopperElevator));
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
+  }
+
+  private void configureFlywheelTuningBindings() {
+
+    // manual shooter w/ wdpad
+    driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
+    driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
   }
 
   private void configureDriveBindings() {
