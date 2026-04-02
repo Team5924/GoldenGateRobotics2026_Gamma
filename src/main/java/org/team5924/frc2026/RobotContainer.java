@@ -310,7 +310,7 @@ public class RobotContainer {
   private void configureShooterHoodTuningBindings() {
     shooterHood.setDefaultCommand(
         (Commands.run(
-            () -> shooterHood.runManual(() -> driveController.getRightY()), shooterHood)));
+            () -> shooterHood.runManual(() -> -driveController.getRightY()), shooterHood)));
 
     driveController
         .rightBumper()

@@ -315,7 +315,7 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
