@@ -301,6 +301,8 @@ public class RobotContainer {
 
     configureFlywheelTuningBindings();
     configureShooterHoodTuningBindings();
+    configureIntakePivotTuningBindings();
+    configureHopperElevatorTuningBindings();
 
     // TODO: auto shooting, hood
   }

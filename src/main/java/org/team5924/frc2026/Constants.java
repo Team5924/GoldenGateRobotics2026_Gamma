@@ -168,8 +168,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(10)
-            .withStatorCurrentLimit(10)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -198,122 +198,6 @@ public final class Constants {
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
-  }
-
-  public final class Indexer {
-    public final static int CAN_ID = 51;
-    public static final String BUS = "rio";
-    public static final boolean REQUIRE_FLYWHEEL_SETPOINT = true;
-
-    // controls two rollers, so reduction is weird
-    public static final double MOTOR_TO_MECHANISM = (30.0 / 12.0) * (36.0 / 36.0) * (18.0 / 18.0);
-    public static final double SIM_MOI = 0.001;
-
-    public static final TalonFXConfiguration CONFIG =
-      GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
-  }
-
-  /* General Subsystems */
-  public final class ShooterHood {
-    public static final String BUS = "rio";
-    public static final double SIM_MOI = 0.001;
-    public static final int CAN_ID = 34;
-
-    /* CANCoder */
-    public static final int CANCODER_ID = 35; // TODO: set to something else
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
-
-    // spur = hood driving gear, mechanism = shooter hood gear
-    public static final double MOTOR_TO_SHAFT = 20.0 / 12.0;
-    public static final double SHAFT_TO_CANCODER = 1.0;
-    public static final double SHAFT_TO_MECHANISM = 160.0 / 10.0;
-
-    public static final double MOTOR_TO_CANCODER = MOTOR_TO_SHAFT * SHAFT_TO_CANCODER;
-    public static final double CANCODER_TO_MECHANISM = SHAFT_TO_MECHANISM / SHAFT_TO_CANCODER;
-    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SHAFT * SHAFT_TO_MECHANISM;
-
-    public static final double EPSILON_RADS = Units.degreesToRadians(0.5);
-    public static final double STATE_TIMEOUT = 5.0;
-    public static final boolean ENABLE_TIMEOUT = false;
-
-    public static final double MIN_POSITION_ROTATIONS = 0.0 - Units.radiansToRotations(EPSILON_RADS);
-    public static final double MAX_POSITION_ROTATIONS = 40.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
-
-    // position from ground at the bottom
-    public static final double BOTTOM_POSITION = Units.degreesToRotations(6.144);
-
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
-
-    /* Configs */
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(20)
-            .withStatorCurrentLimit(20)
-            .withSupplyCurrentLimitEnable(true)
-            .withStatorCurrentLimitEnable(true))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
-
-    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
-      new SoftwareLimitSwitchConfigs()
-            .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
-            .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
-            .withForwardSoftLimitEnable(false)
-            .withReverseSoftLimitEnable(false);
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      new FeedbackConfigs()
-        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
-        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder) // TODO: change to Synced if no work
-        .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
-
-    public static final MagnetSensorConfigs CANCODER_CONFIGS =
-      new MagnetSensorConfigs()
-        .withAbsoluteSensorDiscontinuityPoint(1.0)
-        .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
-  }
-
-  public final class Flywheel {
-    public static final int LEFT_TOP_ID = 30;
-
-    public static final int LEFT_BOTTOM_ID = 31;
-    public static final int RIGHT_TOP_ID = 32;
-    public static final int RIGHT_BOTTOM_ID = 33;
-
-    public static final double FOLLOWER_SIM_MOI = 0.001;
-
-    public static final double EPSILON_VELOCITY = 2.5;
-    public static final double MOTOR_TO_MECHANISM = 1.0;
-    public static final String BUS = "rio";
-    public static final double SIM_MOI = 0.001;
-
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Coast));
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-        new FeedbackConfigs()
-          .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-          .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
-          .withRotorToSensorRatio(1.0);
-
-    public static final TorqueCurrentConfigs TORQUE_CURRENT_CONFIGS =
-        new TorqueCurrentConfigs().withPeakReverseTorqueCurrent(0.0);
   }
 
   public final class HopperElevator {
@@ -373,5 +257,121 @@ public final class Constants {
           .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
           .withMagnetOffset(0.0); // Update value
       
+  }
+
+  public final class Indexer {
+    public final static int CAN_ID = 51;
+    public static final String BUS = "rio";
+    public static final boolean REQUIRE_FLYWHEEL_SETPOINT = true;
+
+    // controls two rollers, so reduction is weird
+    public static final double MOTOR_TO_MECHANISM = (30.0 / 12.0) * (36.0 / 36.0) * (18.0 / 18.0);
+    public static final double SIM_MOI = 0.001;
+
+    public static final TalonFXConfiguration CONFIG =
+      GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
+  }
+
+  /* General Subsystems */
+  public final class ShooterHood {
+    public static final String BUS = "rio";
+    public static final double SIM_MOI = 0.001;
+    public static final int CAN_ID = 34;
+
+    /* CANCoder */
+    public static final int CANCODER_ID = 35; // TODO: set to something else
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
+
+    // spur = hood driving gear, mechanism = shooter hood gear
+    public static final double MOTOR_TO_SHAFT = 20.0 / 12.0;
+    public static final double SHAFT_TO_CANCODER = 1.0;
+    public static final double SHAFT_TO_MECHANISM = 160.0 / 10.0;
+
+    public static final double MOTOR_TO_CANCODER = MOTOR_TO_SHAFT * SHAFT_TO_CANCODER;
+    public static final double CANCODER_TO_MECHANISM = SHAFT_TO_MECHANISM / SHAFT_TO_CANCODER;
+    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SHAFT * SHAFT_TO_MECHANISM;
+
+    public static final double EPSILON_RADS = Units.degreesToRadians(0.5);
+    public static final double STATE_TIMEOUT = 5.0;
+    public static final boolean ENABLE_TIMEOUT = false;
+
+    public static final double MIN_POSITION_ROTATIONS = 0.0 - Units.radiansToRotations(EPSILON_RADS);
+    public static final double MAX_POSITION_ROTATIONS = 40.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
+
+    // position from ground at the bottom
+    public static final double BOTTOM_POSITION = Units.degreesToRotations(6.144);
+
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
+
+    /* Configs */
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(30)
+            .withStatorCurrentLimit(30)
+            .withSupplyCurrentLimitEnable(true)
+            .withStatorCurrentLimitEnable(true))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      new SoftwareLimitSwitchConfigs()
+            .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
+            .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false);
+
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
+        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder) // TODO: change to Synced if no work
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
+
+    public static final MagnetSensorConfigs CANCODER_CONFIGS =
+      new MagnetSensorConfigs()
+        .withAbsoluteSensorDiscontinuityPoint(1.0)
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
+  }
+
+  public final class Flywheel {
+    public static final int LEFT_TOP_ID = 30;
+
+    public static final int LEFT_BOTTOM_ID = 31;
+    public static final int RIGHT_TOP_ID = 32;
+    public static final int RIGHT_BOTTOM_ID = 33;
+
+    public static final double FOLLOWER_SIM_MOI = 0.001;
+
+    public static final double EPSILON_VELOCITY = 2.5;
+    public static final double MOTOR_TO_MECHANISM = 1.0;
+    public static final String BUS = "rio";
+    public static final double SIM_MOI = 0.001;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(40))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Coast));
+
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+        new FeedbackConfigs()
+          .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+          .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
+          .withRotorToSensorRatio(1.0);
+
+    public static final TorqueCurrentConfigs TORQUE_CURRENT_CONFIGS =
+        new TorqueCurrentConfigs().withPeakReverseTorqueCurrent(0.0);
   }
 }

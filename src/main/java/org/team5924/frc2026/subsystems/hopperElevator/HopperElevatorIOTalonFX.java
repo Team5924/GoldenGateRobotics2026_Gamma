@@ -55,12 +55,12 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
   private double setpointMeters;
   /* Logged Tunable Numbers */
   private final LoggedTunableNumber kP =
-      new LoggedTunableNumber("HopperElevator/kP", 40.0); // TODO: tune all these
+      new LoggedTunableNumber("HopperElevator/kP", 20.0); // TODO: tune all these
   private final LoggedTunableNumber kI = new LoggedTunableNumber("HopperElevator/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("HopperElevator/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("HopperElevator/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("HopperElevator/kV", 0.0);
-  private final LoggedTunableNumber kG = new LoggedTunableNumber("HopperElevator/kG", 0.7);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("HopperElevator/kG", 0.8);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("HopperElevator/kA", 0.007);
 
   private final LoggedTunableNumber motionCruiseVelocity =
