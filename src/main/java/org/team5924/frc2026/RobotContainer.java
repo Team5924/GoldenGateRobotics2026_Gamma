@@ -101,7 +101,7 @@ public class RobotContainer {
   private final boolean realIndexer = false;
 
   private final boolean realShooterHood = false;
-  private final boolean realFlywheel = false;
+  private final boolean realFlywheel = true;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);

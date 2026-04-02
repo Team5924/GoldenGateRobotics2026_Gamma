@@ -202,12 +202,12 @@ public final class Constants {
 
   public final class HopperElevator {
     /*Motor */
-    public static final int CAN_ID = 0; // TODO: Update value
+    public static final int CAN_ID = 52; // TODO: Update value
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
 
     /* Cancoder */
-    public static final int CANCODER_ID = 0; // TODO: Update value
+    public static final int CANCODER_ID = 53; // TODO: Update value
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
     public static final double PULLEY_RADIUS_METERS = Units.inchesToMeters(0.460); // TODO: Update value
 
