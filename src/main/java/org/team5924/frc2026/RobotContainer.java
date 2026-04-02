@@ -97,7 +97,7 @@ public class RobotContainer {
   private final boolean realIntakePivot = false;
 
   private final boolean realHopper = false;
-  private final boolean realHopperElevator= false;
+  private final boolean realHopperElevator = false;
   private final boolean realIndexer = false;
 
   private final boolean realShooterHood = false;
@@ -152,7 +152,10 @@ public class RobotContainer {
                 : new IntakePivot(new IntakePivotIO() {});
         hopper = realHopper ? new Hopper(new HopperIOTalonFX()) : new Hopper(new HopperIO() {});
 
-        hopperElevator = realHopperElevator ? new HopperElevator(new HopperElevatorIOTalonFX()) : new HopperElevator(new HopperElevatorIO() {});
+        hopperElevator =
+            realHopperElevator
+                ? new HopperElevator(new HopperElevatorIOTalonFX())
+                : new HopperElevator(new HopperElevatorIO() {});
         indexer =
             realIndexer ? new Indexer(new IndexerIOTalonFX()) : new Indexer(new IndexerIO() {});
 
@@ -202,12 +205,13 @@ public class RobotContainer {
 
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());
-        hopper = new Hopper(new HopperIOSim());
 
+        hopper = new Hopper(new HopperIOSim());
+        hopperElevator = new HopperElevator(new HopperElevatorIO() {});
         indexer = new Indexer(new IndexerIOSim());
+
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         flywheel = new Flywheel(new FlywheelIOSim());
-
         break;
 
       default:
@@ -225,9 +229,11 @@ public class RobotContainer {
 
         intake = new Intake(new IntakeIO() {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
-        hopper = new Hopper(new HopperIO() {});
 
+        hopper = new Hopper(new HopperIO() {});
+        hopperElevator = new HopperElevator(new HopperElevatorIO() {});
         indexer = new Indexer(new IndexerIO() {});
+
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         flywheel = new Flywheel(new FlywheelIO() {});
         break;
@@ -299,7 +305,6 @@ public class RobotContainer {
     // TODO: auto shooting, hood
   }
 
-  
   private void configureShooterHoodTuningBindings() {
     shooterHood.setDefaultCommand(
         (Commands.run(
@@ -325,7 +330,6 @@ public class RobotContainer {
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
   }
 
-  
   private void configureIntakePivotTuningBindings() {
     intakePivot.setDefaultCommand(
         (Commands.run(
@@ -351,7 +355,6 @@ public class RobotContainer {
             Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
   }
 
-  
   private void configureHopperElevatorTuningBindings() {
     hopperElevator.setDefaultCommand(
         (Commands.run(
@@ -360,21 +363,25 @@ public class RobotContainer {
     driveController
         .rightTrigger()
         .onTrue(
-            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.CENTER), hopperElevator));
+            Commands.runOnce(
+                () -> hopperElevator.setGoalState(HopperElevatorState.CENTER), hopperElevator));
 
     driveController
         .leftTrigger()
         .onTrue(
-            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.EXTENDED), hopperElevator));
+            Commands.runOnce(
+                () -> hopperElevator.setGoalState(HopperElevatorState.EXTENDED), hopperElevator));
 
     driveController
         .rightBumper()
         .onTrue(
-            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.STOW), hopperElevator));
+            Commands.runOnce(
+                () -> hopperElevator.setGoalState(HopperElevatorState.STOW), hopperElevator));
     driveController
         .leftBumper()
         .onTrue(
-            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
+            Commands.runOnce(
+                () -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
   }
 
   private void configureFlywheelTuningBindings() {

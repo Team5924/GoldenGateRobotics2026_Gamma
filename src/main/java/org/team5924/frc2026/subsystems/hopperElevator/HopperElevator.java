@@ -27,7 +27,6 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.MatchState;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -53,7 +52,8 @@ public class HopperElevator extends SubsystemBase {
     OFF(() -> 0.0),
 
     STOW(new LoggedTunableNumber("HopperElevator/StowHeightMeters", 0.0)),
-    EXTENDED(new LoggedTunableNumber("HopperElevator/ExtendedHeightMeters", Units.inchesToMeters(8.0))),
+    EXTENDED(
+        new LoggedTunableNumber("HopperElevator/ExtendedHeightMeters", Units.inchesToMeters(8.0))),
     CENTER(new LoggedTunableNumber("HopperElevator/CenterHeightMeters", Units.inchesToMeters(4.0))),
     MANUAL(new LoggedTunableNumber("HopperElevator/ManualVolts", 1.0)),
     MOVING(() -> 0.0);
