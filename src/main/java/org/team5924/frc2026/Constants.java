@@ -299,7 +299,7 @@ public final class Constants {
     public static final double MAX_POSITION_ROTATIONS = 40.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
 
     // position from ground at the bottom
-    public static final double BOTTOM_POSITION = Units.degreesToRotations(6.144);
+    public static final double BOTTOM_POSITION = Units.degreesToRotations(6.870);
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
