@@ -25,7 +25,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.FieldState;
+import org.team5924.frc2026.MatchState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -147,7 +147,7 @@ public class ShooterHood extends SubsystemBase {
       default -> currentState = ShooterHoodState.MOVING;
     }
 
-    lastStateChange = FieldState.getInstance().getTime();
+    lastStateChange = MatchState.getInstance().getTime();
   }
 
   @SuppressWarnings("unused")
@@ -163,7 +163,7 @@ public class ShooterHood extends SubsystemBase {
   }
 
   private void handleCurrentState() {
-    timeSinceLastStateChange = FieldState.getInstance().getTime() - lastStateChange;
+    timeSinceLastStateChange = MatchState.getInstance().getTime() - lastStateChange;
     isAtSetpoint = isAtSetpoint();
 
     showNotImplementedAlert = false;
