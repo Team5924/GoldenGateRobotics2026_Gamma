@@ -297,12 +297,12 @@ public class RobotContainer {
     configureDefaultCommands();
 
     configureLeftBumperBindings();
-    configureRightBumperBindings();
+    // configureRightBumperBindings();
 
     configureFlywheelTuningBindings();
-    configureShooterHoodTuningBindings();
-    configureIntakePivotTuningBindings();
-    configureHopperElevatorTuningBindings();
+    // configureShooterHoodTuningBindings();
+    // configureIntakePivotTuningBindings();
+    // configureHopperElevatorTuningBindings();
 
     // TODO: auto shooting, hood
   }

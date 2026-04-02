@@ -68,14 +68,12 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Flywheel/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.0);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 0.0);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 4.788);
 
-  private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("Flywheel/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("Flywheel/MotionAcceleration", 100.0);
+      new LoggedTunableNumber("Flywheel/MotionAcceleration", 400.0);
   private final LoggedTunableNumber motionJerk =
-      new LoggedTunableNumber("Flywheel/MotionJerk", 0.0);
+      new LoggedTunableNumber("Flywheel/MotionJerk", 4000.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> position;
@@ -233,7 +231,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   private void updateMotionMagicConfigs() {
     motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
-    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
   }
 
@@ -266,7 +263,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
           }
         },
         motionAcceleration,
-        motionCruiseVelocity,
         motionJerk);
   }
 
