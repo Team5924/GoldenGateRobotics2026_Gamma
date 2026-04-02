@@ -43,8 +43,10 @@ public class IntakePivot extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
-    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0)),
+    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0.1)),
     STOW(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(180.0 - 47.933))),
+
+    MAX(new LoggedTunableNumber("IntakePivot/PhysicalMax", 2.63)),
 
     // for testing
     CENTER(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(60.0))),

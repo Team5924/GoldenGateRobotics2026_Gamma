@@ -57,16 +57,16 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 20.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 30.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 5.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.0);
   private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 5.027);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 1.885);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 100.0);
+      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 400.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("IntakePivot/MotionAcceleration", 1000.0);
   private final LoggedTunableNumber motionJerk =
@@ -156,7 +156,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(0.0);
 
     // assuming intake pivot starts stowed
-    talon.setPosition(Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble()));
+    talon.setPosition(Units.radiansToRotations(IntakePivotState.MAX.getRads().getAsDouble()));
   }
 
   @Override

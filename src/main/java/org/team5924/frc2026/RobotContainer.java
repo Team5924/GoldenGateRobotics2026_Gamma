@@ -336,7 +336,7 @@ public class RobotContainer {
   private void configureIntakePivotTuningBindings() {
     intakePivot.setDefaultCommand(
         (Commands.run(
-            () -> intakePivot.runManual(() -> driveController.getRightY()), intakePivot)));
+            () -> intakePivot.runManual(() -> -driveController.getRightY()), intakePivot)));
 
     driveController
         .rightBumper()
