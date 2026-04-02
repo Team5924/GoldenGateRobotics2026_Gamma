@@ -313,6 +313,16 @@ public class RobotContainer {
             () -> shooterHood.runManual(() -> -driveController.getRightY()), shooterHood)));
 
     driveController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
+
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.BOTTOM), shooterHood));
+
+    driveController
         .rightTrigger()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
@@ -321,21 +331,22 @@ public class RobotContainer {
         .leftTrigger()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
-
-    driveController
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.ZERO), shooterHood));
-    driveController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
   }
 
   private void configureIntakePivotTuningBindings() {
     intakePivot.setDefaultCommand(
         (Commands.run(
-            () -> intakePivot.runManual(() -> -driveController.getRightY()), intakePivot)));
+            () -> intakePivot.runManual(() -> driveController.getRightY()), intakePivot)));
+
+    driveController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
+
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW), intakePivot));
 
     driveController
         .rightTrigger()
@@ -346,44 +357,35 @@ public class RobotContainer {
         .leftTrigger()
         .onTrue(
             Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN), intakePivot));
-
-    driveController
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW), intakePivot));
-    driveController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
   }
 
   private void configureHopperElevatorTuningBindings() {
     hopperElevator.setDefaultCommand(
         (Commands.run(
-            () -> hopperElevator.runManual(() -> -driveController.getRightY()), hopperElevator)));
+            () -> hopperElevator.runManual(() -> driveController.getRightY()), hopperElevator)));
+
+    driveController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
+
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> hopperElevator.setGoalState(HopperElevatorState.STOW), hopperElevator));
 
     driveController
         .rightTrigger()
         .onTrue(
             Commands.runOnce(
                 () -> hopperElevator.setGoalState(HopperElevatorState.CENTER), hopperElevator));
-
     driveController
         .leftTrigger()
         .onTrue(
             Commands.runOnce(
                 () -> hopperElevator.setGoalState(HopperElevatorState.EXTENDED), hopperElevator));
-
-    driveController
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> hopperElevator.setGoalState(HopperElevatorState.STOW), hopperElevator));
-    driveController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
   }
 
   private void configureFlywheelTuningBindings() {
