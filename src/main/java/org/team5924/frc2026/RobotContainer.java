@@ -47,7 +47,6 @@ import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator;
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperElevatorState;
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIO;
-import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
@@ -92,16 +91,16 @@ public class RobotContainer {
 
   // Real/IO implementation
   private final boolean realDrive = true;
-  private final boolean realVision = true;
+  private final boolean realVision = false;
 
-  private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
+  private final boolean realIntake = false;
+  private final boolean realIntakePivot = false;
 
-  private final boolean realHopper = true;
-  private final boolean realIndexer = true;
+  private final boolean realHopper = false;
+  private final boolean realIndexer = false;
 
-  private final boolean realShooterHood = true;
-  private final boolean realFlywheel = true;
+  private final boolean realShooterHood = false;
+  private final boolean realFlywheel = false;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -353,20 +352,17 @@ public class RobotContainer {
     driveController
         .leftBumper()
         .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW),
-    intakePivot));
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW), intakePivot));
 
     driveController
         .rightTrigger()
         .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER),
-    intakePivot));
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER), intakePivot));
 
     driveController
         .leftTrigger()
         .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN),
-    intakePivot));
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN), intakePivot));
   }
 
   private void configManualIntakePivot() {

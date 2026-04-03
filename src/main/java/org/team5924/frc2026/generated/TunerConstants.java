@@ -57,12 +57,11 @@ public class TunerConstants {
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPDrive =
-      new LoggedTunableNumber("DriveGains/kP", 200.0);
+  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 200.0);
   public static final LoggedTunableNumber kIDrive = new LoggedTunableNumber("DriveGains/kI", 0.0);
   public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 1.0);
   public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 2.0);
-  public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.124);
+  public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.147);
 
   private static final Slot0Configs driveGains =
       new Slot0Configs()
@@ -186,7 +185,7 @@ public class TunerConstants {
   private static final int kFrontLeftDriveMotorId = 10;
   private static final int kFrontLeftSteerMotorId = 12;
   private static final int kFrontLeftEncoderId = 11;
-  private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.47314453125);
+  private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.446044921875);
   private static final boolean kFrontLeftSteerMotorInverted = true;
   private static final boolean kFrontLeftEncoderInverted = false;
 
