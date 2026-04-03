@@ -295,10 +295,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureDriveBindings();
 
-    // configureDefaultCommands();
+    configureDefaultCommands();
 
-    configureLeftBumperBindings();
-    configureRightBumperBindings();
+    rightTrigger(); // shooting
+    bumperBindings(); // intake
 
     // configureFlywheelTuningBindings();
     // configureShooterHoodTuningBindings();
@@ -405,7 +405,7 @@ public class RobotContainer {
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX()));
 
-    // [driver] SLOW MODE YIPE
+    // [a] -> SLOW MODE YIPE
     driveController
         .x()
         .whileTrue(
@@ -415,14 +415,15 @@ public class RobotContainer {
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
+    // [y] -> auto launch
     driveController
-        .rightTrigger()
+        .y()
         .whileTrue(
             DriveCommands.joystickDriveWhileLaunching(
                 drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
-    // [driver] Switch to X pattern when X button is pressed
-    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // [driver] Switch to X pattern when X button is pressed
+    // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     final Runnable resetGyro =
         Constants.currentMode == Constants.Mode.SIM
@@ -436,7 +437,7 @@ public class RobotContainer {
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    // [driver] Reset gyro to 0° when B button is pressed
+    // [a] -> Reset gyro to 0°
     driveController.a().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
   }
 
@@ -449,7 +450,7 @@ public class RobotContainer {
         Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.IDLE), flywheel));
   }
 
-  private void configureRightBumperBindings() {
+  private void bumperBindings() {
     // [right bumper pressed] -> deploy intake pivot, run intake
     driveController
         .rightBumper()
@@ -462,10 +463,22 @@ public class RobotContainer {
                 intakePivot,
                 intake));
 
-    // [right bumper released] -> stow intake pivot, stop running intake
+    // [left bumper pressed] -> intake pivot shooting mode, run intake
     driveController
-        .rightBumper()
-        .onFalse(
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.SHOOTING);
+                  intake.setGoalState(IntakeState.INTAKE);
+                },
+                intakePivot,
+                intake));
+
+    // [dpad down] -> stow intake pivot, stop intake
+    driveController
+        .povDown()
+        .onTrue(
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.STOW);
@@ -475,7 +488,7 @@ public class RobotContainer {
                 intake));
   }
 
-  private void configureLeftBumperBindings() {
+  private void rightTrigger() {
     // [left bumper pressed] -> run flywheel and indexer
     driveController
         .leftBumper()
