@@ -39,9 +39,10 @@ public class TunerConstants {
 
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPSteer = new LoggedTunableNumber("SteerGains/kP", 800.0);
+  public static final LoggedTunableNumber kPSteer =
+      new LoggedTunableNumber("SteerGains/kP", 2000.0);
   public static final LoggedTunableNumber kISteer = new LoggedTunableNumber("SteerGains/kI", 0.0);
-  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 1.0);
+  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 0.0);
   public static final LoggedTunableNumber kSSteer = new LoggedTunableNumber("SteerGains/kS", 0.1);
   public static final LoggedTunableNumber kVSteer = new LoggedTunableNumber("SteerGains/kV", 1.91);
   public static final LoggedTunableNumber kASteer = new LoggedTunableNumber("SteerGains/kA", 0.0);
@@ -57,7 +58,7 @@ public class TunerConstants {
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 200.0);
+  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 50.0);
   public static final LoggedTunableNumber kIDrive = new LoggedTunableNumber("DriveGains/kI", 0.0);
   public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 1.0);
   public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 2.0);
@@ -93,7 +94,7 @@ public class TunerConstants {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  private static final Current kSlipCurrent = Amps.of(28.0); // TODO: tune
+  private static final Current kSlipCurrent = Amps.of(80.0);
 
   // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
   // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -116,9 +117,9 @@ public class TunerConstants {
       new Pigeon2Configuration()
           .withMountPose(
               new MountPoseConfigs()
-                  .withMountPosePitch(90.38738250732422)
-                  .withMountPoseYaw(0.5337264537811279)
-                  .withMountPoseRoll(179.67320251464844));
+                  .withMountPoseYaw(89.8056640625)
+                  .withMountPosePitch(1.4774128198623657)
+                  .withMountPoseRoll(179.909912109375));
 
   // CAN bus that the devices are located on;
   // All swerve devices must share the same CAN bus
