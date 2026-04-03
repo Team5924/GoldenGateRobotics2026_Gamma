@@ -263,6 +263,7 @@ public class RobotContainer {
     autoChooser.addOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
     autoChooser.addDefaultOption("Right Double Swipe", autoBuilder.rightDoubleSwipe());
+    autoChooser.addOption("Left Double Swipe", autoBuilder.leftDoubleSwipe());
 
     // Set up SysId routines
     autoChooser.addOption(

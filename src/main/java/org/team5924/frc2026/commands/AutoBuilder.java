@@ -118,6 +118,32 @@ public class AutoBuilder {
         Set.of(drive, shooterHood, flywheel, intake, intakePivot));
   }
 
+  public Command leftDoubleSwipe() {
+    return Commands.defer(
+        () -> {
+          if(!"Left".equals(startingPositionSupplier.get())) {
+            throw new IllegalStateException("starting position must be left for this auto command");
+          }
+          return Commands.sequence(
+                RobotContainer.autoFactory.resetOdometry("Swipe1Left"),
+                Commands.deadline(
+                    RobotContainer.autoFactory.trajectoryCmd("Swipe1Left"), 
+                    intake()),
+                intakeOff(),
+                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOff(),
+                Commands.deadline(
+                    RobotContainer.autoFactory.trajectoryCmd("Swipe2Left"), 
+                    intake()),
+                intakeOff(),
+                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOff(),
+                RobotContainer.autoFactory.trajectoryCmd("Stow"));
+        },
+        Set.of(drive, shooterHood, flywheel, intake, intakePivot));
+  }
+
+
   private Command startToHub(String startingPosition) {
     if ("Mid".equals(startingPosition)) {
       return Commands.none();
