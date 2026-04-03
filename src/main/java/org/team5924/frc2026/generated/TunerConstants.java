@@ -39,9 +39,9 @@ public class TunerConstants {
 
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPSteer = new LoggedTunableNumber("SteerGains/kP", 100.0);
+  public static final LoggedTunableNumber kPSteer = new LoggedTunableNumber("SteerGains/kP", 800.0);
   public static final LoggedTunableNumber kISteer = new LoggedTunableNumber("SteerGains/kI", 0.0);
-  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 0.5);
+  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 1.0);
   public static final LoggedTunableNumber kSSteer = new LoggedTunableNumber("SteerGains/kS", 0.1);
   public static final LoggedTunableNumber kVSteer = new LoggedTunableNumber("SteerGains/kV", 1.91);
   public static final LoggedTunableNumber kASteer = new LoggedTunableNumber("SteerGains/kA", 0.0);
@@ -57,7 +57,8 @@ public class TunerConstants {
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 0.0);
+  public static final LoggedTunableNumber kPDrive =
+      new LoggedTunableNumber("DriveGains/kP", 1100.0);
   public static final LoggedTunableNumber kIDrive = new LoggedTunableNumber("DriveGains/kI", 0.0);
   public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 1.0);
   public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 2.0);

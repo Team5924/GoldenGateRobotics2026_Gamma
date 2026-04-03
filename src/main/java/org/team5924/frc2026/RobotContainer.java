@@ -49,7 +49,6 @@ import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperEleva
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIO;
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
-import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
@@ -98,7 +97,7 @@ public class RobotContainer {
   private final boolean realIntakePivot = true;
 
   private final boolean realHopper = true;
-  private final boolean realHopperElevator = true;
+  private final boolean realHopperElevator = false;
   private final boolean realIndexer = true;
 
   private final boolean realShooterHood = true;
@@ -303,7 +302,7 @@ public class RobotContainer {
 
     // configureFlywheelTuningBindings();
     // configureShooterHoodTuningBindings();
-    // configureIntakePivotTuningBindings();
+    configureIntakePivotTuningBindings();
     // configureHopperElevatorTuningBindings();
 
     // TODO: auto shooting, hood
@@ -313,12 +312,12 @@ public class RobotContainer {
     driveController
         .rightBumper()
         .onTrue(
-            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
+            Commands.runOnce(
+                () -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
 
     driveController
         .leftTrigger()
-        .onTrue(
-            Commands.runOnce(() -> hopperElevator.toggleState(), hopperElevator));
+        .onTrue(Commands.runOnce(() -> hopperElevator.toggleState(), hopperElevator));
   }
 
   private void configureShooterHoodTuningBindings() {
@@ -350,27 +349,30 @@ public class RobotContainer {
   private void configureIntakePivotTuningBindings() {
     intakePivot.setDefaultCommand(
         (Commands.run(
-            () -> intakePivot.runManual(() -> -driveController.getRightY()), intakePivot)));
+            () -> intakePivot.runManual(() -> -operatorController.getRightY()), intakePivot)));
 
-    driveController
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
+    // driveController
+    //     .rightBumper()
+    //     .onTrue(
+    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
 
-    driveController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW), intakePivot));
+    // driveController
+    //     .leftBumper()
+    //     .onTrue(
+    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW),
+    // intakePivot));
 
-    driveController
-        .rightTrigger()
-        .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER), intakePivot));
+    // driveController
+    //     .rightTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER),
+    // intakePivot));
 
-    driveController
-        .leftTrigger()
-        .onTrue(
-            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN), intakePivot));
+    // driveController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN),
+    // intakePivot));
   }
 
   private void configureHopperElevatorTuningBindings() {
@@ -470,10 +472,10 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  //   intakePivot.setGoalState(IntakePivotState.DOWN);
                   intake.setGoalState(IntakeState.INTAKE);
                 },
-                intakePivot,
+                // intakePivot,
                 intake));
 
     // [left bumper pressed] -> intake pivot shooting mode, run intake
@@ -482,10 +484,10 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  intakePivot.setGoalState(IntakePivotState.SHOOTING);
+                  //   intakePivot.setGoalState(IntakePivotState.STOW);
                   intake.setGoalState(IntakeState.INTAKE);
                 },
-                intakePivot,
+                // intakePivot,
                 intake));
 
     // [dpad down] -> stow intake pivot, stop intake
@@ -494,10 +496,10 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  //   intakePivot.setGoalState(IntakePivotState.STOW);
                   intake.setGoalState(IntakeState.OFF);
                 },
-                intakePivot,
+                // intakePivot,
                 intake));
   }
 
@@ -514,12 +516,39 @@ public class RobotContainer {
                     },
                     indexer,
                     hopper),
+                Commands.run(() -> flywheel.setGoalState(Flywheel.FlywheelState.AUTO), flywheel)));
+
+    // [left bumper released] -> turn off flywheel and indexer
+    driveController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                  hopper.setGoalState(HopperState.OFF);
+                },
+                flywheel,
+                indexer,
+                hopper));
+
+    driveController
+        .povUp()
+        .onTrue(
+            Commands.parallel(
+                Commands.runOnce(
+                    () -> {
+                      indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                      hopper.setGoalState(HopperState.ON);
+                    },
+                    indexer,
+                    hopper),
                 Commands.run(
                     () -> flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH), flywheel)));
 
     // [left bumper released] -> turn off flywheel and indexer
     driveController
-        .leftBumper()
+        .povUp()
         .onFalse(
             Commands.runOnce(
                 () -> {
