@@ -49,6 +49,7 @@ import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperEleva
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIO;
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
@@ -97,7 +98,6 @@ public class RobotContainer {
   private final boolean realIntakePivot = true;
 
   private final boolean realHopper = true;
-  private final boolean realHopperElevator = false;
   private final boolean realIndexer = true;
 
   private final boolean realShooterHood = true;
@@ -152,10 +152,7 @@ public class RobotContainer {
                 : new IntakePivot(new IntakePivotIO() {});
         hopper = realHopper ? new Hopper(new HopperIOTalonFX()) : new Hopper(new HopperIO() {});
 
-        hopperElevator =
-            realHopperElevator
-                ? new HopperElevator(new HopperElevatorIOTalonFX())
-                : new HopperElevator(new HopperElevatorIO() {});
+        hopperElevator = new HopperElevator(new HopperElevatorIO() {});
         indexer =
             realIndexer ? new Indexer(new IndexerIOTalonFX()) : new Indexer(new IndexerIO() {});
 
@@ -281,8 +278,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // Configure the button bindings
-    configureButtonBindings();
+    // config the button bindings
+    configButtonBindings();
   }
 
   /**
@@ -291,21 +288,20 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
-    configureDriveBindings();
+  private void configButtonBindings() {
+    configDriveBindings();
 
-    configureDefaultCommands();
+    configDefaultCommands();
 
     rightTrigger(); // shooting
     bumperBindings(); // intake
-    leftTrigger();
+    leftTrigger(); // elevator
 
-    // configureFlywheelTuningBindings();
-    // configureShooterHoodTuningBindings();
-    configureIntakePivotTuningBindings();
-    // configureHopperElevatorTuningBindings();
+    configManualIntakePivot();
 
-    // TODO: auto shooting, hood
+    // configFlywheelTuningBindings();
+    // configShooterHoodTuningBindings();
+    // configIntakePivotTuningBindings();
   }
 
   private void leftTrigger() {
@@ -320,7 +316,7 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> hopperElevator.toggleState(), hopperElevator));
   }
 
-  private void configureShooterHoodTuningBindings() {
+  private void configShooterHoodTuningBindings() {
     shooterHood.setDefaultCommand(
         (Commands.run(
             () -> shooterHood.runManual(() -> -driveController.getRightY()), shooterHood)));
@@ -346,36 +342,40 @@ public class RobotContainer {
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
   }
 
-  private void configureIntakePivotTuningBindings() {
+  private void configIntakePivotTuningBindings() {
+    configManualIntakePivot();
+
+    driveController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
+
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW),
+    intakePivot));
+
+    driveController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER),
+    intakePivot));
+
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN),
+    intakePivot));
+  }
+
+  private void configManualIntakePivot() {
     intakePivot.setDefaultCommand(
         (Commands.run(
             () -> intakePivot.runManual(() -> -operatorController.getRightY()), intakePivot)));
-
-    // driveController
-    //     .rightBumper()
-    //     .onTrue(
-    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
-
-    // driveController
-    //     .leftBumper()
-    //     .onTrue(
-    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW),
-    // intakePivot));
-
-    // driveController
-    //     .rightTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER),
-    // intakePivot));
-
-    // driveController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN),
-    // intakePivot));
   }
 
-  private void configureHopperElevatorTuningBindings() {
+  private void configHopperElevatorTuningBindings() {
     hopperElevator.setDefaultCommand(
         (Commands.run(
             () -> hopperElevator.runManual(() -> driveController.getRightY()), hopperElevator)));
@@ -404,14 +404,14 @@ public class RobotContainer {
                 () -> hopperElevator.setGoalState(HopperElevatorState.EXTENDED), hopperElevator));
   }
 
-  private void configureFlywheelTuningBindings() {
+  private void configFlywheelTuningBindings() {
 
     // manual shooter w/ wdpad
     driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
     driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
   }
 
-  private void configureDriveBindings() {
+  private void configDriveBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -456,7 +456,7 @@ public class RobotContainer {
     driveController.a().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
   }
 
-  private void configureDefaultCommands() {
+  private void configDefaultCommands() {
     // // ### hopper on by default
     // hopper.setDefaultCommand(
     //     Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
