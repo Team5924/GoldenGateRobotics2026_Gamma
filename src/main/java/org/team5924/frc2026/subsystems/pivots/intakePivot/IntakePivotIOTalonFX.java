@@ -258,8 +258,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   }
 
   @Override
-  public void runCurrent(double volts) {
-    talon.setControl(currentOut.withOutput(volts));
+  public void runCurrent(double current) {
+    talon.setControl(currentOut.withOutput(current));
   }
 
   @Override

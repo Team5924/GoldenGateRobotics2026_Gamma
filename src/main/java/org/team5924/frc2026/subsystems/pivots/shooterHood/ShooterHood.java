@@ -41,13 +41,14 @@ public class ShooterHood extends SubsystemBase {
     OFF(() -> 0.0),
     ZERO(() -> 0.0),
 
-    // voltage speed at which to rotate the hood
-    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", 1))),
+    // current speed at which to rotate the hood
+    MANUAL((new LoggedTunableNumber("ShooterHood/ManualCurrent", 12))),
 
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
-    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
-    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
+    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(40.0))),
+    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(20.0))),
+    BOTTOM(new LoggedTunableNumber("ShooterHood/BottomAngle", Math.toRadians(5.0))),
     AUTO(() -> 0.0),
 
     // in-between state
@@ -70,13 +71,15 @@ public class ShooterHood extends SubsystemBase {
   private double input;
   private double autoInput = 0.0;
 
-  public void setInput(DoubleSupplier inputSupplier) {
-    input = inputSupplier.getAsDouble();
+  public void setInput(double input) {
+    this.input = input;
   }
 
   public void runManual(DoubleSupplier inputSupplier) {
-    setInput(inputSupplier);
-    setGoalState(ShooterHoodState.MANUAL);
+    // if (goalState != ShooterHoodState.OFF && goalState != ShooterHoodState.MANUAL) return;
+    setInput(inputSupplier.getAsDouble());
+
+    if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(ShooterHoodState.MANUAL);
   }
 
   public void setAutoInput(double inputRads) {
@@ -116,8 +119,8 @@ public class ShooterHood extends SubsystemBase {
     Logger.recordOutput("ShooterHood/TimeSinceLastStateChange", timeSinceLastStateChange);
   }
 
-  public void runVolts(double volts) {
-    io.runVolts(volts);
+  public void runCurrent(double volts) {
+    io.runCurrent(volts);
   }
 
   public void setPosition(double rads) {
@@ -193,6 +196,6 @@ public class ShooterHood extends SubsystemBase {
       return;
     }
 
-    runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
+    runCurrent(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }
 }
