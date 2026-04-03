@@ -445,7 +445,7 @@ public class RobotContainer {
     //     Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
 
     flywheel.setDefaultCommand(
-        Commands.run(() -> flywheel.setGoalState(FlywheelState.IDLE), flywheel));
+        Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.IDLE), flywheel));
   }
 
   private void configureRightBumperBindings() {
@@ -479,15 +479,15 @@ public class RobotContainer {
     driveController
         .leftBumper()
         .onTrue(
+            Commands.parallel(
             Commands.runOnce(
                 () -> {
-                  flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH);
                   indexer.setGoalState(Indexer.IndexerState.INDEXING);
                   hopper.setGoalState(HopperState.ON);
                 },
-                flywheel,
                 indexer,
-                hopper));
+                hopper),
+            Commands.run(() -> flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH), flywheel)));
 
     // [left bumper released] -> turn off flywheel and indexer
     driveController
