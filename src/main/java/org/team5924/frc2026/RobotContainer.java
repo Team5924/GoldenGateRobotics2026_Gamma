@@ -91,14 +91,14 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = false;
+  private final boolean realDrive = true;
   private final boolean realVision = false;
 
   private final boolean realIntake = false;
   private final boolean realIntakePivot = false;
 
   private final boolean realHopper = false;
-  private final boolean realHopperElevator = true;
+  private final boolean realHopperElevator = false;
   private final boolean realIndexer = false;
 
   private final boolean realShooterHood = false;
@@ -295,7 +295,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureDriveBindings();
 
-    configureDefaultCommands();
+    // configureDefaultCommands();
 
     configureLeftBumperBindings();
     configureRightBumperBindings();
@@ -303,7 +303,7 @@ public class RobotContainer {
     // configureFlywheelTuningBindings();
     // configureShooterHoodTuningBindings();
     // configureIntakePivotTuningBindings();
-    configureHopperElevatorTuningBindings();
+    // configureHopperElevatorTuningBindings();
 
     // TODO: auto shooting, hood
   }
