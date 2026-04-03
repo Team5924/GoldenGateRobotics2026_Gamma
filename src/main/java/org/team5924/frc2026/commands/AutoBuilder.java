@@ -115,7 +115,7 @@ public class AutoBuilder {
                 shooterOff(),
                 RobotContainer.autoFactory.trajectoryCmd("Stow"));
         },
-        Set.of(drive, shooterHood, flywheel, intake, intakePivot));
+        Set.of(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer));
   }
 
   public Command leftDoubleSwipe() {
@@ -140,7 +140,7 @@ public class AutoBuilder {
                 shooterOff(),
                 RobotContainer.autoFactory.trajectoryCmd("Stow"));
         },
-        Set.of(drive, shooterHood, flywheel, intake, intakePivot));
+        Set.of(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer));
   }
 
 
@@ -157,14 +157,18 @@ public class AutoBuilder {
   private Command shooterOn(double timeout) {
     return Commands.parallel(
             Commands.run(() -> shooterHood.setGoalState(ShooterHoodState.AUTO), shooterHood),
-            Commands.run(() -> flywheel.setGoalState(FlywheelState.AUTO), flywheel))
+            Commands.run(() -> flywheel.setGoalState(FlywheelState.AUTO), flywheel),
+            Commands.run(() -> indexer.setGoalState(Indexer.IndexerState.INDEXING), indexer),
+            Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper))
         .withTimeout(timeout);
   }
 
   private Command shooterOff() {
     return Commands.parallel(
         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood),
-        Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF), flywheel));
+        Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF), flywheel),
+        Commands.runOnce(() -> indexer.setGoalState(Indexer.IndexerState.OFF), indexer),
+        Commands.runOnce(() -> hopper.setGoalState(Hopper.HopperState.OFF), hopper));
   }
 
   private Command intakeSequence() {
