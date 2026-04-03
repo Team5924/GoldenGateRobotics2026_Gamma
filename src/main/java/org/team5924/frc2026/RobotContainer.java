@@ -256,11 +256,12 @@ public class RobotContainer {
     startingPosition.addOption("Right", "Right");
     startingPosition.addOption("Left", "Left");
     AutoBuilder.setStartingPosition(startingPosition::get);
-    var autoBuilder = new AutoBuilder(drive, shooterHood, flywheel, intake);
+    var autoBuilder =
+        new AutoBuilder(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
 
-    autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
+    autoChooser.addOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
-    autoChooser.addOption("Double Swipe", autoBuilder.doubleSwipe());
+    autoChooser.addDefaultOption("Right Double Swipe", autoBuilder.rightDoubleSwipe());
 
     // Set up SysId routines
     autoChooser.addOption(
