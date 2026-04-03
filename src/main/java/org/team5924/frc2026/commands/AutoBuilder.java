@@ -72,7 +72,7 @@ public class AutoBuilder {
   }
 
   public Command scorePickupAndClimbAuto() {
-    if (startingPositionSupplier.get() == null) {
+    if (startingPositionSupplier == null) {
       throw new IllegalStateException(
           "starting position must be set before building auto commands");
     }
@@ -94,6 +94,10 @@ public class AutoBuilder {
   }
 
   public Command rightDoubleSwipe() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "starting position must be set before building auto commands");
+    }
     return Commands.defer(
         () -> {
           if(!"Right".equals(startingPositionSupplier.get())) {
@@ -119,6 +123,10 @@ public class AutoBuilder {
   }
 
   public Command leftDoubleSwipe() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "starting position must be set before building auto commands");
+    }
     return Commands.defer(
         () -> {
           if(!"Left".equals(startingPositionSupplier.get())) {
