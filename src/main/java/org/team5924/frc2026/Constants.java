@@ -197,7 +197,7 @@ public final class Constants {
     public static final double MOTOR_TO_MECHANISM = 36.0 / 14.0;
     public static final double SIM_MOI = 0.001;
 
-    public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
+    public static final TalonFXConfiguration CONFIG = GenericRoller.CLOCKWISE_CONFIG.clone();
   }
 
   public final class HopperElevator {
@@ -349,7 +349,7 @@ public final class Constants {
 
     public static final double FOLLOWER_SIM_MOI = 0.001;
 
-    public static final double EPSILON_VELOCITY = 2.5;
+    public static final double EPSILON_VELOCITY = 5;
     public static final double MOTOR_TO_MECHANISM = 1.0;
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;

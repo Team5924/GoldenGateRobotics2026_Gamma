@@ -40,6 +40,7 @@ import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
 import org.team5924.frc2026.subsystems.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
@@ -294,7 +295,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureDriveBindings();
 
-    // configureDefaultCommands();
+    configureDefaultCommands();
 
     configureLeftBumperBindings();
     configureRightBumperBindings();
@@ -439,9 +440,12 @@ public class RobotContainer {
   }
 
   private void configureDefaultCommands() {
-    // ### hopper on by default
-    hopper.setDefaultCommand(
-        Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
+    // // ### hopper on by default
+    // hopper.setDefaultCommand(
+    //     Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
+
+    flywheel.setDefaultCommand(
+        Commands.run(() -> flywheel.setGoalState(FlywheelState.IDLE), flywheel));
   }
 
   private void configureRightBumperBindings() {
@@ -491,7 +495,7 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(
                 () -> {
-                  flywheel.setGoalState(Flywheel.FlywheelState.OFF);
+                  flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
                   hopper.setGoalState(HopperState.OFF);
                 },
