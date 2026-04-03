@@ -72,7 +72,8 @@ public final class Constants {
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
   public static final double SYS_ID_TIME = 10.0;
   public static final double JOYSTICK_DEADZONE = 0.05;
-  public static final double AIM_THRESHOLD_RADIANS = Units.degreesToRadians(5.0);
+  public static final double HUB_THRESHOLD_RADIANS = Units.degreesToRadians(5.0);
+  public static final double PASSING_THRESHOLD_RADIANS = Units.degreesToRadians(10.0);
 
   public final class Field {
     // origin = rightmost corner of blue alliance wall
@@ -169,8 +170,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(20)
-            .withStatorCurrentLimit(20)
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(40)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -230,8 +231,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(10)
-            .withStatorCurrentLimit(10))
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(40))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)

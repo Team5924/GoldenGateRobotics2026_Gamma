@@ -61,6 +61,11 @@ public class HopperElevator extends SubsystemBase {
     private final DoubleSupplier heightMeters;
   }
 
+  public void toggleState() {
+    if (goalState == HopperElevatorState.STOW) setGoalState(HopperElevatorState.EXTENDED);
+    else if (goalState == HopperElevatorState.EXTENDED) setGoalState(HopperElevatorState.STOW);
+  }
+
   public HopperElevator(HopperElevatorIO io) {
     this.io = io;
     this.goalState = HopperElevatorState.STOW;

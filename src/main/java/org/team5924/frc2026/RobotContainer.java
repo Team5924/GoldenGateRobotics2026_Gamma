@@ -92,17 +92,17 @@ public class RobotContainer {
 
   // Real/IO implementation
   private final boolean realDrive = true;
-  private final boolean realVision = false;
+  private final boolean realVision = true;
 
-  private final boolean realIntake = false;
-  private final boolean realIntakePivot = false;
+  private final boolean realIntake = true;
+  private final boolean realIntakePivot = true;
 
-  private final boolean realHopper = false;
-  private final boolean realHopperElevator = false;
-  private final boolean realIndexer = false;
+  private final boolean realHopper = true;
+  private final boolean realHopperElevator = true;
+  private final boolean realIndexer = true;
 
-  private final boolean realShooterHood = false;
-  private final boolean realFlywheel = false;
+  private final boolean realShooterHood = true;
+  private final boolean realFlywheel = true;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -299,6 +299,7 @@ public class RobotContainer {
 
     rightTrigger(); // shooting
     bumperBindings(); // intake
+    leftTrigger();
 
     // configureFlywheelTuningBindings();
     // configureShooterHoodTuningBindings();
@@ -306,6 +307,18 @@ public class RobotContainer {
     // configureHopperElevatorTuningBindings();
 
     // TODO: auto shooting, hood
+  }
+
+  private void leftTrigger() {
+    driveController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(() -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
+
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(() -> hopperElevator.toggleState(), hopperElevator));
   }
 
   private void configureShooterHoodTuningBindings() {
