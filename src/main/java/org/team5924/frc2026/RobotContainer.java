@@ -94,15 +94,15 @@ public class RobotContainer {
   private final boolean realDrive = false;
   private final boolean realVision = false;
 
-  private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
+  private final boolean realIntake = false;
+  private final boolean realIntakePivot = false;
 
-  private final boolean realHopper = true;
+  private final boolean realHopper = false;
   private final boolean realHopperElevator = false;
-  private final boolean realIndexer = true;
+  private final boolean realIndexer = false;
 
-  private final boolean realShooterHood = false;
-  private final boolean realFlywheel = true;
+  private final boolean realShooterHood = true;
+  private final boolean realFlywheel = false;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -301,7 +301,7 @@ public class RobotContainer {
     configureRightBumperBindings();
 
     // configureFlywheelTuningBindings();
-    // configureShooterHoodTuningBindings();
+    configureShooterHoodTuningBindings();
     // configureIntakePivotTuningBindings();
     // configureHopperElevatorTuningBindings();
 
@@ -480,14 +480,15 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             Commands.parallel(
-            Commands.runOnce(
-                () -> {
-                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                  hopper.setGoalState(HopperState.ON);
-                },
-                indexer,
-                hopper),
-            Commands.run(() -> flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH), flywheel)));
+                Commands.runOnce(
+                    () -> {
+                      indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                      hopper.setGoalState(HopperState.ON);
+                    },
+                    indexer,
+                    hopper),
+                Commands.run(
+                    () -> flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH), flywheel)));
 
     // [left bumper released] -> turn off flywheel and indexer
     driveController

@@ -48,7 +48,7 @@ public class ShooterHood extends SubsystemBase {
 
     MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(40.0))),
     CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(20.0))),
-    BOTTOM(new LoggedTunableNumber("ShooterHood/BottomAngle", Math.toRadians(5.0))),
+    BOTTOM(new LoggedTunableNumber("ShooterHood/BottomAngle", Math.toRadians(0.0))),
     AUTO(() -> 0.0),
 
     // in-between state

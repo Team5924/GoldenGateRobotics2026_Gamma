@@ -60,19 +60,19 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 20.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 1200.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 50.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.094);
   private final LoggedTunableNumber kG =
-      new LoggedTunableNumber("ShooterHood/kG", 1.8); // prob higher like 6ish
+      new LoggedTunableNumber("ShooterHood/kG", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
       new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 100.0);
+      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 20.0);
   private final LoggedTunableNumber motionJerk =
       new LoggedTunableNumber("ShooterHood/MotionJerk", 0.0);
 
