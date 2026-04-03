@@ -57,7 +57,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 30.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 35.0); // 30
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 5.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.0);
