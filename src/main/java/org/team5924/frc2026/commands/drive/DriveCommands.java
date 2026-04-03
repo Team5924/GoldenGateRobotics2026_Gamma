@@ -200,18 +200,18 @@ public class DriveCommands {
   public static Command joystickDriveWhileLaunching(
       Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     // Create command
-    return (Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()) < 0.01)
+    final var parameters = LaunchCalculator.getInstance().getParameters();
+    final double omegaError =
+        parameters.driveAngle().minus(RobotState.getInstance().getRotation()).getRadians();
+    boolean inRange = omegaError < Constants.AIM_THRESHOLD_RADIANS;
+
+    return (inRange && Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()) < 0.01)
         ? Commands.run(() -> drive.stopWithX())
         : Commands.run(
             () -> {
-              final var parameters = LaunchCalculator.getInstance().getParameters();
               double omegaOutput =
                   parameters.driveVelocity()
-                      + (parameters
-                              .driveAngle()
-                              .minus(RobotState.getInstance().getRotation())
-                              .getRadians()
-                          * driveLaunchKp.get())
+                      + (omegaError * driveLaunchKp.get())
                       + ((parameters.driveVelocity()
                               - RobotState.getInstance().getRobotVelocity().omegaRadiansPerSecond)
                           * driveLaunchKd.get());

@@ -72,6 +72,7 @@ public final class Constants {
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
   public static final double SYS_ID_TIME = 10.0;
   public static final double JOYSTICK_DEADZONE = 0.05;
+  public static final double AIM_THRESHOLD_RADIANS = Units.degreesToRadians(5.0);
 
   public final class Field {
     // origin = rightmost corner of blue alliance wall

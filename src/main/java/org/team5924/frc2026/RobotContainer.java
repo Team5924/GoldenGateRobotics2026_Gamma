@@ -404,9 +404,10 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX()));
+
     // [driver] SLOW MODE YIPE
     driveController
-        .y()
+        .x()
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
@@ -436,7 +437,7 @@ public class RobotContainer {
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // [driver] Reset gyro to 0° when B button is pressed
-    driveController.b().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    driveController.a().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
   }
 
   private void configureDefaultCommands() {
