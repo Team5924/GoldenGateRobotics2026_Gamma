@@ -107,7 +107,7 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  public static AutoFactory autoFactory;
+  public AutoFactory autoFactory;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -258,7 +258,7 @@ public class RobotContainer {
     startingPosition.addOption("Left", "Left");
     AutoBuilder.setStartingPosition(startingPosition::get);
     var autoBuilder =
-        new AutoBuilder(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
+        new AutoBuilder(autoFactory, drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
 
     // autoChooser.addOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     // autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());

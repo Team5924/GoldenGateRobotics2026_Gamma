@@ -34,8 +34,11 @@ import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 
+import choreo.auto.AutoFactory;
+
 @RequiredArgsConstructor
 public class AutoBuilder {
+  private final AutoFactory autoFactory;
   private final Drive drive;
   private final ShooterHood shooterHood;
   private final Flywheel flywheel;
@@ -65,7 +68,7 @@ public class AutoBuilder {
                 startToHub(startingPositionSupplier.get()),
                 shooterOn(1.0), // TODO: Edit timeout
                 shooterOff(),
-                RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
+                autoFactory.trajectoryCmd("HubToClimb")
                 // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
                 ),
         Set.of(drive, shooterHood, flywheel));
@@ -82,12 +85,12 @@ public class AutoBuilder {
                 startToHub(startingPositionSupplier.get()),
                 shooterOn(1.0), // TODO: edit timeouts
                 shooterOff(),
-                RobotContainer.autoFactory.trajectoryCmd("HubToDepot"),
+                autoFactory.trajectoryCmd("HubToDepot"),
                 intakeSequence(),
-                RobotContainer.autoFactory.trajectoryCmd("DepotToHub"),
+                autoFactory.trajectoryCmd("DepotToHub"),
                 shooterOn(1.0),
                 shooterOff(),
-                RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
+                autoFactory.trajectoryCmd("HubToClimb")
                 // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
                 ),
         Set.of(drive, shooterHood, flywheel, intake));
@@ -104,20 +107,20 @@ public class AutoBuilder {
             throw new IllegalStateException("starting position must be right for this auto command");
           }
           return Commands.sequence(
-                RobotContainer.autoFactory.resetOdometry("Swipe1Right"),
+                autoFactory.resetOdometry("Swipe1Right"),
                 Commands.deadline(
-                    RobotContainer.autoFactory.trajectoryCmd("Swipe1Right"), 
+                    autoFactory.trajectoryCmd("Swipe1Right"), 
                     intake()),
                 intakeOff(),
                 shooterOn(1.0), // TODO: Edit Timeout values
                 shooterOff(),
                 Commands.deadline(
-                    RobotContainer.autoFactory.trajectoryCmd("Swipe2Right"), 
+                    autoFactory.trajectoryCmd("Swipe2Right"), 
                     intake()),
                 intakeOff(),
                 shooterOn(1.0), // TODO: Edit Timeout values
                 shooterOff(),
-                RobotContainer.autoFactory.trajectoryCmd("Stow"));
+                autoFactory.trajectoryCmd("Stow"));
         },
         Set.of(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer));
   }
@@ -133,20 +136,20 @@ public class AutoBuilder {
             throw new IllegalStateException("starting position must be left for this auto command");
           }
           return Commands.sequence(
-                RobotContainer.autoFactory.resetOdometry("Swipe1Left"),
+                autoFactory.resetOdometry("Swipe1Left"),
                 Commands.deadline(
-                    RobotContainer.autoFactory.trajectoryCmd("Swipe1Left"), 
+                    autoFactory.trajectoryCmd("Swipe1Left"), 
                     intake()),
                 intakeOff(),
                 shooterOn(1.0), // TODO: Edit Timeout values
                 shooterOff(),
                 Commands.deadline(
-                    RobotContainer.autoFactory.trajectoryCmd("Swipe2Left"), 
+                    autoFactory.trajectoryCmd("Swipe2Left"), 
                     intake()),
                 intakeOff(),
                 shooterOn(1.0), // TODO: Edit Timeout values
                 shooterOff(),
-                RobotContainer.autoFactory.trajectoryCmd("Stow"));
+                autoFactory.trajectoryCmd("Stow"));
         },
         Set.of(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer));
   }
@@ -157,8 +160,8 @@ public class AutoBuilder {
       return Commands.none();
     } else {
       return Commands.sequence(
-          RobotContainer.autoFactory.resetOdometry(startingPosition + "StartToHub"),
-          RobotContainer.autoFactory.trajectoryCmd(startingPosition + "StartToHub"));
+          autoFactory.resetOdometry(startingPosition + "StartToHub"),
+          autoFactory.trajectoryCmd(startingPosition + "StartToHub"));
     }
   }
 
@@ -181,7 +184,7 @@ public class AutoBuilder {
 
   private Command intakeSequence() {
     return Commands.sequence(
-        Commands.deadline(RobotContainer.autoFactory.trajectoryCmd("DepotIntake"), intake()),
+        Commands.deadline(autoFactory.trajectoryCmd("DepotIntake"), intake()),
         intakeOff());
   }
 
