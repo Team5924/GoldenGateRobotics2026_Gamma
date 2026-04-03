@@ -99,7 +99,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   public ShooterHoodIOTalonFX() {
     talon = new TalonFX(ShooterHood.CAN_ID, new CANBus(ShooterHood.BUS));
-    cancoder = new CANcoder(ShooterHood.CANCODER_ID, new CANBus(ShooterHood.BUS));
+    cancoder = new CANcoder(ShooterHood.CANCODER_ID, new CANBus(ShooterHood.CANCODER_BUS));
 
     talonConfig = talon.getConfigurator();
 

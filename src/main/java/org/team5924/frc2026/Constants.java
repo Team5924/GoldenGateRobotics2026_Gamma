@@ -281,6 +281,7 @@ public final class Constants {
     public static final int CAN_ID = 34;
 
     /* CANCoder */
+    public static final String CANCODER_BUS = "canivore";
     public static final int CANCODER_ID = 35; // TODO: set to something else
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
