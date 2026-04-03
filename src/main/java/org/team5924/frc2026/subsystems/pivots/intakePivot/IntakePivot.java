@@ -43,7 +43,7 @@ public class IntakePivot extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
-    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0.6)),
+    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0.3)),
     STOW(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(180.0 - 47.933))),
 
     MAX(new LoggedTunableNumber("IntakePivot/PhysicalMax", 2.63)),
@@ -153,7 +153,7 @@ public class IntakePivot extends SubsystemBase {
       case MANUAL -> handleManualState();
       case OFF -> stop();
       default -> {
-        if (!isAtSetpoint) setPosition(goalState.getRads().getAsDouble());
+        setPosition(goalState.getRads().getAsDouble());
       }
     }
   }

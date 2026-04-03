@@ -294,7 +294,6 @@ public class RobotContainer {
 
     rightTrigger(); // shooting
     bumperBindings(); // intake
-    leftTrigger(); // elevator
 
     configManualIntakePivot();
 
@@ -502,7 +501,7 @@ public class RobotContainer {
   private void rightTrigger() {
     // [left bumper pressed] -> run flywheel and indexer
     driveController
-        .leftBumper()
+        .rightTrigger()
         .onTrue(
             Commands.parallel(
                 Commands.runOnce(
@@ -516,7 +515,7 @@ public class RobotContainer {
 
     // [left bumper released] -> turn off flywheel and indexer
     driveController
-        .leftBumper()
+        .rightTrigger()
         .onFalse(
             Commands.runOnce(
                 () -> {
