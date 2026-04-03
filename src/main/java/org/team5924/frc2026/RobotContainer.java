@@ -98,10 +98,10 @@ public class RobotContainer {
   private final boolean realIntakePivot = false;
 
   private final boolean realHopper = false;
-  private final boolean realHopperElevator = false;
+  private final boolean realHopperElevator = true;
   private final boolean realIndexer = false;
 
-  private final boolean realShooterHood = true;
+  private final boolean realShooterHood = false;
   private final boolean realFlywheel = false;
 
   // Controller
@@ -301,9 +301,9 @@ public class RobotContainer {
     configureRightBumperBindings();
 
     // configureFlywheelTuningBindings();
-    configureShooterHoodTuningBindings();
+    // configureShooterHoodTuningBindings();
     // configureIntakePivotTuningBindings();
-    // configureHopperElevatorTuningBindings();
+    configureHopperElevatorTuningBindings();
 
     // TODO: auto shooting, hood
   }

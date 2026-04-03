@@ -202,6 +202,9 @@ public class DriveCommands {
     // Create command
     return Commands.run(
         () -> {
+          // if (Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()) < 0.01)
+          //   return new Command(drive::stopWithX);
+
           // Run PID controller
           final var parameters = LaunchCalculator.getInstance().getParameters();
           double omegaOutput =

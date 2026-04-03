@@ -188,6 +188,14 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
                 closedLoopReferenceSlope)
             .isOK();
 
+    inputs.cancoderConnected =
+        BaseStatusSignal.refreshAll(
+                cancoderAbsolutePosition,
+                cancoderVelocity,
+                cancoderSupplyVoltage,
+                cancoderPositionRotations)
+            .isOK();
+
     inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
@@ -214,6 +222,13 @@ public class HopperElevatorIOTalonFX implements HopperElevatorIO {
     }
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
+
+    inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
+    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
+    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
+    inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
+
+    inputs.cancoderPositionRotations = Units.radiansToRotations(inputs.cancoderPositionRotations);
   }
 
   private void updateLoggedTunableNumbers() {

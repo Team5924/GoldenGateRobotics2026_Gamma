@@ -66,8 +66,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.094);
-  private final LoggedTunableNumber kG =
-      new LoggedTunableNumber("ShooterHood/kG", 0.0);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
       new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 10.0);
