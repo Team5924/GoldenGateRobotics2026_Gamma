@@ -94,12 +94,12 @@ public class AutoBuilder {
   }
 
   public Command rightDoubleSwipe() {
-    if (startingPositionSupplier.get() == "Right") {
-      throw new IllegalStateException("starting position must be right for this auto command");
-    }
     return Commands.defer(
-        () ->
-            Commands.sequence(
+        () -> {
+          if(!"Right".equals(startingPositionSupplier.get())) {
+            throw new IllegalStateException("starting position must be right for this auto command");
+          }
+          return Commands.sequence(
                 RobotContainer.autoFactory.resetOdometry("Swipe1Right"),
                 Commands.deadline(
                     RobotContainer.autoFactory.trajectoryCmd("Swipe1Right"), 
@@ -113,7 +113,8 @@ public class AutoBuilder {
                 intakeOff(),
                 shooterOn(1.0), // TODO: Edit Timeout values
                 shooterOff(),
-                RobotContainer.autoFactory.trajectoryCmd("Stow")),
+                RobotContainer.autoFactory.trajectoryCmd("Stow"));
+        },
         Set.of(drive, shooterHood, flywheel, intake, intakePivot));
   }
 

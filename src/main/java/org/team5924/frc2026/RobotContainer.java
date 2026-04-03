@@ -252,8 +252,8 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
     LoggedDashboardChooser<String> startingPosition =
         new LoggedDashboardChooser<>("Starting Position?");
-    startingPosition.addDefaultOption("Middle", "Mid");
-    startingPosition.addOption("Right", "Right");
+    startingPosition.addOption("Middle", "Mid");
+    startingPosition.addDefaultOption("Right", "Right");
     startingPosition.addOption("Left", "Left");
     AutoBuilder.setStartingPosition(startingPosition::get);
     var autoBuilder =
