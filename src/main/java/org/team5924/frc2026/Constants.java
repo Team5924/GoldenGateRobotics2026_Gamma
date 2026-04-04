@@ -199,7 +199,11 @@ public final class Constants {
     public static final double MOTOR_TO_MECHANISM = 36.0 / 14.0;
     public static final double SIM_MOI = 0.001;
 
-    public static final TalonFXConfiguration CONFIG = GenericRoller.CLOCKWISE_CONFIG.clone();
+    public static final TalonFXConfiguration CONFIG = GenericRoller.CLOCKWISE_CONFIG.clone()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(40));
   }
 
   public final class HopperElevator {
