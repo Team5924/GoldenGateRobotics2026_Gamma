@@ -43,8 +43,9 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 40)),
-    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 25)),
+    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 30)),
+    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 30)),
+    IDLE(new LoggedTunableNumber("Flywheel/Idle", 5)),
 
     AUTO(() -> 0.0),
 
@@ -147,11 +148,13 @@ public class Flywheel extends SubsystemBase {
   public boolean isAtSetpoint() {
     return switch (goalState) {
       case B4, B6, B8, B12 -> true;
+      case IDLE -> false;
       default ->
           EqualsUtil.epsilonEquals(
-              getTargetVelocityRotationsPerSec(),
-              inputs.velocityRotationsPerSec,
-              Constants.Flywheel.EPSILON_VELOCITY);
+                  getTargetVelocityRotationsPerSec(),
+                  inputs.velocityRotationsPerSec,
+                  Constants.Flywheel.EPSILON_VELOCITY)
+              || inputs.velocityRotationsPerSec > getTargetVelocityRotationsPerSec();
     };
   }
 

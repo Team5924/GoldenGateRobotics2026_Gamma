@@ -24,7 +24,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -63,15 +63,13 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private double setpointVelocityRotationsPerSec;
 
   /* Gains  */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Flywheel/kP", 0.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Flywheel/kP", 999999999.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("Flywheel/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Flywheel/kD", 0.0);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.365);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.123);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 0.0);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.0);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.0);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 2.394);
 
-  private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("Flywheel/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("Flywheel/MotionAcceleration", 100.0);
   private final LoggedTunableNumber motionJerk =
@@ -90,7 +88,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private double prevReferenceSlopeTimestamp = 0.0;
 
   private final VoltageOut voltageOut;
-  private final MotionMagicVelocityVoltage motionMagicVelocity;
+  private final MotionMagicVelocityTorqueCurrentFOC motionMagicVelocity;
 
   public FlywheelIOTalonFX() {
     leftTopTalon = new TalonFX(Flywheel.LEFT_TOP_ID, new CANBus(Flywheel.BUS));
@@ -110,18 +108,19 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     updateMotionMagicConfigs();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[9];
+    StatusCode[] statusArray = new StatusCode[10];
 
     statusArray[0] = leftTopConfig.apply(Flywheel.CONFIG);
     statusArray[1] = leftTopConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[2] = leftTopConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[3] = leftTopConfig.apply(Flywheel.FEEDBACK_CONFIGS);
-    statusArray[4] = leftTopConfig.apply(slot0Configs);
-    statusArray[5] = leftTopConfig.apply(motionMagicConfigs);
+    statusArray[4] = leftTopConfig.apply(Flywheel.TORQUE_CURRENT_CONFIGS);
+    statusArray[5] = leftTopConfig.apply(slot0Configs);
+    statusArray[6] = leftTopConfig.apply(motionMagicConfigs);
 
-    statusArray[6] = leftBottomConfig.apply(Flywheel.CONFIG);
-    statusArray[7] = rightTopConfig.apply(Flywheel.CONFIG);
-    statusArray[8] = rightBottomConfig.apply(Flywheel.CONFIG);
+    statusArray[7] = leftBottomConfig.apply(Flywheel.CONFIG);
+    statusArray[8] = rightTopConfig.apply(Flywheel.CONFIG);
+    statusArray[9] = rightBottomConfig.apply(Flywheel.CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -167,7 +166,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         leftTopTalon, leftBottomTalon, rightBottomTalon, rightTopTalon);
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
+    motionMagicVelocity = new MotionMagicVelocityTorqueCurrentFOC(0.0).withSlot(0);
 
     leftTopTalon.setPosition(0.0);
   }
@@ -232,7 +231,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   private void updateMotionMagicConfigs() {
     motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
-    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
   }
 
@@ -265,7 +263,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
           }
         },
         motionAcceleration,
-        motionCruiseVelocity,
         motionJerk);
   }
 

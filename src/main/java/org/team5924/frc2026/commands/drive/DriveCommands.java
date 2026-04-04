@@ -199,18 +199,28 @@ public class DriveCommands {
 
   public static Command joystickDriveWhileLaunching(
       Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
-    // Create command
+
     return Commands.run(
         () -> {
-          // Run PID controller
           final var parameters = LaunchCalculator.getInstance().getParameters();
+          final double omegaError =
+              parameters.driveAngle().minus(RobotState.getInstance().getRotation()).getRadians();
+          double updatedThreshold =
+              parameters.passing()
+                  ? (4.0 / parameters.distance()) * Constants.HUB_THRESHOLD_RADIANS
+                  : (12.0 / parameters.distance()) * Constants.PASSING_THRESHOLD_RADIANS;
+          boolean inRange = Math.abs(omegaError) < updatedThreshold;
+          boolean shouldStop =
+              inRange && Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()) < 0.01;
+
+          if (shouldStop) {
+            drive.stopWithX();
+            return;
+          }
+
           double omegaOutput =
               parameters.driveVelocity()
-                  + (parameters
-                          .driveAngle()
-                          .minus(RobotState.getInstance().getRotation())
-                          .getRadians()
-                      * driveLaunchKp.get())
+                  + (omegaError * driveLaunchKp.get())
                   + ((parameters.driveVelocity()
                           - RobotState.getInstance().getRobotVelocity().omegaRadiansPerSecond)
                       * driveLaunchKd.get());
@@ -286,7 +296,8 @@ public class DriveCommands {
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   fieldRelativeSpeedsWithOffset, RobotState.getInstance().getRotation()));
 
-          // Override robot setpoint speeds published by drive. We run our calculations using the
+          // Override robot setpoint speeds published by drive. We run our calculations using
+          // the
           // speeds that will ultimately be applied once we are using the full robot-to-launcher
           // transform. This prevents the setpoint from changing due to the shifting COR of the
           // robot.

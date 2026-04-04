@@ -41,9 +41,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.Constants.ShooterHood;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHoodIOTalonFX implements ShooterHoodIO {
@@ -60,13 +57,13 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 250.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 23.0); // 1200
   private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 7.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.0);
-  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 5.5);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.094);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("ShooterHood/kG", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
       new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 10.0);
@@ -99,14 +96,14 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   public ShooterHoodIOTalonFX() {
     talon = new TalonFX(ShooterHood.CAN_ID, new CANBus(ShooterHood.BUS));
-    cancoder = new CANcoder(ShooterHood.CANCODER_ID, new CANBus(ShooterHood.BUS));
+    cancoder = new CANcoder(ShooterHood.CANCODER_ID, new CANBus(ShooterHood.CANCODER_BUS));
 
     talonConfig = talon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     updateSlot0Configs();
-    slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
-    slot0Configs.GravityArmPositionOffset = Constants.ShooterHood.BOTTOM_POSITION;
+    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
+    slot0Configs.GravityArmPositionOffset = -Constants.ShooterHood.BOTTOM_POSITION;
 
     motionMagicConfigs = new MotionMagicConfigs();
     updateMotionMagicConfigs();
@@ -120,20 +117,20 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[5] = talonConfig.apply(ShooterHood.SOFTWARE_LIMIT_CONFIGS);
-    statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
-    statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
+    // statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
+    // statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
 
-    boolean isErrorPresent = false;
-    for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
+    // boolean isErrorPresent = false;
+    // for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
 
-    if (isErrorPresent)
-      Elastic.sendNotification(
-          new Notification(
-              NotificationLevel.WARNING,
-              "Shooter Hood Configs",
-              "Error in applying Shooter Hood configs!"));
+    // if (isErrorPresent)
+    //   Elastic.sendNotification(
+    //       new Notification(
+    //           NotificationLevel.WARNING,
+    //           "Shooter Hood Configs",
+    //           "Error in applying Shooter Hood configs!"));
 
-    Logger.recordOutput("ShooterHood/InitConfReport", statusArray);
+    // Logger.recordOutput("ShooterHood/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
     position = talon.getPosition();
@@ -299,8 +296,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
       return;
     }
 
-    setpointRads = clampRads(rads);
-    talon.setControl(motionMagicCurrent.withPosition(radsToMotorPosition(setpointRads)));
+    // setpointRads = clampRads(rads);
+    double updatedPosition = rads * 4.11 / 0.76794;
+    talon.setControl(motionMagicCurrent.withPosition(updatedPosition));
   }
 
   /* Unused but nice to have */

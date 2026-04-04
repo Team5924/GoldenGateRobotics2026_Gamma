@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,16 +43,28 @@ public class IntakePivot extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
-    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0)),
-    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 2.05)),
-    PHYSICAL_STOW(() -> 2.1),
-    SHOOTING(new LoggedTunableNumber("IntakePivot/ShootingRads", 1.5)),
+    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0.3)),
+    STOW(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(180.0 - 47.933))),
+
+    MAX(new LoggedTunableNumber("IntakePivot/PhysicalMax", 2.63)),
+
+    // for testing
+    CENTER(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(60.0))),
+
+    SHOOTING_UP(new LoggedTunableNumber("IntakePivot/ShootingUpRads", Units.degreesToRadians(100.0))),
+    SHOOTING_DOWN(new LoggedTunableNumber("IntakePivot/ShootingDownRads", Units.degreesToRadians(85.0))),
 
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("IntakePivot/OperatorCurrent", 12.5));
 
     /** rads are measured from stow position (+ is down) */
     private final DoubleSupplier rads;
+  }
+
+  public void runManual(DoubleSupplier inputSupplier) {
+    setInput(inputSupplier.getAsDouble());
+
+    if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(IntakePivotState.MANUAL);
   }
 
   private final Alert motorDisconnected;
@@ -128,7 +141,19 @@ public class IntakePivot extends SubsystemBase {
         && EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.positionRads, Constants.IntakePivot.EPSILON_RADS);
   }
+  private void handleShooterState() {
+    if (!goalState.equals(IntakePivotState.SHOOTING_UP) && !goalState.equals(IntakePivotState.SHOOTING_DOWN)) return;
+    if (!isAtSetpoint()) return;
 
+    if (goalState.equals(IntakePivotState.SHOOTING_DOWN)) {
+      setGoalState(IntakePivotState.SHOOTING_UP);
+    }
+    if (goalState.equals(IntakePivotState.SHOOTING_UP)) {
+      setGoalState(IntakePivotState.SHOOTING_DOWN);
+    }
+
+    setPosition(goalState.getRads().getAsDouble());
+  }
   private void handleCurrentState() {
     timeSinceLastStateChange = MatchState.getInstance().getTime() - lastStateChange;
     isAtSetpoint = isAtSetpoint();
@@ -140,8 +165,9 @@ public class IntakePivot extends SubsystemBase {
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
+      case SHOOTING_UP, SHOOTING_DOWN -> handleShooterState();
       default -> {
-        if (!isAtSetpoint) setPosition(goalState.getRads().getAsDouble());
+        setPosition(goalState.getRads().getAsDouble());
       }
     }
   }

@@ -25,33 +25,39 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.team5924.frc2026.util.VisionUtil;
 
 public class VisionConstants {
-  public static final String FRONT_RIGHT_NAME = "FR_Camera";
-  public static final String FRONT_LEFT_NAME = "FL_Camera";
-  public static final String BACK_RIGHT_NAME = "BR_Camera";
-  public static final String BACK_LEFT_NAME = "BL_Camera";
+  public static final String FRONT_NAME = "Front_Camera";
+  public static final String LEFT_NAME = "Left_Camera";
+  public static final String RIGHT_NAME = "Right_Camera";
 
   // +x = forward, +y = left, +z = up
   // transforms are relative to the robot's center
-  public static final Transform3d FRONT_LEFT_TRANSFORM =
+  public static final Transform3d FRONT_TRANSFORM =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(10.402),
-              Units.inchesToMeters(12.042),
-              Units.inchesToMeters(8.401)),
+              Units.inchesToMeters(-1.601), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
           new Rotation3d(
-              Units.degreesToRadians(8.0),
+              Units.degreesToRadians(0.0),
               Units.degreesToRadians(-55.0),
-              Units.degreesToRadians(-15.0)));
-  public static final Transform3d FRONT_RIGHT_TRANSFORM =
+              Units.degreesToRadians(0.0)));
+
+  // TODO: update left and right measurements once we get values
+  public static final Transform3d LEFT_TRANSFORM =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(10.402),
-              Units.inchesToMeters(-12.042),
-              Units.inchesToMeters(8.711)),
+              Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
           new Rotation3d(
-              Units.degreesToRadians(-8.0),
-              Units.degreesToRadians(-55.0),
-              Units.degreesToRadians(15.0)));
+              Units.degreesToRadians(0.0),
+              Units.degreesToRadians(0.0),
+              Units.degreesToRadians(0.0)));
+
+  public static final Transform3d RIGHT_TRANSFORM =
+      new Transform3d(
+          new Translation3d(
+              Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
+          new Rotation3d(
+              Units.degreesToRadians(0.0),
+              Units.degreesToRadians(0.0),
+              Units.degreesToRadians(0.0)));
 
   // public static final ArrayList<Integer> IGNORE_IDS =
   //     new ArrayList<Integer>(List.of());

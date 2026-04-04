@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.hopperElevator;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,11 +52,18 @@ public class HopperElevator extends SubsystemBase {
     OFF(() -> 0.0),
 
     STOW(new LoggedTunableNumber("HopperElevator/StowHeightMeters", 0.0)),
-    EXTENDED(new LoggedTunableNumber("HopperElevator/ExtendedHeightMeters", 0.0)),
+    EXTENDED(
+        new LoggedTunableNumber("HopperElevator/ExtendedHeightMeters", Units.inchesToMeters(8.0))),
+    CENTER(new LoggedTunableNumber("HopperElevator/CenterHeightMeters", Units.inchesToMeters(4.0))),
     MANUAL(new LoggedTunableNumber("HopperElevator/ManualVolts", 1.0)),
     MOVING(() -> 0.0);
 
     private final DoubleSupplier heightMeters;
+  }
+
+  public void toggleState() {
+    if (goalState == HopperElevatorState.STOW) setGoalState(HopperElevatorState.EXTENDED);
+    else if (goalState == HopperElevatorState.EXTENDED) setGoalState(HopperElevatorState.STOW);
   }
 
   public HopperElevator(HopperElevatorIO io) {
@@ -65,6 +73,12 @@ public class HopperElevator extends SubsystemBase {
     this.motorDisconnected =
         new Alert("HopperElevator Motor Disconnected!", Alert.AlertType.kWarning);
     overheatAlert = new Alert("HopperElevator motor overheating!", Alert.AlertType.kWarning);
+  }
+
+  public void runManual(DoubleSupplier inputSupplier) {
+    setInput(inputSupplier.getAsDouble());
+
+    if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(HopperElevatorState.MANUAL);
   }
 
   @Override

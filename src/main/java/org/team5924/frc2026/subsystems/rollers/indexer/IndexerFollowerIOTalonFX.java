@@ -1,5 +1,5 @@
 /*
- * IndexerIOTalonFX.java
+ * IndexerFollowerIOTalonFX.java
  */
 
 /* 
@@ -16,14 +16,21 @@
 
 package org.team5924.frc2026.subsystems.rollers.indexer;
 
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import org.team5924.frc2026.Constants.Indexer;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
 
-public class IndexerIOTalonFX extends GenericRollerIOTalonFX implements IndexerIO {
-  private final IndexerFollowerIOTalonFX follower;
+public class IndexerFollowerIOTalonFX extends GenericRollerIOTalonFX implements IndexerIO {
+  public IndexerFollowerIOTalonFX() {
+    super(Indexer.FOLLOWER_CAN_ID, Indexer.BUS, Indexer.CONFIG, Indexer.MOTOR_TO_MECHANISM);
 
-  public IndexerIOTalonFX() {
-    super(Indexer.CAN_ID, Indexer.BUS, Indexer.CONFIG, Indexer.MOTOR_TO_MECHANISM);
-    follower = new IndexerFollowerIOTalonFX();
+    talon.setControl(new Follower(Indexer.CAN_ID, MotorAlignmentValue.Opposed));
   }
+
+  @Override
+  public void runVolts(double volts) {}
+
+  @Override
+  public void stop() {}
 }

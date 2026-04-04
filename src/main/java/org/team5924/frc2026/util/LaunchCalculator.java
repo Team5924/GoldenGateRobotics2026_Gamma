@@ -150,39 +150,37 @@ public class LaunchCalculator {
           FieldConstants.LinesHorizontal.leftBumpEnd);
 
   static {
-    minDistance = 0.9;
+    minDistance = 1.0;
     maxDistance = 4.9;
     passingMinDistance = 0.0;
     passingMaxDistance = 12.0;
     phaseDelay = 0.03;
 
     // if (true) {
-    hoodAngleMap.put(2.388, Rotation2d.fromRadians(0.0));
-    hoodAngleMap.put(2.450, Rotation2d.fromRadians(0.031));
-    hoodAngleMap.put(2.570, Rotation2d.fromRadians(0.040));
-    hoodAngleMap.put(2.730, Rotation2d.fromRadians(0.052));
-    hoodAngleMap.put(3.050, Rotation2d.fromRadians(0.052));
-    hoodAngleMap.put(3.550, Rotation2d.fromRadians(0.110));
-    hoodAngleMap.put(4.000, Rotation2d.fromRadians(0.139));
-    hoodAngleMap.put(4.470, Rotation2d.fromRadians(0.181));
+    hoodAngleMap.put(1.780, Rotation2d.fromDegrees(0.000));
+    hoodAngleMap.put(2.600, Rotation2d.fromDegrees(4.330));
+    hoodAngleMap.put(3.050, Rotation2d.fromDegrees(6.574));
+    hoodAngleMap.put(3.570, Rotation2d.fromDegrees(8.374));
+    hoodAngleMap.put(4.020, Rotation2d.fromDegrees(10.674));
+    hoodAngleMap.put(4.520, Rotation2d.fromDegrees(12.774));
 
-    flywheelSpeedMap.put(2.388, 75.0);
-    flywheelSpeedMap.put(2.450, 75.0);
-    flywheelSpeedMap.put(2.570, 77.5);
-    flywheelSpeedMap.put(2.730, 77.5);
-    flywheelSpeedMap.put(3.050, 80.0);
-    flywheelSpeedMap.put(3.550, 85.0);
-    flywheelSpeedMap.put(4.000, 87.5);
-    flywheelSpeedMap.put(4.470, 92.5);
+    final double multi = 0.55;
 
-    timeOfFlightMap.put(2.388, 0.814);
-    timeOfFlightMap.put(3.050, 0.879);
-    timeOfFlightMap.put(4.000, 0.935);
-    timeOfFlightMap.put(4.470, 0.975);
+    flywheelSpeedMap.put(1.780, 56.723 * multi);
+    flywheelSpeedMap.put(2.600, 57.353 * multi);
+    flywheelSpeedMap.put(3.050, 57.563 * multi);
+    flywheelSpeedMap.put(3.570, 59.454 * multi);
+    flywheelSpeedMap.put(4.020, 60.294 * multi);
+    flywheelSpeedMap.put(4.520, 60.924 * multi);
+
+    timeOfFlightMap.put(2.600, 1.414);
+    timeOfFlightMap.put(3.050, 1.428);
+    timeOfFlightMap.put(4.020, 1.444);
 
     // ------------------------
 
     // minDistance = 0.9;
+    
     // maxDistance = 4.9;
     // passingMinDistance = 0.0;
     // passingMaxDistance = 12.0;
@@ -221,40 +219,18 @@ public class LaunchCalculator {
     // timeOfFlightMap.put(1.88, 1.09);
     // timeOfFlightMap.put(1.38, 0.90);
 
-    // TODO: update; these are just to prevent a bug when passing maps have no values
     {
-      passingHoodAngleMap.put(5.46, Rotation2d.fromDegrees(38.0));
-      passingHoodAngleMap.put(6.62, Rotation2d.fromDegrees(38.0));
-      passingHoodAngleMap.put(7.80, Rotation2d.fromDegrees(38.0));
+      passingHoodAngleMap.put(5.720, Rotation2d.fromDegrees(12.774));
+      passingHoodAngleMap.put(6.570, Rotation2d.fromDegrees(12.774));
+      passingHoodAngleMap.put(7.700, Rotation2d.fromDegrees(12.774));
 
-      passingFlywheelSpeedMap.put(5.46, 160.0);
-      passingFlywheelSpeedMap.put(6.62, 180.0);
-      passingFlywheelSpeedMap.put(7.80, 200.0);
+      passingFlywheelSpeedMap.put(5.720, 63.445 * multi);
+      passingFlywheelSpeedMap.put(6.570, 68.697 * multi);
+      passingFlywheelSpeedMap.put(7.700, 74.790 * multi);
 
       passingTimeOfFlightMap.put(passingMinDistance, 0.0);
       passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
     }
-    // } else {
-    //   // Full field maps
-
-    //   hoodAngleMap.put(minDistance, Rotation2d.fromDegrees(0.0));
-    //   hoodAngleMap.put(maxDistance, Rotation2d.fromDegrees(0.0));
-
-    //   flywheelSpeedMap.put(minDistance, 0.0);
-    //   flywheelSpeedMap.put(maxDistance, 0.0);
-
-    //   timeOfFlightMap.put(minDistance, 0.0);
-    //   timeOfFlightMap.put(maxDistance, 0.0);
-
-    //   passingHoodAngleMap.put(passingMinDistance, Rotation2d.fromDegrees(0.0));
-    //   passingHoodAngleMap.put(passingMaxDistance, Rotation2d.fromDegrees(0.0));
-
-    //   passingFlywheelSpeedMap.put(passingMinDistance, 0.0);
-    //   passingFlywheelSpeedMap.put(passingMaxDistance, 0.0);
-
-    //   passingTimeOfFlightMap.put(passingMinDistance, 0.0);
-    //   passingTimeOfFlightMap.put(passingMaxDistance, 0.0);
-    // }
 
     // passingPreset =
     //     new LaunchPreset(

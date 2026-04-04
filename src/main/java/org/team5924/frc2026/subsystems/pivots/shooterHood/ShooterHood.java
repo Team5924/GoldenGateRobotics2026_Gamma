@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,13 +41,13 @@ public class ShooterHood extends SubsystemBase {
     ZERO(() -> 0.0),
 
     // current speed at which to rotate the hood
-    MANUAL((new LoggedTunableNumber("ShooterHood/ManualCurrent", 12))),
+    MANUAL((new LoggedTunableNumber("ShooterHood/ManualCurrent", 30))),
 
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
     MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(40.0))),
     CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(20.0))),
-    BOTTOM(new LoggedTunableNumber("ShooterHood/BottomAngle", Math.toRadians(5.0))),
+    BOTTOM(new LoggedTunableNumber("ShooterHood/BottomAngle", Math.toRadians(0.0))),
     AUTO(() -> 0.0),
 
     // in-between state
@@ -76,18 +75,13 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void runManual(DoubleSupplier inputSupplier) {
-    // if (goalState != ShooterHoodState.OFF && goalState != ShooterHoodState.MANUAL) return;
     setInput(inputSupplier.getAsDouble());
 
     if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(ShooterHoodState.MANUAL);
   }
 
   public void setAutoInput(double inputRads) {
-    autoInput =
-        MathUtil.clamp(
-            inputRads,
-            Constants.ShooterHood.MIN_POSITION_RADS,
-            Constants.ShooterHood.MAX_POSITION_RADS);
+    autoInput = inputRads;
   }
 
   public ShooterHood(ShooterHoodIO io) {
@@ -177,11 +171,11 @@ public class ShooterHood extends SubsystemBase {
       case AUTO -> {
         // pass in hood angle from launch calculator
         if (LaunchCalculator.getInstance().getParameters().isValid())
-           setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
-         if (!isAtSetpoint) setPosition(autoInput);
+          setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
+        setPosition(autoInput);
       }
       default -> {
-        if (!isAtSetpoint) setPosition(getTargetRads());
+        setPosition(getTargetRads());
       }
     }
 
