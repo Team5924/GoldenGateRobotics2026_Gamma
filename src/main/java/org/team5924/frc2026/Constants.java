@@ -61,7 +61,7 @@ public final class Constants {
   }
 
   public static final double TRACK_WIDTH_Y_METERS = Units.inchesToMeters(19.5);
-  public static final boolean TUNING_MODE = false; // TODO: tuning mode off
+  public static final boolean TUNING_MODE = true; // TODO: tuning mode off
 
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.33;
@@ -331,10 +331,16 @@ public final class Constants {
             .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      // new FeedbackConfigs()
+        // .withRotorToSensorRatio(MOTOR_TO_CANCODER)
+        // .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
+        // .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder) // TODO: change to Synced if no work
+        // .withFeedbackRemoteSensorID(CANCODER_ID)
+        // .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
       new FeedbackConfigs()
-        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
-        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder) // TODO: change to Synced if no work
+        .withRotorToSensorRatio(1.0)
+        .withSensorToMechanismRatio(1.0)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor) // TODO: change to Synced if no work
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
