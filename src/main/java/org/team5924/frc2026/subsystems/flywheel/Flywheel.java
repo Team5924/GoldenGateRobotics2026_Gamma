@@ -44,7 +44,7 @@ public class Flywheel extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
     FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 30)),
-    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 30)),
+    SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 32)),
     IDLE(new LoggedTunableNumber("Flywheel/Idle", 5)),
 
     AUTO(() -> 0.0),
