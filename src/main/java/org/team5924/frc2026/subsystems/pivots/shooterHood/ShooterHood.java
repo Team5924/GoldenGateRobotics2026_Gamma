@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -82,11 +81,7 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void setAutoInput(double inputRads) {
-    autoInput =
-        MathUtil.clamp(
-            inputRads,
-            Constants.ShooterHood.MIN_POSITION_RADS,
-            Constants.ShooterHood.MAX_POSITION_RADS);
+    autoInput = inputRads;
   }
 
   public ShooterHood(ShooterHoodIO io) {
@@ -177,10 +172,10 @@ public class ShooterHood extends SubsystemBase {
         // pass in hood angle from launch calculator
         if (LaunchCalculator.getInstance().getParameters().isValid())
           setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
-        if (!isAtSetpoint) setPosition(autoInput);
+        setPosition(autoInput);
       }
       default -> {
-        if (!isAtSetpoint) setPosition(getTargetRads());
+        setPosition(getTargetRads());
       }
     }
 

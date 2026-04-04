@@ -164,12 +164,14 @@ public class LaunchCalculator {
     hoodAngleMap.put(4.020, Rotation2d.fromDegrees(10.674));
     hoodAngleMap.put(4.520, Rotation2d.fromDegrees(12.774));
 
-    flywheelSpeedMap.put(1.780, 56.723);
-    flywheelSpeedMap.put(2.600, 57.353);
-    flywheelSpeedMap.put(3.050, 57.563);
-    flywheelSpeedMap.put(3.570, 59.454);
-    flywheelSpeedMap.put(4.020, 60.294);
-    flywheelSpeedMap.put(4.520, 60.924);
+    final double multi = 0.55;
+
+    flywheelSpeedMap.put(1.780, 56.723 * multi);
+    flywheelSpeedMap.put(2.600, 57.353 * multi);
+    flywheelSpeedMap.put(3.050, 57.563 * multi);
+    flywheelSpeedMap.put(3.570, 59.454 * multi);
+    flywheelSpeedMap.put(4.020, 60.294 * multi);
+    flywheelSpeedMap.put(4.520, 60.924 * multi);
 
     timeOfFlightMap.put(2.600, 1.414);
     timeOfFlightMap.put(3.050, 1.428);
@@ -178,6 +180,7 @@ public class LaunchCalculator {
     // ------------------------
 
     // minDistance = 0.9;
+    
     // maxDistance = 4.9;
     // passingMinDistance = 0.0;
     // passingMaxDistance = 12.0;
@@ -221,9 +224,9 @@ public class LaunchCalculator {
       passingHoodAngleMap.put(6.570, Rotation2d.fromDegrees(12.774));
       passingHoodAngleMap.put(7.700, Rotation2d.fromDegrees(12.774));
 
-      passingFlywheelSpeedMap.put(5.720, 63.445);
-      passingFlywheelSpeedMap.put(6.570, 68.697);
-      passingFlywheelSpeedMap.put(7.700, 74.790);
+      passingFlywheelSpeedMap.put(5.720, 63.445 * multi);
+      passingFlywheelSpeedMap.put(6.570, 68.697 * multi);
+      passingFlywheelSpeedMap.put(7.700, 74.790 * multi);
 
       passingTimeOfFlightMap.put(passingMinDistance, 0.0);
       passingTimeOfFlightMap.put(passingMaxDistance, 0.0);

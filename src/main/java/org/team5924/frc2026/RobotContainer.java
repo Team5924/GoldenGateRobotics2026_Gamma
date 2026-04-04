@@ -75,6 +75,7 @@ import org.team5924.frc2026.subsystems.vision.Vision;
 import org.team5924.frc2026.subsystems.vision.VisionConstants;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
+import org.team5924.frc2026.util.LaunchCalculator;
 
 public class RobotContainer {
   // Subsystems
@@ -90,17 +91,17 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = false;
-  private final boolean realVision = false;
+  private final boolean realDrive = true;
+  private final boolean realVision = true;
 
-  private final boolean realIntake = false;
-  private final boolean realIntakePivot = false;
+  private final boolean realIntake = true;
+  private final boolean realIntakePivot = true;
 
-  private final boolean realHopper = false;
-  private final boolean realIndexer = false;
+  private final boolean realHopper = true;
+  private final boolean realIndexer = true;
 
   private final boolean realShooterHood = true;
-  private final boolean realFlywheel = false;
+  private final boolean realFlywheel = true;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -290,12 +291,12 @@ public class RobotContainer {
   private void configButtonBindings() {
     configDriveBindings();
 
-    // configDefaultCommands();
+    configDefaultCommands();
 
-    // rightTrigger(); // shooting
-    // bumperBindings(); // intake
+    rightTrigger(); // shooting
+    bumperBindings(); // intake
 
-    // configManualIntakePivot();
+    configManualIntakePivot();
 
     // configFlywheelTuningBindings();
     configShooterHoodTuningBindings();
@@ -317,24 +318,24 @@ public class RobotContainer {
   private void configShooterHoodTuningBindings() {
     shooterHood.setDefaultCommand(
         (Commands.run(
-            () -> shooterHood.runManual(() -> -driveController.getRightY()), shooterHood)));
+            () -> shooterHood.runManual(() -> -operatorController.getRightY()), shooterHood)));
 
-    driveController
+    operatorController
         .rightBumper()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
 
-    driveController
+    operatorController
         .leftBumper()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.BOTTOM), shooterHood));
 
-    driveController
+    operatorController
         .rightTrigger()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
 
-    driveController
+    operatorController
         .leftTrigger()
         .onTrue(
             Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
@@ -502,13 +503,16 @@ public class RobotContainer {
     // [left bumper pressed] -> run flywheel and indexer
     driveController
         .rightTrigger()
+        .and(() -> LaunchCalculator.getInstance().getParameters().isValid())
         .onTrue(
             Commands.parallel(
                 Commands.runOnce(
                     () -> {
+                      shooterHood.setGoalState(ShooterHoodState.AUTO);
                       indexer.setGoalState(Indexer.IndexerState.INDEXING);
                       hopper.setGoalState(HopperState.ON);
                     },
+                    shooterHood,
                     indexer,
                     hopper),
                 Commands.run(() -> flywheel.setGoalState(Flywheel.FlywheelState.AUTO), flywheel)));
@@ -519,10 +523,12 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(
                 () -> {
+                  shooterHood.setGoalState(ShooterHoodState.OFF);
                   flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
                   hopper.setGoalState(HopperState.ON);
                 },
+                shooterHood,
                 flywheel,
                 indexer,
                 hopper));
@@ -533,9 +539,11 @@ public class RobotContainer {
             Commands.parallel(
                 Commands.runOnce(
                     () -> {
+                      shooterHood.setGoalState(ShooterHoodState.CENTER);
                       indexer.setGoalState(Indexer.IndexerState.INDEXING);
                       hopper.setGoalState(HopperState.ON);
                     },
+                    shooterHood,
                     indexer,
                     hopper),
                 Commands.run(
@@ -547,10 +555,12 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(
                 () -> {
+                  shooterHood.setGoalState(ShooterHoodState.OFF);
                   flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
                   hopper.setGoalState(HopperState.ON);
                 },
+                shooterHood,
                 flywheel,
                 indexer,
                 hopper));

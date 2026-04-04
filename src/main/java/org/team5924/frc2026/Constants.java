@@ -266,7 +266,7 @@ public final class Constants {
 
     public static final int FOLLOWER_CAN_ID = 54;
     public static final String BUS = "rio";
-    public static final boolean REQUIRE_FLYWHEEL_SETPOINT = false;
+    public static final boolean REQUIRE_FLYWHEEL_SETPOINT = true;
 
     // controls two rollers, so reduction is weird
     public static final double MOTOR_TO_MECHANISM = (30.0 / 12.0) * (36.0 / 36.0) * (18.0 / 18.0);
@@ -314,8 +314,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(80)
-            .withStatorCurrentLimit(80)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -340,7 +340,7 @@ public final class Constants {
       new FeedbackConfigs()
         .withRotorToSensorRatio(1.0)
         .withSensorToMechanismRatio(1.0)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor) // TODO: change to Synced if no work
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
