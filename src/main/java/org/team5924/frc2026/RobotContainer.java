@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import static edu.wpi.first.units.Units.Rotation;
+
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -281,6 +284,7 @@ public class RobotContainer {
     // autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
     autoChooser.addDefaultOption("Right Double Swipe", autoBuilder.rightDoubleSwipe());
     autoChooser.addOption("Left Double Swipe", autoBuilder.leftDoubleSwipe());
+    autoChooser.addOption("Left Double Swipe Intake", autoBuilder.leftDoubleSwipeIntake());
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -447,7 +451,18 @@ public class RobotContainer {
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-    driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+    final Runnable resetGyroInverted =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+            // during simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), Rotation2d.k180deg)); // zero gyro
+    driveController.start().onTrue(Commands.runOnce(resetGyroInverted, drive).ignoringDisable(true));
 
     // [a] -> Reset gyro to 0°
     driveController.a().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));

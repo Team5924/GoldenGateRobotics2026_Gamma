@@ -154,6 +154,31 @@ public class AutoBuilder {
         Set.of(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer));
   }
 
+  public Command leftDoubleSwipeIntake() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "starting position must be set before building auto commands");
+    }
+    return Commands.defer(
+        () -> {
+          if(!"Left".equals(startingPositionSupplier.get())) {
+            throw new IllegalStateException("starting position must be left for this auto command");
+          }
+          return Commands.sequence(
+                autoFactory.resetOdometry("Swipe1Left"),
+                Commands.deadline(
+                    autoFactory.trajectoryCmd("Swipe1Left"), 
+                    intake()),
+                intakeOff(),
+                Commands.deadline(
+                    autoFactory.trajectoryCmd("Swipe2Left"), 
+                    intake()),
+                intakeOff(),
+                autoFactory.trajectoryCmd("Stow"));
+        },
+        Set.of(drive, intake, intakePivot, hopper, indexer));
+  }
+
 
   private Command startToHub(String startingPosition) {
     if ("Mid".equals(startingPosition)) {
@@ -178,8 +203,7 @@ public class AutoBuilder {
     return Commands.parallel(
         Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood),
         Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.OFF), flywheel),
-        Commands.runOnce(() -> indexer.setGoalState(Indexer.IndexerState.OFF), indexer),
-        Commands.runOnce(() -> hopper.setGoalState(Hopper.HopperState.OFF), hopper));
+        Commands.runOnce(() -> indexer.setGoalState(Indexer.IndexerState.OFF), indexer));
   }
 
   private Command intakeSequence() {
@@ -197,6 +221,6 @@ public class AutoBuilder {
   private Command intakeOff() {
     return Commands.parallel(
         Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.SHOOTING_UP), intakePivot),
-        Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake));
+        Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE), intake));
   }
 }
