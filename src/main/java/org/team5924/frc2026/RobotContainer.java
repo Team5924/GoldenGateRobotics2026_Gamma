@@ -90,17 +90,17 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = false;
-  private final boolean realVision = false;
+  private final boolean realDrive = true;
+  private final boolean realVision = true;
 
-  private final boolean realIntake = false;
-  private final boolean realIntakePivot = false;
+  private final boolean realIntake = true;
+  private final boolean realIntakePivot = true;
 
-  private final boolean realHopper = false;
+  private final boolean realHopper = true;
   private final boolean realIndexer = true;
 
-  private final boolean realShooterHood = false;
-  private final boolean realFlywheel = false;
+  private final boolean realShooterHood = true;
+  private final boolean realFlywheel = true;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -452,9 +452,9 @@ public class RobotContainer {
   }
 
   private void configDefaultCommands() {
-    // // ### hopper on by default
-    // hopper.setDefaultCommand(
-    //     Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
+    // ### hopper on by default
+    hopper.setDefaultCommand(
+        Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
 
     flywheel.setDefaultCommand(
         Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.IDLE), flywheel));
@@ -521,7 +521,7 @@ public class RobotContainer {
                 () -> {
                   flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
-                  hopper.setGoalState(HopperState.OFF);
+                  hopper.setGoalState(HopperState.ON);
                 },
                 flywheel,
                 indexer,
@@ -549,7 +549,7 @@ public class RobotContainer {
                 () -> {
                   flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
-                  hopper.setGoalState(HopperState.OFF);
+                  hopper.setGoalState(HopperState.ON);
                 },
                 flywheel,
                 indexer,
