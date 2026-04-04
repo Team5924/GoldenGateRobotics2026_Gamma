@@ -26,19 +26,6 @@ import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LaunchCalculator.LaunchingParameters;
 
 public class AutoScoreCommands {
-  // TODO Make and auto score program
-  // public static Command autoScore(
-  //   Drive drive,
-  //   SuperShooter shooter,
-  //   DoubleSupplier driverX,
-  //   DoubleSupplier driverY,
-  //   DoubleSupplier driverOmega,
-  //   Command joystickDrive,
-  //   Supplier<Command> controllerRumble,
-  //   BooleanSupplier trigger,
-  //   BooleanSupplier disableReefAutoAlign,
-  //   BooleanSupplier manualEject) {
-  //   }
   private AutoScoreCommands() {}
 
   public static Command runTrackTargetCommand(ShooterHood shooterHood, Flywheel flywheel) {

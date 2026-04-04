@@ -16,8 +16,7 @@
 
 package org.team5924.frc2026;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -30,6 +29,7 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.team5924.frc2026.commands.AutoBuilder;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
@@ -109,6 +109,8 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  public AutoFactory autoFactory;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -235,7 +237,11 @@ public class RobotContainer {
         flywheel = new Flywheel(new FlywheelIO() {});
         break;
     }
+    autoFactory =
+        new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
 
+    // *** OUTDATED AUTO COMMANDS *** Auto commands
+    /*
     // Auto commands
     NamedCommands.registerCommand(
         "Run Shooter",
@@ -258,9 +264,23 @@ public class RobotContainer {
             () -> {
               // intake.setGoalState(IntakeState.INTAKE);
             }));
+    */
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+    LoggedDashboardChooser<String> startingPosition =
+        new LoggedDashboardChooser<>("Starting Position?");
+    startingPosition.addOption("Middle", "Mid");
+    startingPosition.addDefaultOption("Right", "Right");
+    startingPosition.addOption("Left", "Left");
+    AutoBuilder.setStartingPosition(startingPosition::get);
+    var autoBuilder =
+        new AutoBuilder(autoFactory, drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
+
+    // autoChooser.addOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
+    // autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
+    autoChooser.addDefaultOption("Right Double Swipe", autoBuilder.rightDoubleSwipe());
+    autoChooser.addOption("Left Double Swipe", autoBuilder.leftDoubleSwipe());
 
     // Set up SysId routines
     autoChooser.addOption(
