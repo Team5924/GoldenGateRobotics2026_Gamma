@@ -51,7 +51,8 @@ public class IntakePivot extends SubsystemBase {
     // for testing
     CENTER(new LoggedTunableNumber("IntakePivot/StowRads", Units.degreesToRadians(60.0))),
 
-    SHOOTING(new LoggedTunableNumber("IntakePivot/ShootingRads", Units.degreesToRadians(90.0))),
+    SHOOTING_UP(new LoggedTunableNumber("IntakePivot/ShootingUpRads", Units.degreesToRadians(100.0))),
+    SHOOTING_DOWN(new LoggedTunableNumber("IntakePivot/ShootingDownRads", Units.degreesToRadians(85.0))),
 
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("IntakePivot/OperatorCurrent", 12.5));
@@ -140,7 +141,19 @@ public class IntakePivot extends SubsystemBase {
         && EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.positionRads, Constants.IntakePivot.EPSILON_RADS);
   }
+  private void handleShooterState() {
+    if (!goalState.equals(IntakePivotState.SHOOTING_UP) && !goalState.equals(IntakePivotState.SHOOTING_DOWN)) return;
+    if (!isAtSetpoint()) return;
 
+    if (goalState.equals(IntakePivotState.SHOOTING_DOWN)) {
+      setGoalState(IntakePivotState.SHOOTING_UP);
+    }
+    if (goalState.equals(IntakePivotState.SHOOTING_UP)) {
+      setGoalState(IntakePivotState.SHOOTING_DOWN);
+    }
+
+    setPosition(goalState.getRads().getAsDouble());
+  }
   private void handleCurrentState() {
     timeSinceLastStateChange = MatchState.getInstance().getTime() - lastStateChange;
     isAtSetpoint = isAtSetpoint();
@@ -152,6 +165,7 @@ public class IntakePivot extends SubsystemBase {
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
+      case SHOOTING_UP, SHOOTING_DOWN -> handleShooterState();
       default -> {
         setPosition(goalState.getRads().getAsDouble());
       }
