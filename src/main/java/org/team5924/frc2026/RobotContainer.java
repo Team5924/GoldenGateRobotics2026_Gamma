@@ -318,21 +318,8 @@ public class RobotContainer {
 
     configManualIntakePivot();
 
-    // configFlywheelTuningBindings();
-    configShooterHoodTuningBindings();
+    // configShooterHoodTuningBindings();
     // configIntakePivotTuningBindings();
-  }
-
-  private void leftTrigger() {
-    driveController
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> hopperElevator.setGoalState(HopperElevatorState.OFF), hopperElevator));
-
-    driveController
-        .leftTrigger()
-        .onTrue(Commands.runOnce(() -> hopperElevator.toggleState(), hopperElevator));
   }
 
   private void configShooterHoodTuningBindings() {
@@ -420,12 +407,6 @@ public class RobotContainer {
                 () -> hopperElevator.setGoalState(HopperElevatorState.EXTENDED), hopperElevator));
   }
 
-  private void configFlywheelTuningBindings() {
-
-    // manual shooter w/ wdpad
-    driveController.pov(0).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(5)));
-    driveController.pov(180).onTrue(Commands.runOnce(() -> flywheel.updateSetpointState(-5)));
-  }
 
   private void configDriveBindings() {
     // Default command, normal field-relative drive

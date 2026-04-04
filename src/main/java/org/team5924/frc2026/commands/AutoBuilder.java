@@ -112,13 +112,13 @@ public class AutoBuilder {
                     autoFactory.trajectoryCmd("Swipe1Right"), 
                     intake()),
                 intakeOff(),
-                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOn(5.0), // TODO: Edit Timeout values
                 shooterOff(),
                 Commands.deadline(
                     autoFactory.trajectoryCmd("Swipe2Right"), 
                     intake()),
                 intakeOff(),
-                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOn(5.0), // TODO: Edit Timeout values
                 shooterOff(),
                 autoFactory.trajectoryCmd("Stow"));
         },
@@ -141,13 +141,13 @@ public class AutoBuilder {
                     autoFactory.trajectoryCmd("Swipe1Left"), 
                     intake()),
                 intakeOff(),
-                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOn(5.0), // TODO: Edit Timeout values
                 shooterOff(),
                 Commands.deadline(
                     autoFactory.trajectoryCmd("Swipe2Left"), 
                     intake()),
                 intakeOff(),
-                shooterOn(1.0), // TODO: Edit Timeout values
+                shooterOn(5.0), // TODO: Edit Timeout values
                 shooterOff(),
                 autoFactory.trajectoryCmd("Stow"));
         },
