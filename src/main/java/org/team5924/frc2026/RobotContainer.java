@@ -496,27 +496,27 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  intakePivot.setGoalState(IntakePivotState.SHOOTING_UP);
                   intake.setGoalState(IntakeState.INTAKE);
                 },
                 intakePivot,
                 intake));
 
-    // [dpad down] -> stow intake pivot, stop intake
+    // [dpad down] -> stow intake pivot, stop intake = panic intake button
     driveController
         .povDown()
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  //   intakePivot.setGoalState(IntakePivotState.STOW);
+                    intakePivot.setGoalState(IntakePivotState.STOW);
                   intake.setGoalState(IntakeState.OFF);
                 },
-                // intakePivot,
+                intakePivot,
                 intake));
   }
 
   private void rightTrigger() {
-    // [left bumper pressed] -> run flywheel and indexer
+    // [right trigger pressed] -> shoot
     driveController
         .rightTrigger()
         .and(() -> LaunchCalculator.getInstance().getParameters().isValid())
@@ -526,14 +526,12 @@ public class RobotContainer {
                     () -> {
                       shooterHood.setGoalState(ShooterHoodState.AUTO);
                       indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                      hopper.setGoalState(HopperState.ON);
                     },
                     shooterHood,
-                    indexer,
-                    hopper),
+                    indexer),
                 Commands.run(() -> flywheel.setGoalState(Flywheel.FlywheelState.AUTO), flywheel)));
 
-    // [left bumper released] -> turn off flywheel and indexer
+    // [right trigger released] -> stop shoot
     driveController
         .rightTrigger()
         .onFalse(
@@ -542,13 +540,12 @@ public class RobotContainer {
                   shooterHood.setGoalState(ShooterHoodState.OFF);
                   flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
-                  hopper.setGoalState(HopperState.ON);
                 },
                 shooterHood,
                 flywheel,
-                indexer,
-                hopper));
+                indexer));
 
+    // [dpad up] -> panic shoot (when auto doesn't work)
     driveController
         .povUp()
         .onTrue(
@@ -565,7 +562,7 @@ public class RobotContainer {
                 Commands.run(
                     () -> flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH), flywheel)));
 
-    // [left bumper released] -> turn off flywheel and indexer
+    // [dpad up release] -> stop panic shoot
     driveController
         .povUp()
         .onFalse(
@@ -574,12 +571,10 @@ public class RobotContainer {
                   shooterHood.setGoalState(ShooterHoodState.OFF);
                   flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
                   indexer.setGoalState(Indexer.IndexerState.OFF);
-                  hopper.setGoalState(HopperState.ON);
                 },
                 shooterHood,
                 flywheel,
-                indexer,
-                hopper));
+                indexer));
   }
 
   /**
