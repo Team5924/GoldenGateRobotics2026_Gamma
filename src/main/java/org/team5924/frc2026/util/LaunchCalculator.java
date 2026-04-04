@@ -180,7 +180,7 @@ public class LaunchCalculator {
     // ------------------------
 
     // minDistance = 0.9;
-    
+
     // maxDistance = 4.9;
     // passingMinDistance = 0.0;
     // passingMaxDistance = 12.0;

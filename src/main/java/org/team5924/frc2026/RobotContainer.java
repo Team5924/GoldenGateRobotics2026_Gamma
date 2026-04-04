@@ -25,9 +25,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import static edu.wpi.first.units.Units.Rotation;
-
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -278,7 +275,8 @@ public class RobotContainer {
     startingPosition.addOption("Left", "Left");
     AutoBuilder.setStartingPosition(startingPosition::get);
     var autoBuilder =
-        new AutoBuilder(autoFactory, drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
+        new AutoBuilder(
+            autoFactory, drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
 
     // autoChooser.addOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     // autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
@@ -320,7 +318,7 @@ public class RobotContainer {
     rightTrigger(); // shooting
     bumperBindings(); // intake
 
-    configManualIntakePivot();
+    // configManualIntakePivot();
 
     // configShooterHoodTuningBindings();
     // configIntakePivotTuningBindings();
@@ -411,7 +409,6 @@ public class RobotContainer {
                 () -> hopperElevator.setGoalState(HopperElevatorState.EXTENDED), hopperElevator));
   }
 
-
   private void configDriveBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -462,7 +459,9 @@ public class RobotContainer {
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), Rotation2d.k180deg)); // zero gyro
-    driveController.start().onTrue(Commands.runOnce(resetGyroInverted, drive).ignoringDisable(true));
+    driveController
+        .start()
+        .onTrue(Commands.runOnce(resetGyroInverted, drive).ignoringDisable(true));
 
     // [a] -> Reset gyro to 0°
     driveController.a().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
@@ -508,7 +507,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                    intakePivot.setGoalState(IntakePivotState.STOW);
+                  intakePivot.setGoalState(IntakePivotState.STOW);
                   intake.setGoalState(IntakeState.OFF);
                 },
                 intakePivot,

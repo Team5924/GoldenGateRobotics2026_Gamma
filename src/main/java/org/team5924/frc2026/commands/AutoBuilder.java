@@ -16,12 +16,12 @@
 
 package org.team5924.frc2026.commands;
 
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotContainer;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.flywheel.Flywheel;
 import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
@@ -33,8 +33,6 @@ import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
-
-import choreo.auto.AutoFactory;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
@@ -103,24 +101,21 @@ public class AutoBuilder {
     }
     return Commands.defer(
         () -> {
-          if(!"Right".equals(startingPositionSupplier.get())) {
-            throw new IllegalStateException("starting position must be right for this auto command");
+          if (!"Right".equals(startingPositionSupplier.get())) {
+            throw new IllegalStateException(
+                "starting position must be right for this auto command");
           }
           return Commands.sequence(
-                autoFactory.resetOdometry("Swipe1Right"),
-                Commands.deadline(
-                    autoFactory.trajectoryCmd("Swipe1Right"), 
-                    intake()),
-                intakeOff(),
-                shooterOn(5.0), // TODO: Edit Timeout values
-                shooterOff(),
-                Commands.deadline(
-                    autoFactory.trajectoryCmd("Swipe2Right"), 
-                    intake()),
-                intakeOff(),
-                shooterOn(5.0), // TODO: Edit Timeout values
-                shooterOff(),
-                autoFactory.trajectoryCmd("Stow"));
+              autoFactory.resetOdometry("Swipe1Right"),
+              Commands.deadline(autoFactory.trajectoryCmd("Swipe1Right"), intake()),
+              intakeOff(),
+              shooterOn(5.0), // TODO: Edit Timeout values
+              shooterOff(),
+              Commands.deadline(autoFactory.trajectoryCmd("Swipe2Right"), intake()),
+              intakeOff(),
+              shooterOn(5.0), // TODO: Edit Timeout values
+              shooterOff(),
+              autoFactory.trajectoryCmd("Stow"));
         },
         Set.of(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer));
   }
@@ -132,24 +127,20 @@ public class AutoBuilder {
     }
     return Commands.defer(
         () -> {
-          if(!"Left".equals(startingPositionSupplier.get())) {
+          if (!"Left".equals(startingPositionSupplier.get())) {
             throw new IllegalStateException("starting position must be left for this auto command");
           }
           return Commands.sequence(
-                autoFactory.resetOdometry("Swipe1Left"),
-                Commands.deadline(
-                    autoFactory.trajectoryCmd("Swipe1Left"), 
-                    intake()),
-                intakeOff(),
-                shooterOn(5.0), // TODO: Edit Timeout values
-                shooterOff(),
-                Commands.deadline(
-                    autoFactory.trajectoryCmd("Swipe2Left"), 
-                    intake()),
-                intakeOff(),
-                shooterOn(5.0), // TODO: Edit Timeout values
-                shooterOff(),
-                autoFactory.trajectoryCmd("Stow"));
+              autoFactory.resetOdometry("Swipe1Left"),
+              Commands.deadline(autoFactory.trajectoryCmd("Swipe1Left"), intake()),
+              intakeOff(),
+              shooterOn(5.0), // TODO: Edit Timeout values
+              shooterOff(),
+              Commands.deadline(autoFactory.trajectoryCmd("Swipe2Left"), intake()),
+              intakeOff(),
+              shooterOn(5.0), // TODO: Edit Timeout values
+              shooterOff(),
+              autoFactory.trajectoryCmd("Stow"));
         },
         Set.of(drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer));
   }
@@ -161,24 +152,19 @@ public class AutoBuilder {
     }
     return Commands.defer(
         () -> {
-          if(!"Left".equals(startingPositionSupplier.get())) {
+          if (!"Left".equals(startingPositionSupplier.get())) {
             throw new IllegalStateException("starting position must be left for this auto command");
           }
           return Commands.sequence(
-                autoFactory.resetOdometry("Swipe1Left"),
-                Commands.deadline(
-                    autoFactory.trajectoryCmd("Swipe1Left"), 
-                    intake()),
-                intakeOff(),
-                Commands.deadline(
-                    autoFactory.trajectoryCmd("Swipe2Left"), 
-                    intake()),
-                intakeOff(),
-                autoFactory.trajectoryCmd("Stow"));
+              autoFactory.resetOdometry("Swipe1Left"),
+              Commands.deadline(autoFactory.trajectoryCmd("Swipe1Left"), intake()),
+              intakeOff(),
+              Commands.deadline(autoFactory.trajectoryCmd("Swipe2Left"), intake()),
+              intakeOff(),
+              autoFactory.trajectoryCmd("Stow"));
         },
         Set.of(drive, intake, intakePivot, hopper, indexer));
   }
-
 
   private Command startToHub(String startingPosition) {
     if ("Mid".equals(startingPosition)) {
@@ -208,8 +194,7 @@ public class AutoBuilder {
 
   private Command intakeSequence() {
     return Commands.sequence(
-        Commands.deadline(autoFactory.trajectoryCmd("DepotIntake"), intake()),
-        intakeOff());
+        Commands.deadline(autoFactory.trajectoryCmd("DepotIntake"), intake()), intakeOff());
   }
 
   private Command intake() {
