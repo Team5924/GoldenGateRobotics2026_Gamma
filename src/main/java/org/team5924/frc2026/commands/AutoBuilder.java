@@ -196,7 +196,7 @@ public class AutoBuilder {
 
   private Command intakeOff() {
     return Commands.parallel(
-        Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.SHOOTING), intakePivot),
+        Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.SHOOTING_UP), intakePivot),
         Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake));
   }
 }
