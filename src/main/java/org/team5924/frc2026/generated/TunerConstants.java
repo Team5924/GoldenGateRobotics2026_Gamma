@@ -39,12 +39,11 @@ public class TunerConstants {
 
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPSteer =
-      new LoggedTunableNumber("SteerGains/kP",100.0);
+  public static final LoggedTunableNumber kPSteer = new LoggedTunableNumber("SteerGains/kP", 100.0);
   public static final LoggedTunableNumber kISteer = new LoggedTunableNumber("SteerGains/kI", 0.0);
-  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 10.0);
+  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 0.5);
   public static final LoggedTunableNumber kSSteer = new LoggedTunableNumber("SteerGains/kS", 0.1);
-  public static final LoggedTunableNumber kVSteer = new LoggedTunableNumber("SteerGains/kV", 1.19);
+  public static final LoggedTunableNumber kVSteer = new LoggedTunableNumber("SteerGains/kV", 1.16);
   public static final LoggedTunableNumber kASteer = new LoggedTunableNumber("SteerGains/kA", 0.0);
 
   private static final Slot0Configs steerGains =
@@ -58,11 +57,13 @@ public class TunerConstants {
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 50.0);
+  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 0.1);
   public static final LoggedTunableNumber kIDrive = new LoggedTunableNumber("DriveGains/kI", 0.0);
-  public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 1.0);
-  public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 2.0);
-  public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.147);
+  public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 0.0);
+  public static final LoggedTunableNumber kSDrive =
+      new LoggedTunableNumber("DriveGains/kS", 0.23714);
+  public static final LoggedTunableNumber kVDrive =
+      new LoggedTunableNumber("DriveGains/kV", 0.86837);
 
   private static final Slot0Configs driveGains =
       new Slot0Configs()
@@ -74,10 +75,10 @@ public class TunerConstants {
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
-  private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
+  private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
   // The closed-loop output type to use for the drive motors;
   // This affects the PID/FF gains for the drive motors
-  private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
+  private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
 
   // The type of motor used for the drive motor
   private static final DriveMotorArrangement kDriveMotorType =
@@ -125,13 +126,13 @@ public class TunerConstants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.69);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.69 * 0.8);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
   private static final double kCoupleRatio = 5.4;
 
-  private static final double kDriveGearRatio = 6.821052631578947;
+  private static final double kDriveGearRatio = 6.48;
   private static final double kSteerGearRatio = 12.1;
   private static final Distance kWheelRadius = Inches.of(2);
 
