@@ -55,11 +55,11 @@ public interface ShooterHoodIO {
   public default void periodicUpdates() {}
 
   /**
-   * Sets the subsystem motor to the specified voltage
+   * Sets the subsystem motor to the specified current
    *
-   * @param volts number of volts
+   * @param current amt of current
    */
-  public default void runVolts(double volts) {}
+  public default void runCurrent(double current) {}
 
   /**
    * Sets the turret motor to a specified angle
