@@ -45,9 +45,6 @@ import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIO;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOSim;
 import org.team5924.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
-import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator;
-import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperElevatorState;
-import org.team5924.frc2026.subsystems.hopperElevator.HopperElevatorIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
@@ -113,41 +110,44 @@ public class RobotContainer {
   public AutoFactory autoFactory;
 
   public Drive buildDriveSystem() {
-    if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realDrive)) {
+    if (Constants.currentMode == Mode.REPLAY
+        || (Constants.currentMode == Mode.REAL && !realDrive)) {
       return new Drive(
-        new GyroIO() {},
-        new ModuleIO() {},
-        new ModuleIO() {},
-        new ModuleIO() {},
-        new ModuleIO() {},
-        (pose) -> {});
+          new GyroIO() {},
+          new ModuleIO() {},
+          new ModuleIO() {},
+          new ModuleIO() {},
+          new ModuleIO() {},
+          (pose) -> {});
     }
 
     if (Constants.currentMode == Mode.REAL) {
       return new Drive(
-        new GyroIOPigeon2(),
-        new ModuleIOTalonFX(TunerConstants.FrontLeft),
-        new ModuleIOTalonFX(TunerConstants.FrontRight),
-        new ModuleIOTalonFX(TunerConstants.BackLeft),
-        new ModuleIOTalonFX(TunerConstants.BackRight),
-        (pose) -> {});
+          new GyroIOPigeon2(),
+          new ModuleIOTalonFX(TunerConstants.FrontLeft),
+          new ModuleIOTalonFX(TunerConstants.FrontRight),
+          new ModuleIOTalonFX(TunerConstants.BackLeft),
+          new ModuleIOTalonFX(TunerConstants.BackRight),
+          (pose) -> {});
     }
 
     // === SIM ===
-    driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+    driveSimulation =
+        new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
     SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
 
     return new Drive(
-      new GyroIOSim(driveSimulation.getGyroSimulation()),
-      new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
-      new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
-      new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
-      new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
-      driveSimulation::setSimulationWorldPose);
+        new GyroIOSim(driveSimulation.getGyroSimulation()),
+        new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+        new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+        new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+        new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+        driveSimulation::setSimulationWorldPose);
   }
 
   public Vision buildVisionSystem() {
-    if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realVision)) {
+    if (Constants.currentMode == Mode.REPLAY
+        || (Constants.currentMode == Mode.REAL && !realVision)) {
       return null;
     }
 
@@ -155,7 +155,7 @@ public class RobotContainer {
 
     if (Constants.currentMode == Mode.REAL) {
       VisionIOPhotonVision frontCamera =
-        new VisionIOPhotonVision(VisionConstants.FRONT_NAME, VisionConstants.FRONT_TRANSFORM);
+          new VisionIOPhotonVision(VisionConstants.FRONT_NAME, VisionConstants.FRONT_TRANSFORM);
       // VisionIOPhotonVision leftCamera =
       //   new VisionIOPhotonVision(VisionConstants.LEFT_NAME, VisionConstants.LEFT_TRANSFORM);
       // VisionIOPhotonVision rightCamera =
@@ -165,27 +165,27 @@ public class RobotContainer {
     }
 
     // === SIM ===
-    VisionIOPhotonVisionSim frontCameraSim = 
-      new VisionIOPhotonVisionSim(
-        VisionConstants.FRONT_NAME,
-        VisionConstants.FRONT_TRANSFORM,
-        VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-        driveSimulation::getSimulatedDriveTrainPose);
+    VisionIOPhotonVisionSim frontCameraSim =
+        new VisionIOPhotonVisionSim(
+            VisionConstants.FRONT_NAME,
+            VisionConstants.FRONT_TRANSFORM,
+            VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+            driveSimulation::getSimulatedDriveTrainPose);
 
-    // VisionIOPhotonVisionSim leftCameraSim = 
+    // VisionIOPhotonVisionSim leftCameraSim =
     //   new VisionIOPhotonVisionSim(
     //     VisionConstants.LEFT_NAME,
     //     VisionConstants.LEFT_TRANSFORM,
     //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
     //     driveSimulation::getSimulatedDriveTrainPose);
 
-    // VisionIOPhotonVisionSim rightCameraSim = 
+    // VisionIOPhotonVisionSim rightCameraSim =
     //   new VisionIOPhotonVisionSim(
     //     VisionConstants.RIGHT_NAME,
     //     VisionConstants.RIGHT_TRANSFORM,
     //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
     //     driveSimulation::getSimulatedDriveTrainPose);
-    
+
     return new Vision(drive::addVisionMeasurement, frontCameraSim);
   }
 
@@ -193,19 +193,18 @@ public class RobotContainer {
     if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realIntake))
       return new Intake(new IntakeIO() {});
 
-    if (Constants.currentMode == Mode.REAL)
-      return new Intake(new IntakeIOTalonFX());
-      
+    if (Constants.currentMode == Mode.REAL) return new Intake(new IntakeIOTalonFX());
+
     return new Intake(new IntakeIOSim());
   }
 
   public IntakePivot buildIntakePivotSystem() {
-    if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realIntakePivot))
+    if (Constants.currentMode == Mode.REPLAY
+        || (Constants.currentMode == Mode.REAL && !realIntakePivot))
       return new IntakePivot(new IntakePivotIO() {});
 
-    if (Constants.currentMode == Mode.REAL)
-      return new IntakePivot(new IntakePivotIOTalonFX());
-      
+    if (Constants.currentMode == Mode.REAL) return new IntakePivot(new IntakePivotIOTalonFX());
+
     return new IntakePivot(new IntakePivotIOSim());
   }
 
@@ -213,39 +212,38 @@ public class RobotContainer {
     if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realHopper))
       return new Hopper(new HopperIO() {});
 
-    if (Constants.currentMode == Mode.REAL)
-      return new Hopper(new HopperIOTalonFX());
-      
+    if (Constants.currentMode == Mode.REAL) return new Hopper(new HopperIOTalonFX());
+
     return new Hopper(new HopperIOSim());
   }
 
   public Indexer buildIndexerSystem() {
-    if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realIndexer))
+    if (Constants.currentMode == Mode.REPLAY
+        || (Constants.currentMode == Mode.REAL && !realIndexer))
       return new Indexer(new IndexerIO() {});
 
-    if (Constants.currentMode == Mode.REAL)
-      return new Indexer(new IndexerIOTalonFX());
-      
+    if (Constants.currentMode == Mode.REAL) return new Indexer(new IndexerIOTalonFX());
+
     return new Indexer(new IndexerIOSim());
   }
 
   public ShooterHood buildShooterHoodSystem() {
-    if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realShooterHood))
+    if (Constants.currentMode == Mode.REPLAY
+        || (Constants.currentMode == Mode.REAL && !realShooterHood))
       return new ShooterHood(new ShooterHoodIO() {});
 
-    if (Constants.currentMode == Mode.REAL)
-      return new ShooterHood(new ShooterHoodIOTalonFX());
-      
+    if (Constants.currentMode == Mode.REAL) return new ShooterHood(new ShooterHoodIOTalonFX());
+
     return new ShooterHood(new ShooterHoodIOSim());
   }
 
   public Flywheel buildFlywheelSystem() {
-    if (Constants.currentMode == Mode.REPLAY || (Constants.currentMode == Mode.REAL && !realFlywheel))
+    if (Constants.currentMode == Mode.REPLAY
+        || (Constants.currentMode == Mode.REAL && !realFlywheel))
       return new Flywheel(new FlywheelIO() {});
 
-    if (Constants.currentMode == Mode.REAL)
-      return new Flywheel(new FlywheelIOTalonFX());
-      
+    if (Constants.currentMode == Mode.REAL) return new Flywheel(new FlywheelIOTalonFX());
+
     return new Flywheel(new FlywheelIOSim());
   }
 
@@ -264,7 +262,7 @@ public class RobotContainer {
     flywheel = buildFlywheelSystem();
 
     autoFactory =
-      new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
+        new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
 
     // *** OUTDATED AUTO COMMANDS *** Auto commands
     /*
@@ -295,14 +293,14 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
     LoggedDashboardChooser<String> startingPosition =
-      new LoggedDashboardChooser<>("Starting Position?");
+        new LoggedDashboardChooser<>("Starting Position?");
     startingPosition.addOption("Middle", "Mid");
     startingPosition.addDefaultOption("Right", "Right");
     startingPosition.addOption("Left", "Left");
     AutoBuilder.setStartingPosition(startingPosition::get);
     var autoBuilder =
-      new AutoBuilder(
-        autoFactory, drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
+        new AutoBuilder(
+            autoFactory, drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
 
     // autoChooser.addOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     // autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
@@ -312,19 +310,19 @@ public class RobotContainer {
 
     // Set up SysId routines
     autoChooser.addOption(
-      "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
-      "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     autoChooser.addOption(
-      "Drive SysId (Quasistatic Forward)",
-      drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-      "Drive SysId (Quasistatic Reverse)",
-      drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-      "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-      "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // config the button bindings
     configButtonBindings();
@@ -352,112 +350,112 @@ public class RobotContainer {
 
   private void configShooterHoodTuningBindings() {
     shooterHood.setDefaultCommand(
-      Commands.run(
-        () -> shooterHood.runManual(() -> -operatorController.getRightY()), shooterHood));
+        Commands.run(
+            () -> shooterHood.runManual(() -> -operatorController.getRightY()), shooterHood));
 
     operatorController
-      .rightBumper()
+        .rightBumper()
         .onTrue(
-          Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.OFF), shooterHood));
 
     operatorController
-      .leftBumper()
+        .leftBumper()
         .onTrue(
-          Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.BOTTOM), shooterHood));
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.BOTTOM), shooterHood));
 
     operatorController
-      .rightTrigger()
+        .rightTrigger()
         .onTrue(
-          Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.CENTER), shooterHood));
 
     operatorController
-      .leftTrigger()
+        .leftTrigger()
         .onTrue(
-          Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
+            Commands.runOnce(() -> shooterHood.setGoalState(ShooterHoodState.MAX), shooterHood));
   }
 
   private void configIntakePivotTuningBindings() {
     configManualIntakePivot();
 
     driveController
-      .rightBumper()
+        .rightBumper()
         .onTrue(
-          Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.OFF), intakePivot));
 
     driveController
-      .leftBumper()
+        .leftBumper()
         .onTrue(
-          Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW), intakePivot));
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.STOW), intakePivot));
 
     driveController
-      .rightTrigger()
+        .rightTrigger()
         .onTrue(
-          Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER), intakePivot));
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.CENTER), intakePivot));
 
     driveController
-      .leftTrigger()
+        .leftTrigger()
         .onTrue(
-          Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN), intakePivot));
+            Commands.runOnce(() -> intakePivot.setGoalState(IntakePivotState.DOWN), intakePivot));
   }
 
   private void configManualIntakePivot() {
     intakePivot.setDefaultCommand(
-      Commands.run(
-        () -> intakePivot.runManual(() -> -operatorController.getRightY()), intakePivot));
+        Commands.run(
+            () -> intakePivot.runManual(() -> -operatorController.getRightY()), intakePivot));
   }
 
   private void configDriveBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
-      DriveCommands.joystickDrive(
-        drive,
-        () -> -driveController.getLeftY(),
-        () -> -driveController.getLeftX(),
-        () -> -driveController.getRightX()));
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
 
     // [a] -> SLOW MODE YIPE
     driveController
-      .x()
+        .x()
         .whileTrue(
-          DriveCommands.joystickDrive(
-            drive,
-            () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
-            () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-            () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
     // [y] -> auto launch
     driveController
-      .y()
+        .y()
         .whileTrue(
-          DriveCommands.joystickDriveWhileLaunching(
-            drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
+            DriveCommands.joystickDriveWhileLaunching(
+                drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
     // // [driver] Switch to X pattern when X button is pressed
     // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     final Runnable resetGyro =
-      Constants.currentMode == Constants.Mode.SIM
-        ? () ->
-          drive.setPose(
-            driveSimulation
-              .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
-        // during simulation
-        : () ->
-          drive.setPose(
-            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+            // during simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
 
     final Runnable resetGyroInverted =
-      Constants.currentMode == Constants.Mode.SIM
-        ? () ->
-          drive.setPose(
-            driveSimulation
-              .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
-        // during simulation
-        : () ->
-          drive.setPose(
-            new Pose2d(drive.getPose().getTranslation(), Rotation2d.k180deg)); // zero gyro
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+            // during simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), Rotation2d.k180deg)); // zero gyro
     driveController
-      .start()
+        .start()
         .onTrue(Commands.runOnce(resetGyroInverted, drive).ignoringDisable(true));
 
     // [a] -> Reset gyro to 0°
@@ -467,110 +465,110 @@ public class RobotContainer {
   private void configDefaultCommands() {
     // ### hopper on by default
     hopper.setDefaultCommand(
-      Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
+        Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
 
     flywheel.setDefaultCommand(
-      Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.IDLE), flywheel));
+        Commands.runOnce(() -> flywheel.setGoalState(FlywheelState.IDLE), flywheel));
   }
 
   private void bumperBindings() {
     // [right bumper pressed] -> deploy intake pivot, run intake
     driveController
-      .rightBumper()
+        .rightBumper()
         .onTrue(
-          Commands.runOnce(
-            () -> {
-              intakePivot.setGoalState(IntakePivotState.DOWN);
-              intake.setGoalState(IntakeState.INTAKE);
-            },
-            intakePivot,
-            intake));
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  intake.setGoalState(IntakeState.INTAKE);
+                },
+                intakePivot,
+                intake));
 
     // [left bumper pressed] -> intake pivot shooting mode, run intake
     driveController
-      .leftBumper()
+        .leftBumper()
         .onTrue(
-          Commands.runOnce(
-            () -> {
-              intakePivot.setGoalState(IntakePivotState.SHOOTING_UP);
-              intake.setGoalState(IntakeState.INTAKE);
-            },
-            intakePivot,
-            intake));
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.SHOOTING_UP);
+                  intake.setGoalState(IntakeState.INTAKE);
+                },
+                intakePivot,
+                intake));
 
     // [dpad down] -> stow intake pivot, stop intake = panic intake button
     driveController
-      .povDown()
+        .povDown()
         .onTrue(
-          Commands.runOnce(
-            () -> {
-              intakePivot.setGoalState(IntakePivotState.STOW);
-              intake.setGoalState(IntakeState.OFF);
-            },
-            intakePivot,
-            intake));
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  intake.setGoalState(IntakeState.OFF);
+                },
+                intakePivot,
+                intake));
   }
 
   private void rightTrigger() {
     // [right trigger pressed] -> shoot
     driveController
-      .rightTrigger()
+        .rightTrigger()
         .and(() -> LaunchCalculator.getInstance().getParameters().isValid())
-          .onTrue(
+        .onTrue(
             Commands.parallel(
-              Commands.runOnce(
-                () -> {
-                  shooterHood.setGoalState(ShooterHoodState.AUTO);
-                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                },
-                shooterHood,
-                indexer),
-              Commands.run(() -> flywheel.setGoalState(Flywheel.FlywheelState.AUTO), flywheel)));
+                Commands.runOnce(
+                    () -> {
+                      shooterHood.setGoalState(ShooterHoodState.AUTO);
+                      indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                    },
+                    shooterHood,
+                    indexer),
+                Commands.run(() -> flywheel.setGoalState(Flywheel.FlywheelState.AUTO), flywheel)));
 
     // [right trigger released] -> stop shoot
     driveController
-      .rightTrigger()
+        .rightTrigger()
         .onFalse(
-          Commands.runOnce(
-            () -> {
-              shooterHood.setGoalState(ShooterHoodState.OFF);
-              flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
-              indexer.setGoalState(Indexer.IndexerState.OFF);
-            },
-            shooterHood,
-            flywheel,
-            indexer));
+            Commands.runOnce(
+                () -> {
+                  shooterHood.setGoalState(ShooterHoodState.OFF);
+                  flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                },
+                shooterHood,
+                flywheel,
+                indexer));
 
     // [dpad up] -> panic shoot (when auto doesn't work)
     driveController
-      .povUp()
+        .povUp()
         .onTrue(
-          Commands.parallel(
-            Commands.runOnce(
-              () -> {
-                shooterHood.setGoalState(ShooterHoodState.CENTER);
-                indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                hopper.setGoalState(HopperState.ON);
-              },
-              shooterHood,
-              indexer,
-              hopper),
-            Commands.run(
-              () -> flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH), flywheel)));
+            Commands.parallel(
+                Commands.runOnce(
+                    () -> {
+                      shooterHood.setGoalState(ShooterHoodState.CENTER);
+                      indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                      hopper.setGoalState(HopperState.ON);
+                    },
+                    shooterHood,
+                    indexer,
+                    hopper),
+                Commands.run(
+                    () -> flywheel.setGoalState(Flywheel.FlywheelState.SLOW_LAUNCH), flywheel)));
 
     // [dpad up release] -> stop panic shoot
     driveController
-      .povUp()
+        .povUp()
         .onFalse(
-          Commands.runOnce(
-            () -> {
-              shooterHood.setGoalState(ShooterHoodState.OFF);
-              flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
-              indexer.setGoalState(Indexer.IndexerState.OFF);
-            },
-            shooterHood,
-            flywheel,
-            indexer));
+            Commands.runOnce(
+                () -> {
+                  shooterHood.setGoalState(ShooterHoodState.OFF);
+                  flywheel.setGoalState(Flywheel.FlywheelState.IDLE);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                },
+                shooterHood,
+                flywheel,
+                indexer));
   }
 
   /**
@@ -594,10 +592,10 @@ public class RobotContainer {
 
     SimulatedArena.getInstance().simulationPeriodic();
     Logger.recordOutput(
-      "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
     Logger.recordOutput(
-      "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
-      "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }
