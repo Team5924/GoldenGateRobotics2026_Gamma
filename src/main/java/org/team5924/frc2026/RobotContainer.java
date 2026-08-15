@@ -17,6 +17,7 @@
 package org.team5924.frc2026;
 
 import choreo.auto.AutoFactory;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -32,6 +33,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.Constants.Mode;
 import org.team5924.frc2026.commands.AutoBuilder;
 import org.team5924.frc2026.commands.drive.DriveCommands;
+import org.team5924.frc2026.commands.shooter.AutoScoreCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
@@ -247,6 +249,18 @@ public class RobotContainer {
     return new Flywheel(new FlywheelIOSim());
   }
 
+  public void registerAutoCommands() {
+    NamedCommands.registerCommand(
+        "Run Shooter",
+        Commands.run(() -> AutoScoreCommands.runTrackTargetCommand(shooterHood, flywheel))
+            .finallyDo(() -> flywheel.setGoalState(FlywheelState.IDLE)));
+
+    NamedCommands.registerCommand(
+        "Run Intake",
+        Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE))
+            .finallyDo(() -> intake.setGoalState(IntakeState.INTAKE)));
+  }
+
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     drive = buildDriveSystem();
@@ -264,31 +278,7 @@ public class RobotContainer {
     autoFactory =
         new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
 
-    // *** OUTDATED AUTO COMMANDS *** Auto commands
-    /*
-    // Auto commands
-    NamedCommands.registerCommand(
-      "Run Shooter",
-      Commands.runOnce(
-        () -> {
-        // AutoScoreCommands.autoScore(drive, shooter);
-        }));
-
-    NamedCommands.registerCommand(
-      "Run L1 Climb",
-      Commands.runOnce(
-        () -> {
-        // add once climb is figured out
-        }));
-
-    // TODO: Uncomment when intake subsystem is enabled
-    NamedCommands.registerCommand(
-      "Run Intake",
-      Commands.runOnce(
-        () -> {
-        // intake.setGoalState(IntakeState.INTAKE);
-        }));
-    */
+    registerAutoCommands();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
