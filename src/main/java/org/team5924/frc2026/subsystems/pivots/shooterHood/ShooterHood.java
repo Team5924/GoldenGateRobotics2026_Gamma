@@ -108,16 +108,16 @@ public class ShooterHood extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(isNearTrench()){
+      setGoalState(ShooterHoodState.TRENCH);
+    }
+
     io.periodicUpdates();
     io.updateInputs(inputs);
     Logger.processInputs("ShooterHood", inputs);
 
     motorDisconnectedAlert.set(!inputs.motorConnected);
     overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
-
-    if(isNearTrench()){
-      setGoalState(ShooterHoodState.TRENCH);
-    }
 
     handleCurrentState();
 
@@ -210,11 +210,9 @@ public class ShooterHood extends SubsystemBase {
   }
 
   private boolean isNearTrench() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    boolean isRed = alliance.isPresent() && alliance.get() == Alliance.Red;
     Pose2d pose = RobotState.getInstance().getOdometryPose();
 
-    return isRed ? FieldAwareness.redLeftTrenchZone.contains(pose) || FieldAwareness.redRightTrenchZone.contains(pose)
-                 : FieldAwareness.blueLeftTrenchZone.contains(pose) || FieldAwareness.blueRightTrenchZone.contains(pose);
+    return FieldAwareness.redLeftTrenchZone.contains(pose) || FieldAwareness.redRightTrenchZone.contains(pose)
+    || FieldAwareness.blueLeftTrenchZone.contains(pose) || FieldAwareness.blueRightTrenchZone.contains(pose);
   }
 }
