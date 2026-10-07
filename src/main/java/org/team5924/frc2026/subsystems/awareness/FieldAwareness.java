@@ -19,26 +19,11 @@ package org.team5924.frc2026.subsystems.awareness;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldConstants;
 import org.team5924.frc2026.RobotState;
 
 public class FieldAwareness {
   private static FieldAwareness instance;
-  
-  //Fields for blocked areas
-  /*  TODO: Use FieldConstants to put in real values for these zones
-      ALSO TALK TO MENTORS ABOUT BUFFER AMOUNT */
-
-  public static FieldZone redRightBumpZone = new FieldZone(0, 0, 0, 0);
-  public static FieldZone redLeftBumpZone = new FieldZone(0, 0, 0, 0);
-
-  public static FieldZone redRightTrenchZone = new FieldZone(0, 0, 0, 0);
-  public static FieldZone redLeftTrenchZone = new FieldZone(0, 0, 0, 0);
-
-  public static FieldZone blueRightBumpZone = new FieldZone(0, 0, 0, 0);
-  public static FieldZone blueLeftBumpZone = new FieldZone(0, 0, 0, 0);
-
-  public static FieldZone blueRightTrenchZone = new FieldZone(0, 0, 0, 0);
-  public static FieldZone blueLeftTrenchZone = new FieldZone(0, 0, 0, 0);
 
   public static FieldAwareness getInstance() {
     if (instance == null) instance = new FieldAwareness();

@@ -16,6 +16,9 @@
 
 package org.team5924.frc2026;
 
+import org.team5924.frc2026.FieldConstants.Hub;
+import org.team5924.frc2026.FieldConstants.LinesHorizontal;
+import org.team5924.frc2026.subsystems.awareness.FieldZone;
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperElevatorState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.util.ElevatorUtil;
@@ -371,5 +374,31 @@ public final class Constants {
           .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
           .withMagnetOffset(0.0); // Update value
       
+  }
+  public final class FieldZones{
+
+    private static final double ROBOT_LENGTH = 0.0; // TODO: wrong value!!!!!!!!
+    private static final double ROBOT_WIDTH = 0.0; // TODO: WRONG VALUE
+    private static final double X_MARGIN = Units.inchesToMeters(24.0) + (ROBOT_LENGTH / 2); // TODO: placeholder value talk to mentors
+
+    private static final double MIN_X = Hub.nearLeftCorner.getX() - X_MARGIN;
+    private static final double MAX_X = Hub.farLeftCorner.getX() + X_MARGIN;
+
+    public static final FieldZone BLUE_RIGHT_TRENCH =
+      new FieldZone(MIN_X, MAX_X, 0.0, LinesHorizontal.rightBumpEnd);
+
+    public static final FieldZone BLUE_RIGHT_BUMP =
+      new FieldZone(MIN_X, MAX_X, LinesHorizontal.rightBumpEnd, LinesHorizontal.rightBumpStart);
+
+    public static final FieldZone BLUE_LEFT_BUMP =
+      new FieldZone(MIN_X, MAX_X, LinesHorizontal.leftBumpEnd, LinesHorizontal.leftBumpStart);
+
+    public static final FieldZone BLUE_LEFT_TRENCH =
+      new FieldZone(MIN_X, MAX_X, LinesHorizontal.leftBumpStart, FieldConstants.fieldWidth);
+
+    public static final FieldZone RED_RIGHT_TRENCH = FieldZone.rotated(BLUE_RIGHT_TRENCH);
+    public static final FieldZone RED_RIGHT_BUMP = FieldZone.rotated(BLUE_RIGHT_BUMP);
+    public static final FieldZone RED_LEFT_BUMP = FieldZone.rotated(BLUE_LEFT_BUMP);
+    public static final FieldZone RED_LEFT_TRENCH = FieldZone.rotated(BLUE_LEFT_TRENCH);
   }
 }

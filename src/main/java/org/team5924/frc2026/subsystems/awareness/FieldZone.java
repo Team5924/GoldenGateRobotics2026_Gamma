@@ -2,15 +2,18 @@ package org.team5924.frc2026.subsystems.awareness;
 
 import java.util.Optional;
 
+import org.team5924.frc2026.FieldConstants;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import lombok.Getter;
 
 public class FieldZone {
-  public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(12 * 54 + 2.5975);
-  public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(12 * 26 + 5.6875);
+  public static final double FIELD_LENGTH_METERS = FieldConstants.fieldLength;
+  public static final double FIELD_WIDTH_METERS = FieldConstants.fieldWidth;
 
   @Getter private final double blueMinX;
   @Getter private final double blueMaxX;
@@ -47,5 +50,13 @@ public class FieldZone {
     } else {
       return x >= blueMinX && x <= blueMaxX && y >= blueMinY && y <= blueMaxY;
     }
+  }
+
+  public static FieldZone rotated(FieldZone original) {
+    return new FieldZone(
+        FieldConstants.fieldLength - original.getBlueMaxX(),
+        FieldConstants.fieldLength - original.getBlueMinX(),
+        FieldConstants.fieldWidth - original.getBlueMaxY(),
+        FieldConstants.fieldWidth - original.getBlueMinY());
   }
 }

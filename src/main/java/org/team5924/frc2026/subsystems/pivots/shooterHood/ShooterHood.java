@@ -31,6 +31,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.MatchState;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.Constants.FieldZones;
 import org.team5924.frc2026.subsystems.awareness.FieldAwareness;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LaunchCalculator;
@@ -212,7 +213,7 @@ public class ShooterHood extends SubsystemBase {
   private boolean isNearTrench() {
     Pose2d pose = RobotState.getInstance().getOdometryPose();
 
-    return FieldAwareness.redLeftTrenchZone.contains(pose) || FieldAwareness.redRightTrenchZone.contains(pose)
-    || FieldAwareness.blueLeftTrenchZone.contains(pose) || FieldAwareness.blueRightTrenchZone.contains(pose);
+    return FieldZones.BLUE_LEFT_TRENCH.contains(pose) || FieldZones.BLUE_RIGHT_TRENCH.contains(pose)
+    || FieldZones.RED_LEFT_TRENCH.contains(pose) || FieldZones.RED_RIGHT_TRENCH.contains(pose);
   }
 }
