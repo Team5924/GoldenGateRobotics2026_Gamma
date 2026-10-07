@@ -39,7 +39,7 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
 
   @Override
   public void updateInputs(ShooterHoodIOInputs inputs) {
-    if (DriverStation.isDisabled()) runVolts(0.0);
+    if (DriverStation.isDisabled()) runCurrent(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
     inputs.motorConnected = true;
@@ -52,7 +52,7 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
   }
 
   @Override
-  public void runVolts(double volts) {
+  public void runCurrent(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
   }
@@ -68,6 +68,6 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
 
   @Override
   public void stop() {
-    runVolts(0.0);
+    runCurrent(0.0);
   }
 }
