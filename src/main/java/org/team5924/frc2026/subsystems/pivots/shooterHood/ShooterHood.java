@@ -16,15 +16,23 @@
 
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.MatchState;
+import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.Constants.FieldZones;
+import org.team5924.frc2026.subsystems.awareness.FieldAwareness;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -45,9 +53,11 @@ public class ShooterHood extends SubsystemBase {
 
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
-    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(40.0))),
-    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(20.0))),
-    BOTTOM(new LoggedTunableNumber("ShooterHood/BottomAngle", Math.toRadians(0.0))),
+    MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
+    CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
+
+    // TODO: Edit Angle based on how low it needs to be to fit under trench
+    TRENCH(new LoggedTunableNumber("ShooterHood/Trench", Math.toRadians(0))),
     AUTO(() -> 0.0),
 
     // in-between state
@@ -96,6 +106,10 @@ public class ShooterHood extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(isNearTrench()){
+      setGoalState(ShooterHoodState.TRENCH);
+    }
+
     io.periodicUpdates();
     io.updateInputs(inputs);
     Logger.processInputs("ShooterHood", inputs);
@@ -191,5 +205,12 @@ public class ShooterHood extends SubsystemBase {
     }
 
     runCurrent(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
+  }
+
+  private boolean isNearTrench() {
+    Pose2d pose = RobotState.getInstance().getOdometryPose();
+
+    return FieldZones.BLUE_LEFT_TRENCH.contains(pose) || FieldZones.BLUE_RIGHT_TRENCH.contains(pose)
+    || FieldZones.RED_LEFT_TRENCH.contains(pose) || FieldZones.RED_RIGHT_TRENCH.contains(pose);
   }
 }

@@ -16,6 +16,9 @@
 
 package org.team5924.frc2026;
 
+import org.team5924.frc2026.FieldConstants.Hub;
+import org.team5924.frc2026.FieldConstants.LinesHorizontal;
+import org.team5924.frc2026.subsystems.awareness.FieldZone;
 import org.team5924.frc2026.subsystems.hopperElevator.HopperElevator.HopperElevatorState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.util.ElevatorUtil;
@@ -33,6 +36,12 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Translation2d;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -78,16 +87,19 @@ public final class Constants {
   public final class Field {
     // origin = rightmost corner of blue alliance wall
     // +x -> towards red alliance wall
-
-    public static final double BORDER_MARGIN = 0.5;
     public static final AprilTagFieldLayout field =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-    public static final double LENGTH = field.getFieldLength(); // x
-    public static final double WIDTH = field.getFieldWidth(); // y
 
-    public static final double CENTER_X = WIDTH / 2;
-    public static final double CENTER_Y = LENGTH / 2;
-    public static final double HUB_X = CENTER_X - 143.50;
+    public static final double BLUE_TRENCH_X = FieldConstants.LinesVertical.hubCenter;
+    public static final double RED_TRENCH_X = FieldConstants.LinesVertical.oppHubCenter;
+    public static final double LEFT_TRENCH_Y = FieldConstants.fieldWidth - FieldConstants.LeftTrench.openingWidth / 2;
+    public static final double RIGHT_TRENCH_Y = FieldConstants.RightTrench.openingWidth / 2;
+
+    public static final Translation2d[] TRENCH_TRANSLATIONS = {
+      new Translation2d(BLUE_TRENCH_X, RIGHT_TRENCH_Y),
+      new Translation2d(BLUE_TRENCH_X, LEFT_TRENCH_Y),
+      new Translation2d(RED_TRENCH_X, RIGHT_TRENCH_Y),
+      new Translation2d(RED_TRENCH_X, LEFT_TRENCH_Y)};
   }
 
   /* ### Subystems ### */
@@ -388,5 +400,31 @@ public final class Constants {
 
     public static final TorqueCurrentConfigs TORQUE_CURRENT_CONFIGS =
         new TorqueCurrentConfigs().withPeakReverseTorqueCurrent(0.0);
+  }
+  public final class FieldZones{
+
+    private static final double ROBOT_LENGTH = 0.0; // TODO: wrong value!!!!!!!!
+    private static final double ROBOT_WIDTH = 0.0; // TODO: WRONG VALUE
+    private static final double X_MARGIN = Units.inchesToMeters(24.0) + (ROBOT_LENGTH / 2); // TODO: placeholder value talk to mentors
+
+    private static final double MIN_X = Hub.nearLeftCorner.getX() - X_MARGIN;
+    private static final double MAX_X = Hub.farLeftCorner.getX() + X_MARGIN;
+
+    public static final FieldZone BLUE_RIGHT_TRENCH =
+      new FieldZone(MIN_X, MAX_X, 0.0, LinesHorizontal.rightBumpEnd);
+
+    public static final FieldZone BLUE_RIGHT_BUMP =
+      new FieldZone(MIN_X, MAX_X, LinesHorizontal.rightBumpEnd, LinesHorizontal.rightBumpStart);
+
+    public static final FieldZone BLUE_LEFT_BUMP =
+      new FieldZone(MIN_X, MAX_X, LinesHorizontal.leftBumpEnd, LinesHorizontal.leftBumpStart);
+
+    public static final FieldZone BLUE_LEFT_TRENCH =
+      new FieldZone(MIN_X, MAX_X, LinesHorizontal.leftBumpStart, FieldConstants.fieldWidth);
+
+    public static final FieldZone RED_RIGHT_TRENCH = FieldZone.rotated(BLUE_RIGHT_TRENCH);
+    public static final FieldZone RED_RIGHT_BUMP = FieldZone.rotated(BLUE_RIGHT_BUMP);
+    public static final FieldZone RED_LEFT_BUMP = FieldZone.rotated(BLUE_LEFT_BUMP);
+    public static final FieldZone RED_LEFT_TRENCH = FieldZone.rotated(BLUE_LEFT_TRENCH);
   }
 }
