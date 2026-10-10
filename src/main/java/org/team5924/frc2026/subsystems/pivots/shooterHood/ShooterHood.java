@@ -45,8 +45,8 @@ public class ShooterHood extends SubsystemBase {
     OFF(() -> 0.0),
     ZERO(() -> 0.0),
 
-    // voltage speed at which to rotate the hood
-    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", 1))),
+    // current speed at which to rotate the hood
+    MANUAL((new LoggedTunableNumber("ShooterHood/ManualCurrent", 30))),
 
     MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
@@ -77,21 +77,18 @@ public class ShooterHood extends SubsystemBase {
   private double input;
   private double autoInput = 0.0;
 
-  public void setInput(DoubleSupplier inputSupplier) {
-    input = inputSupplier.getAsDouble();
+  public void setInput(double input) {
+    this.input = input;
   }
 
   public void runManual(DoubleSupplier inputSupplier) {
-    setInput(inputSupplier);
-    setGoalState(ShooterHoodState.MANUAL);
+    setInput(inputSupplier.getAsDouble());
+
+    if (Math.abs(input) > Constants.JOYSTICK_DEADZONE) setGoalState(ShooterHoodState.MANUAL);
   }
 
   public void setAutoInput(double inputRads) {
-    autoInput =
-        MathUtil.clamp(
-            inputRads,
-            Constants.ShooterHood.MIN_POSITION_RADS,
-            Constants.ShooterHood.MAX_POSITION_RADS);
+    autoInput = inputRads;
   }
 
   public ShooterHood(ShooterHoodIO io) {
@@ -127,8 +124,8 @@ public class ShooterHood extends SubsystemBase {
     Logger.recordOutput("ShooterHood/TimeSinceLastStateChange", timeSinceLastStateChange);
   }
 
-  public void runVolts(double volts) {
-    io.runVolts(volts);
+  public void runCurrent(double volts) {
+    io.runCurrent(volts);
   }
 
   public void setPosition(double rads) {
@@ -186,10 +183,10 @@ public class ShooterHood extends SubsystemBase {
         // pass in hood angle from launch calculator
         if (LaunchCalculator.getInstance().getParameters().isValid())
           setAutoInput(LaunchCalculator.getInstance().getParameters().hoodAngle());
-        if (!isAtSetpoint) setPosition(autoInput);
+        setPosition(autoInput);
       }
       default -> {
-        if (!isAtSetpoint) setPosition(getTargetRads());
+        setPosition(getTargetRads());
       }
     }
 
@@ -204,7 +201,7 @@ public class ShooterHood extends SubsystemBase {
       return;
     }
 
-    runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
+    runCurrent(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }
 
   private boolean isNearTrench() {

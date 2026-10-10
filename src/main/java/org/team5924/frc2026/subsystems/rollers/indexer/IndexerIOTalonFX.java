@@ -20,7 +20,10 @@ import org.team5924.frc2026.Constants.Indexer;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
 
 public class IndexerIOTalonFX extends GenericRollerIOTalonFX implements IndexerIO {
+  private final IndexerFollowerIOTalonFX follower;
+
   public IndexerIOTalonFX() {
     super(Indexer.CAN_ID, Indexer.BUS, Indexer.CONFIG, Indexer.MOTOR_TO_MECHANISM);
+    follower = new IndexerFollowerIOTalonFX();
   }
 }

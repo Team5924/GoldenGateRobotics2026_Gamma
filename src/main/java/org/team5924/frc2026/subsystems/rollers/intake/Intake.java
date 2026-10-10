@@ -30,7 +30,7 @@ public class Intake extends GenericRoller<Intake.IntakeState> {
   public enum IntakeState implements VoltageState {
     OFF(() -> 0.0),
     SPITOUT(new LoggedTunableNumber("Intake/SpitOut", -8.0)),
-    INTAKE(new LoggedTunableNumber("Intake/Intake", 8.0));
+    INTAKE(new LoggedTunableNumber("Intake/Intake", 10.0));
 
     private final DoubleSupplier voltageSupplier;
   }
