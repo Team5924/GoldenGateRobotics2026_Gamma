@@ -17,9 +17,7 @@
 package org.team5924.frc2026.subsystems.awareness;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.FieldConstants;
 import org.team5924.frc2026.RobotState;
 
 public class FieldAwareness {
@@ -39,12 +37,5 @@ public class FieldAwareness {
     }
 
     return offsets;
-  }
-
-  private void tdfyguijoi() { // TODO: name later
-    ChassisSpeeds speeds = RobotState.getInstance().getRobotChassisSpeeds();
-    Translation2d velocity = new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-
-    for (int i = 0; i < 4; i++) {}
   }
 }

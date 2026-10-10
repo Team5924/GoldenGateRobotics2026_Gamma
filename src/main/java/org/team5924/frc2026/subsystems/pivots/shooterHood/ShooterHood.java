@@ -20,10 +20,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +30,6 @@ import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.MatchState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.Constants.FieldZones;
-import org.team5924.frc2026.subsystems.awareness.FieldAwareness;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -57,7 +54,7 @@ public class ShooterHood extends SubsystemBase {
     CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
 
     // TODO: Edit Angle based on how low it needs to be to fit under trench
-    TRENCH(new LoggedTunableNumber("ShooterHood/Trench", Math.toRadians(0))),
+    BOTTOM(new LoggedTunableNumber("ShooterHood/Bottom", Math.toRadians(0))),
     AUTO(() -> 0.0),
 
     // in-between state
@@ -110,7 +107,7 @@ public class ShooterHood extends SubsystemBase {
   @Override
   public void periodic() {
     if(isNearTrench()){
-      setGoalState(ShooterHoodState.TRENCH);
+      setGoalState(ShooterHoodState.BOTTOM);
     }
 
     io.periodicUpdates();
