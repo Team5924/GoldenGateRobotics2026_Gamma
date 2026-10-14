@@ -231,7 +231,7 @@ public final class Constants {
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     // spur = hood driving gear, mechanism = shooter hood gear
-    public static final double MOTOR_TO_SHAFT = 20.0 / 12.0;
+    public static final double MOTOR_TO_SHAFT =  (3.0 / 1.0) * (24.0 / 18.0);
     public static final double SHAFT_TO_CANCODER = 1.0;
     public static final double SHAFT_TO_MECHANISM = 160.0 / 10.0;
 
@@ -257,8 +257,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(10)
-            .withStatorCurrentLimit(10)
+            .withSupplyCurrentLimit(35)
+            .withStatorCurrentLimit(35)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -274,18 +274,18 @@ public final class Constants {
             .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      // new FeedbackConfigs()
-        // .withRotorToSensorRatio(MOTOR_TO_CANCODER)
-        // .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        // .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder) // TODO: change to Synced if no work
-        // .withFeedbackRemoteSensorID(CANCODER_ID)
-        // .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
       new FeedbackConfigs()
-        .withRotorToSensorRatio(1.0)
-        .withSensorToMechanismRatio(1.0)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
+        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder) // TODO: change to Synced if no work
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
+      // new FeedbackConfigs()
+      //   .withRotorToSensorRatio(1.0)
+      //   .withSensorToMechanismRatio(1.0)
+      //   .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+      //   .withFeedbackRemoteSensorID(CANCODER_ID)
+      //   .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
     public static final MagnetSensorConfigs CANCODER_CONFIGS =
       new MagnetSensorConfigs()
