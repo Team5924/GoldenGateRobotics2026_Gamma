@@ -29,6 +29,11 @@ public class MatchState {
     return instance;
   }
 
+  /** Discards all state. For unit tests only; never call this from robot code. */
+  public static synchronized void resetForTests() {
+    instance = new MatchState();
+  }
+
   /** returns the current time in seconds (counting up) */
   public double getTime() {
     return ((double) Logger.getTimestamp() * 1.0E-6);
