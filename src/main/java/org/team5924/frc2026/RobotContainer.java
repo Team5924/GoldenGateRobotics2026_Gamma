@@ -25,14 +25,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.littletonrobotics.junction.Logger;
+import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.AutoBuilder;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
+import org.team5924.frc2026.subsystems.drive.DriveSimulation;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
 import org.team5924.frc2026.subsystems.drive.GyroIOSim;
@@ -80,7 +79,8 @@ import org.team5924.frc2026.util.LaunchCalculator;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private SwerveDriveSimulation driveSimulation = null;
+  // Non-null only in SIM mode
+  private DriveSimulation driveSimulation = null;
   private final Vision vision;
   private final Intake intake;
   private final IntakePivot intakePivot;
@@ -170,17 +170,19 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        driveSimulation =
-            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
-        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        driveSimulation = new DriveSimulation();
         drive =
             new Drive(
                 new GyroIOSim(driveSimulation.getGyroSimulation()),
-                new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
-                new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
-                new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
-                new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
-                driveSimulation::setSimulationWorldPose);
+                new ModuleIOTalonFXSim(
+                    TunerConstants.FrontLeft, driveSimulation.getModuleSimulation(0)),
+                new ModuleIOTalonFXSim(
+                    TunerConstants.FrontRight, driveSimulation.getModuleSimulation(1)),
+                new ModuleIOTalonFXSim(
+                    TunerConstants.BackLeft, driveSimulation.getModuleSimulation(2)),
+                new ModuleIOTalonFXSim(
+                    TunerConstants.BackRight, driveSimulation.getModuleSimulation(3)),
+                driveSimulation::resetPose);
 
         // TODO: uncommment once we receive measurements
         vision =
@@ -190,17 +192,17 @@ public class RobotContainer {
                     VisionConstants.FRONT_NAME,
                     VisionConstants.FRONT_TRANSFORM,
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                    driveSimulation::getSimulatedDriveTrainPose));
+                    driveSimulation::getGroundTruthPose));
         // new VisionIOPhotonVisionSim(
         //     VisionConstants.LEFT_NAME,
         //     VisionConstants.LEFT_TRANSFORM,
         //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-        //     driveSimulation::getSimulatedDriveTrainPose),
+        //     driveSimulation::getGroundTruthPose),
         // new VisionIOPhotonVisionSim(
         //     VisionConstants.RIGHT_NAME,
         //     VisionConstants.RIGHT_TRANSFORM,
         //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-        //     driveSimulation::getSimulatedDriveTrainPose));
+        //     driveSimulation::getGroundTruthPose));
 
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());
@@ -442,8 +444,7 @@ public class RobotContainer {
         Constants.currentMode == Constants.Mode.SIM
             ? () ->
                 drive.setPose(
-                    driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+                    driveSimulation.getGroundTruthPose()) // reset odometry to actual robot pose
             // during simulation
             : () ->
                 drive.setPose(
@@ -453,8 +454,7 @@ public class RobotContainer {
         Constants.currentMode == Constants.Mode.SIM
             ? () ->
                 drive.setPose(
-                    driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+                    driveSimulation.getGroundTruthPose()) // reset odometry to actual robot pose
             // during simulation
             : () ->
                 drive.setPose(
@@ -586,21 +586,20 @@ public class RobotContainer {
   }
 
   public void resetSimulationField() {
-    if (Constants.currentMode != Constants.Mode.SIM) return;
+    if (driveSimulation == null) return;
 
-    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
-    SimulatedArena.getInstance().resetFieldForAuto();
+    driveSimulation.resetPose(DriveSimulation.STARTING_POSE);
+    driveSimulation.resetFieldForAuto();
   }
 
   public void updateSimulation() {
-    if (Constants.currentMode != Constants.Mode.SIM) return;
+    if (driveSimulation == null) return;
 
-    SimulatedArena.getInstance().simulationPeriodic();
-    Logger.recordOutput(
-        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
-    Logger.recordOutput(
-        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-    Logger.recordOutput(
-        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+    driveSimulation.periodic();
+  }
+
+  /** The simulated robot's true field pose, or empty when not running in simulation. */
+  public Optional<Pose2d> getGroundTruthPose() {
+    return Optional.ofNullable(driveSimulation).map(DriveSimulation::getGroundTruthPose);
   }
 }

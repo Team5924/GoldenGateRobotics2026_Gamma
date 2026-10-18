@@ -19,7 +19,6 @@ package org.team5924.frc2026.subsystems.drive;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import org.ironmaple.simulation.drivesims.GyroSimulation;
-import org.team5924.frc2026.util.PhoenixUtil;
 
 public class GyroIOSim implements GyroIO {
   private final GyroSimulation gyroSimulation;
@@ -33,7 +32,7 @@ public class GyroIOSim implements GyroIO {
     inputs.connected = true;
     inputs.yawPosition = gyroSimulation.getGyroReading();
     inputs.yawVelocityRadPerSec = gyroSimulation.getMeasuredAngularVelocity().in(RadiansPerSecond);
-    inputs.odometryYawTimestamps = PhoenixUtil.getSimulationOdometryTimeStamps();
+    inputs.odometryYawTimestamps = DriveSimulation.getOdometryTimestamps();
     inputs.odometryYawPositions = gyroSimulation.getCachedGyroReadings();
   }
 }
