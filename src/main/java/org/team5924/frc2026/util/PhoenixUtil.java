@@ -30,9 +30,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
 import java.util.function.Supplier;
-import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.motorsims.SimulatedMotorController;
 
@@ -91,21 +89,6 @@ public class PhoenixUtil {
       return super.updateControlSignal(
           mechanismAngle, mechanismVelocity, encoderAngle, encoderVelocity);
     }
-  }
-
-  public static double[] getSimulationOdometryTimeStamps() {
-    final double[] odometryTimeStamps = new double[SimulatedArena.getSimulationSubTicksIn1Period()];
-    final double periodSeconds =
-        SimulatedArena.getSimulationSubTicksIn1Period()
-            * SimulatedArena.getSimulationDt().in(Seconds);
-    for (int i = 0; i < odometryTimeStamps.length; i++) {
-      odometryTimeStamps[i] =
-          Timer.getFPGATimestamp()
-              - periodSeconds
-              + i * SimulatedArena.getSimulationDt().in(Seconds);
-    }
-
-    return odometryTimeStamps;
   }
 
   /**
