@@ -331,11 +331,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configButtonBindings() {
-    configDriveBindings();
+    // configDriveBindings();
 
-    configDefaultCommands();
+    // configDefaultCommands();
 
-    configureIntakeBindings(false, ControlMode.NORMAL);
+    // configureIntakeBindings(false, ControlMode.NORMAL);
     configureShooterBindings(false, ControlMode.TUNING);
   }
 

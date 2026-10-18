@@ -122,7 +122,7 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void stop() {
-    io.stop();
+    // io.stop();
   }
 
   public void setGoalState(ShooterHoodState goalState) {

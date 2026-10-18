@@ -213,6 +213,7 @@ public final class Constants {
 
     // controls two rollers, so reduction is weird
     public static final double MOTOR_TO_MECHANISM = (30.0 / 12.0) * (36.0 / 36.0) * (18.0 / 18.0);
+    public static final double FOLLOWER_MOTOR_TO_MECHANISM = (24.0 / 16.0);
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =

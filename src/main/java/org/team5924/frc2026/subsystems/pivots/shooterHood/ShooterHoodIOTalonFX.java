@@ -296,9 +296,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
       return;
     }
 
-    // setpointRads = clampRads(rads);
-    double updatedPosition = rads * 4.11 / 0.76794;
-    talon.setControl(motionMagicCurrent.withPosition(updatedPosition));
+    setpointRads = Units.radiansToRotations(clampRads(rads));
+    // double updatedPosition = rads * 4.11 / 0.76794;
+    talon.setControl(motionMagicCurrent.withPosition(setpointRads));
   }
 
   /* Unused but nice to have */
