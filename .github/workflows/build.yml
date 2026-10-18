@@ -2,17 +2,37 @@ name: Build
 
 on:
   push:
+    branches: [main]
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    name: Build
-    runs-on: ubuntu-latest
+    name: Build and test
+    # Pinned so the runner doesn't change under us when ubuntu-latest moves to 26.04
+    runs-on: ubuntu-24.04
+    # WPILib says the 2025 image is still correct for 2026 robot code
     container: wpilib/roborio-cross-ubuntu:2025-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Grant execute permission
         run: chmod +x gradlew
-      - name: Build robot code
+      - name: Check formatting
+        run: ./gradlew spotlessCheck
+      - name: Build robot code and run tests
         run: ./gradlew build
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            build/reports/
+            build/test-results/
+          if-no-files-found: ignore
