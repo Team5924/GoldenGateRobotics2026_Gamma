@@ -147,6 +147,8 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
+    // Source has non-ASCII comments (e.g. degree signs); don't depend on the machine's locale
+    options.encoding = 'UTF-8'
 }
 
 // Create version file
@@ -201,7 +203,7 @@ spotless {
     java {
         target fileTree(".") {
             include "**/*.java"
-            exclude "**/build/**", "**/build-*/**", "**/.claude/**", "**.json", "**/Constants.java", "src/main/java/org/team5924/frc2026/util/swerve/**", "src/main/java/org/team5924/frc2026/util/GeomUtil.java", "src/main/java/org/team5924/frc2026/util/EqualsUtil.java", "src/main/java/org/team5924/frc2026/util/Elastic.java"
+            exclude "**/build/**", "**/build-*/**", "**/.claude/**", "**.json", "**/Constants.java", "**/BuildConstants.java", "src/main/java/org/team5924/frc2026/util/swerve/**", "src/main/java/org/team5924/frc2026/util/GeomUtil.java", "src/main/java/org/team5924/frc2026/util/EqualsUtil.java", "src/main/java/org/team5924/frc2026/util/Elastic.java"
         }
         importOrder()
         toggleOffOn()

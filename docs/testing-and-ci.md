@@ -9,7 +9,7 @@ Every pull request runs **Build and test** (`.github/workflows/build.yml`) insid
 1. `./gradlew spotlessCheck`: fails if any file isn't formatted. Fix it with `./gradlew spotlessApply`. Local builds format automatically; CI only checks.
 2. `./gradlew build`: compiles and runs every test in `src/test/java`.
 
-When a run fails, open it on GitHub, scroll to the failed step, and download the **test-reports** artifact for the full HTML report. `main` requires this check to pass before merging.
+When a run fails, open it on GitHub, scroll to the failed step, and download the **test-reports** artifact for the full HTML report. Once branch protection requires this check on `main`, it must pass before merging.
 
 ## Running tests locally
 

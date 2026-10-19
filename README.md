@@ -19,6 +19,6 @@ Test results are in `build/reports/tests/test/index.html` and coverage is in `bu
 
 ## Pull requests
 
-Every pull request runs the **Build and test** check (`.github/workflows/build.yml`). It must pass before merging into `main`. If the formatting check fails, run `./gradlew spotlessApply` and commit the result.
+Every pull request runs the **Build and test** check (`.github/workflows/build.yml`). Once branch protection requires it, it must pass before merging into `main`. If the formatting check fails, run `./gradlew spotlessApply` and commit the result.
 
 See [docs/testing-and-ci.md](docs/testing-and-ci.md) for how to write tests and for the 2027 (Systemcore) CI plan.
