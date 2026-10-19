@@ -190,7 +190,7 @@ public class FieldConstants {
     public static final Translation3d openingTopLeft =
         new Translation3d(LinesVertical.hubCenter, fieldWidth, openingHeight);
     public static final Translation3d openingTopRight =
-        new Translation3d(LinesVertical.hubCenter, fieldWidth - openingWidth, openingHeight);
+        new Translation3d(LinesVertical.hubCenter, fieldWidth - openingWidth, openingHeight);  
 
     // Relevant reference points on opposing side
     public static final Translation3d oppOpeningTopLeft =

@@ -53,6 +53,8 @@ public class RobotState {
   // @AutoLogOutput(key = "RobotState/OdometryPose")
   @Getter @Setter private Pose2d odometryPose = new Pose2d();
 
+  @Getter @Setter private ChassisSpeeds robotChassisSpeeds = new ChassisSpeeds();
+
   public void resetPose(Pose2d pose) {
     // Gyro offset is the rotation that maps the old gyro rotation (estimated - offset) to the new
     // frame of rotation
