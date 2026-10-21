@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -29,7 +30,14 @@ import org.team5924.frc2026.MatchState.MatchShift;
 import org.team5924.frc2026.testutil.RobotTestBase;
 
 class MatchStateTest extends RobotTestBase {
-  private final MatchState matchState = MatchState.getInstance();
+  private MatchState matchState;
+
+  // Runs after RobotTestBase's setup, so this is the freshly reset singleton (a field initializer
+  // would run first and keep the previous test's instance)
+  @BeforeEach
+  void setUp() {
+    matchState = MatchState.getInstance();
+  }
 
   /** Teleop enabled on the given alliance, with the given match time and game message. */
   private static void teleop(Alliance alliance, double matchTime, String gameMessage) {
