@@ -26,8 +26,6 @@ import org.team5924.frc2026.util.VisionUtil;
 
 public class VisionConstants {
   public static final String FRONT_NAME = "Front_Camera";
-  public static final String LEFT_NAME = "Left_Camera";
-  public static final String RIGHT_NAME = "Right_Camera";
 
   // +x = forward, +y = left, +z = up
   // transforms are relative to the robot's center
@@ -38,25 +36,6 @@ public class VisionConstants {
           new Rotation3d(
               Units.degreesToRadians(0.0),
               Units.degreesToRadians(-55.0),
-              Units.degreesToRadians(0.0)));
-
-  // TODO: update left and right measurements once we get values
-  public static final Transform3d LEFT_TRANSFORM =
-      new Transform3d(
-          new Translation3d(
-              Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
-          new Rotation3d(
-              Units.degreesToRadians(0.0),
-              Units.degreesToRadians(0.0),
-              Units.degreesToRadians(0.0)));
-
-  public static final Transform3d RIGHT_TRANSFORM =
-      new Transform3d(
-          new Translation3d(
-              Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
-          new Rotation3d(
-              Units.degreesToRadians(0.0),
-              Units.degreesToRadians(0.0),
               Units.degreesToRadians(0.0)));
 
   // public static final ArrayList<Integer> IGNORE_IDS =

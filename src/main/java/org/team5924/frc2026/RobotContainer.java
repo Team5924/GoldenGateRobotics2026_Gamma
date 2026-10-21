@@ -89,6 +89,7 @@ public class RobotContainer {
   private final ShooterHood shooterHood;
   private final Flywheel flywheel;
 
+  // TODO: reenable these :D
   // Real/IO implementation
   private final boolean realDrive = false;
   private final boolean realVision = false;
@@ -159,15 +160,9 @@ public class RobotContainer {
       return null;
     }
 
-    // TODO: add left and right cameras once we receive measurements
-
     if (Constants.currentMode == Mode.REAL) {
       VisionIOPhotonVision frontCamera =
           new VisionIOPhotonVision(VisionConstants.FRONT_NAME, VisionConstants.FRONT_TRANSFORM);
-      // VisionIOPhotonVision leftCamera =
-      //   new VisionIOPhotonVision(VisionConstants.LEFT_NAME, VisionConstants.LEFT_TRANSFORM);
-      // VisionIOPhotonVision rightCamera =
-      //   new VisionIOPhotonVision(VisionConstants.RIGHT_NAME, VisionConstants.RIGHT_TRANSFORM);
 
       return new Vision(drive::addVisionMeasurement, frontCamera);
     }
@@ -179,20 +174,6 @@ public class RobotContainer {
             VisionConstants.FRONT_TRANSFORM,
             VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
             driveSimulation::getSimulatedDriveTrainPose);
-
-    // VisionIOPhotonVisionSim leftCameraSim =
-    //   new VisionIOPhotonVisionSim(
-    //     VisionConstants.LEFT_NAME,
-    //     VisionConstants.LEFT_TRANSFORM,
-    //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-    //     driveSimulation::getSimulatedDriveTrainPose);
-
-    // VisionIOPhotonVisionSim rightCameraSim =
-    //   new VisionIOPhotonVisionSim(
-    //     VisionConstants.RIGHT_NAME,
-    //     VisionConstants.RIGHT_TRANSFORM,
-    //     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-    //     driveSimulation::getSimulatedDriveTrainPose);
 
     return new Vision(drive::addVisionMeasurement, frontCameraSim);
   }
@@ -298,6 +279,7 @@ public class RobotContainer {
         new AutoBuilder(
             autoFactory, drive, shooterHood, flywheel, intake, intakePivot, hopper, indexer);
 
+    // TODO: autos
     // autoChooser.addOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     // autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
     autoChooser.addDefaultOption("Right Double Swipe", autoBuilder.rightDoubleSwipe());
@@ -331,6 +313,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configButtonBindings() {
+
+    // TODO: uncomment these bindings, use normal mode
     // configDriveBindings();
 
     // configDefaultCommands();
@@ -365,8 +349,8 @@ public class RobotContainer {
             DriveCommands.joystickDriveWhileLaunching(
                 drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
-    // // [driver] Switch to X pattern when X button is pressed
-    // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // [driver] Switch to X pattern when X button is pressed
+    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     final Runnable resetGyro =
         (Constants.currentMode == Constants.Mode.SIM)
