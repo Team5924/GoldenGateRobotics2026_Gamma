@@ -16,3 +16,5 @@ Robot code for Team 5924 Golden Gate Robotics' 2026 robot.
 | `./gradlew deploy` | Deploy to the robot |
 
 Test results are in `build/reports/tests/test/index.html` and coverage is in `build/reports/jacoco/test/html/index.html`.
+
+See [docs/testing-and-ci.md](docs/testing-and-ci.md) for how to write tests and for the 2027 (Systemcore) CI plan.

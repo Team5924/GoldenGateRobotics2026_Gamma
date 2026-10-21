@@ -31,6 +31,11 @@ public class RobotState {
     return instance;
   }
 
+  /** Discards all state. For unit tests only; never call this from robot code. */
+  public static void resetForTests() {
+    instance = null;
+  }
+
   @Getter @Setter private ChassisSpeeds robotVelocity = new ChassisSpeeds();
   @Getter @Setter private ChassisSpeeds robotSetpointVelocity = new ChassisSpeeds();
 
