@@ -129,7 +129,10 @@ public class IntakePivot extends SubsystemBase {
           DriverStation.reportError(
               "IntakePivot: MOVING is an invalid goal state; it is a transition state!!", null);
       case OFF -> currentState = IntakePivotState.OFF;
-      default -> currentState = IntakePivotState.MOVING;
+      default -> {
+        setPosition(goalState.getRads().getAsDouble());
+        currentState = IntakePivotState.MOVING;
+      }
     }
 
     lastStateChange = MatchState.getInstance().getTime();
@@ -143,7 +146,8 @@ public class IntakePivot extends SubsystemBase {
             inputs.setpointRads, inputs.positionRads, Constants.IntakePivot.EPSILON_RADS);
   }
 
-  private void handleShooterState() {
+  // jostles intake pivot between SHOOTING_UP & SHOOTING_DOWN
+  private void handlePivotState() {
     if (!currentState.equals(IntakePivotState.SHOOTING_UP)
         && !currentState.equals(IntakePivotState.SHOOTING_DOWN)) return;
     if (!isAtSetpoint()) return;
@@ -162,14 +166,14 @@ public class IntakePivot extends SubsystemBase {
 
     switch (currentState) {
       case MOVING -> {
-        setPosition(goalState.getRads().getAsDouble());
         if (isAtSetpoint()) currentState = goalState;
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
-      case SHOOTING_UP, SHOOTING_DOWN -> handleShooterState();
+      case SHOOTING_UP, SHOOTING_DOWN -> handlePivotState();
       default -> {
-        setPosition(goalState.getRads().getAsDouble());
+        if (!isAtSetpoint())
+          setGoalState(goalState);
       }
     }
   }

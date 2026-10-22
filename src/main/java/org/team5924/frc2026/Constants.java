@@ -227,8 +227,8 @@ public final class Constants {
     public static final int CAN_ID = 34;
 
     /* CANCoder */
-    public static final String CANCODER_BUS = "canivore";
-    public static final int CANCODER_ID = 35; // TODO: set to something else
+    public static final String CANCODER_BUS = "rio";
+    public static final int CANCODER_ID = 35;
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     // spur = hood driving gear, mechanism = shooter hood gear
@@ -278,7 +278,7 @@ public final class Constants {
       new FeedbackConfigs()
         .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder) // TODO: change to Synced if no work
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
       // new FeedbackConfigs()

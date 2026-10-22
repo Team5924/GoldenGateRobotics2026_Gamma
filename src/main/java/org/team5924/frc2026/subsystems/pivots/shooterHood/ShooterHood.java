@@ -58,12 +58,9 @@ public class ShooterHood extends SubsystemBase {
 
   private final Alert motorDisconnectedAlert;
   protected final Alert overheatAlert;
-  private final Alert notImplementedAlert;
-  private boolean showNotImplementedAlert;
 
   @Getter private ShooterHoodState goalState = ShooterHoodState.OFF;
   private ShooterHoodState currentState = ShooterHoodState.OFF;
-  private boolean isAtSetpoint = false;
   private double lastStateChange = 0.0;
   private double timeSinceLastStateChange = 0.0;
 
@@ -90,7 +87,6 @@ public class ShooterHood extends SubsystemBase {
     goalState = ShooterHoodState.OFF;
     motorDisconnectedAlert =
         new Alert("Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
-    notImplementedAlert = new Alert("Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
     overheatAlert = new Alert("Shooter Hood motor overheating!", Alert.AlertType.kWarning);
   }
 
@@ -109,7 +105,7 @@ public class ShooterHood extends SubsystemBase {
     Logger.recordOutput("ShooterHood/CurrentState", currentState.toString());
     Logger.recordOutput("ShooterHood/TargetRads", getTargetRads());
     Logger.recordOutput("ShooterHood/CurrentRads", inputs.positionRads);
-    Logger.recordOutput("ShooterHood/IsAtSetpoint", isAtSetpoint);
+    Logger.recordOutput("ShooterHood/IsAtSetpoint", isAtSetpoint());
     Logger.recordOutput("ShooterHood/TimeSinceLastStateChange", timeSinceLastStateChange);
   }
 
@@ -122,7 +118,7 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void stop() {
-    // io.stop();
+    io.stop();
   }
 
   public void setGoalState(ShooterHoodState goalState) {
@@ -138,7 +134,10 @@ public class ShooterHood extends SubsystemBase {
               "Shooter Hood: MOVING is an invalid goal state; it is a transition state!!", null);
       case AUTO -> currentState = ShooterHoodState.AUTO;
       case OFF -> currentState = ShooterHoodState.OFF;
-      default -> currentState = ShooterHoodState.MOVING;
+      default -> {
+        currentState = ShooterHoodState.MOVING;
+        setPosition(getTargetRads());
+      }
     }
 
     lastStateChange = MatchState.getInstance().getTime();
@@ -158,12 +157,9 @@ public class ShooterHood extends SubsystemBase {
 
   private void handleCurrentState() {
     timeSinceLastStateChange = MatchState.getInstance().getTime() - lastStateChange;
-    isAtSetpoint = isAtSetpoint();
 
-    showNotImplementedAlert = false;
     switch (currentState) {
       case MOVING -> {
-        setPosition(getTargetRads());
         if (isAtSetpoint() && goalState != ShooterHoodState.AUTO) currentState = goalState;
       }
       case MANUAL -> handleManualState();
@@ -175,11 +171,10 @@ public class ShooterHood extends SubsystemBase {
         setPosition(autoInput);
       }
       default -> {
-        setPosition(getTargetRads());
+        if (!isAtSetpoint())
+          setGoalState(goalState);
       }
     }
-
-    notImplementedAlert.set(showNotImplementedAlert);
   }
 
   private void handleManualState() {
