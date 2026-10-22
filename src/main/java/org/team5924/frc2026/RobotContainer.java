@@ -73,6 +73,7 @@ import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOTalonFX;
 import org.team5924.frc2026.subsystems.vision.Vision;
 import org.team5924.frc2026.subsystems.vision.VisionConstants;
+import org.team5924.frc2026.subsystems.vision.VisionIO;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
 import org.team5924.frc2026.util.LaunchCalculator;
@@ -91,17 +92,17 @@ public class RobotContainer {
 
   // TODO: reenable these :D
   // Real/IO implementation
-  private final boolean realDrive = false;
-  private final boolean realVision = false;
+  private final boolean realDrive = true;
+  private final boolean realVision = true;
 
-  private final boolean realIntake = false;
-  private final boolean realIntakePivot = false;
+  private final boolean realIntake = true;
+  private final boolean realIntakePivot = true;
 
-  private final boolean realHopper = false;
-  private final boolean realIndexer = false;
+  private final boolean realHopper = true;
+  private final boolean realIndexer = true;
 
   private final boolean realShooterHood = true;
-  private final boolean realFlywheel = false;
+  private final boolean realFlywheel = true;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -157,7 +158,7 @@ public class RobotContainer {
   private Vision buildVisionSystem() {
     if (Constants.currentMode == Mode.REPLAY
         || (Constants.currentMode == Mode.REAL && !realVision)) {
-      return null;
+      return new Vision(drive::addVisionMeasurement, new VisionIO() {});
     }
 
     if (Constants.currentMode == Mode.REAL) {
@@ -239,7 +240,7 @@ public class RobotContainer {
   private void registerAutoCommands() {
     NamedCommands.registerCommand(
         "Run Shooter",
-        Commands.run(() -> AutoScoreCommands.runTrackTargetCommand(shooterHood, flywheel))
+        AutoScoreCommands.runTrackTargetCommand(shooterHood, flywheel)
             .finallyDo(() -> flywheel.setGoalState(FlywheelState.IDLE)));
 
     NamedCommands.registerCommand(
@@ -313,14 +314,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configButtonBindings() {
+    configDriveBindings();
 
-    // TODO: uncomment these bindings, use normal mode
-    // configDriveBindings();
+    configDefaultCommands();
 
-    // configDefaultCommands();
-
-    // configureIntakeBindings(false, ControlMode.NORMAL);
-    configureShooterBindings(false, ControlMode.TUNING);
+    configureIntakeBindings(false, ControlMode.NORMAL);
+    configureShooterBindings(false, ControlMode.NORMAL);
   }
 
   private void configDriveBindings() {
@@ -349,22 +348,17 @@ public class RobotContainer {
             DriveCommands.joystickDriveWhileLaunching(
                 drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
 
-    // [driver] Switch to X pattern when X button is pressed
-    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // [driver] Switch to X pattern when X button is pressed -> replaced with SLOW MODE YIPE
+    // reuse for auto shooting once physically tested
+    // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     final Runnable resetGyro =
         (Constants.currentMode == Constants.Mode.SIM)
             ? () -> drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
             : () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
 
-    final Runnable resetGyroInverted =
-        (Constants.currentMode == Constants.Mode.SIM)
-            ? () -> drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
-            : () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), Rotation2d.k180deg));
-
-    driveController
-        .start()
-        .onTrue(Commands.runOnce(resetGyroInverted, drive).ignoringDisable(true));
+    // TODO: test if robot starts with proper orientation
+    driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // [a] -> Reset gyro to 0°
     driveController.a().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));

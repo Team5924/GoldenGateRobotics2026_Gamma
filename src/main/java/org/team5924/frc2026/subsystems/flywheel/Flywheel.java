@@ -185,8 +185,7 @@ public class Flywheel extends SubsystemBase {
         setVelocity(autoInput);
       }
       default -> {
-        if (!isAtSetpoint())
-          setGoalState(goalState);
+        if (!isAtSetpoint()) setGoalState(goalState);
       }
     }
   }

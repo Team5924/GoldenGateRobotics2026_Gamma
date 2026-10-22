@@ -171,8 +171,7 @@ public class ShooterHood extends SubsystemBase {
         setPosition(autoInput);
       }
       default -> {
-        if (!isAtSetpoint())
-          setGoalState(goalState);
+        if (!isAtSetpoint()) setGoalState(goalState);
       }
     }
   }

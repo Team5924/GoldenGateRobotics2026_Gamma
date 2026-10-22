@@ -172,8 +172,7 @@ public class IntakePivot extends SubsystemBase {
       case OFF -> stop();
       case SHOOTING_UP, SHOOTING_DOWN -> handlePivotState();
       default -> {
-        if (!isAtSetpoint())
-          setGoalState(goalState);
+        if (!isAtSetpoint()) setGoalState(goalState);
       }
     }
   }
