@@ -90,7 +90,6 @@ public class RobotContainer {
   private final ShooterHood shooterHood;
   private final Flywheel flywheel;
 
-  // TODO: reenable these :D
   // Real/IO implementation
   private final boolean realDrive = true;
   private final boolean realVision = true;
