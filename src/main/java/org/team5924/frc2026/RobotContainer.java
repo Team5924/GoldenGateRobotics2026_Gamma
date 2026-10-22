@@ -91,17 +91,17 @@ public class RobotContainer {
   private final Flywheel flywheel;
 
   // Real/IO implementation
-  private final boolean realDrive = true;
-  private final boolean realVision = true;
+  private final boolean realDrive = false;
+  private final boolean realVision = false;
 
-  private final boolean realIntake = true;
-  private final boolean realIntakePivot = true;
+  private final boolean realIntake = false;
+  private final boolean realIntakePivot = false;
 
-  private final boolean realHopper = true;
-  private final boolean realIndexer = true;
+  private final boolean realHopper = false;
+  private final boolean realIndexer = false;
 
   private final boolean realShooterHood = true;
-  private final boolean realFlywheel = true;
+  private final boolean realFlywheel = false;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -313,12 +313,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configButtonBindings() {
-    configDriveBindings();
+    // configDriveBindings();
 
-    configDefaultCommands();
+    // configDefaultCommands();
 
-    configureIntakeBindings(false, ControlMode.NORMAL);
-    configureShooterBindings(false, ControlMode.NORMAL);
+    // configureIntakeBindings(false, ControlMode.NORMAL);
+    configureShooterBindings(false, ControlMode.TUNING);
   }
 
   private void configDriveBindings() {
