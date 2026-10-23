@@ -1,5 +1,5 @@
 /*
- * BeamBreakIOHardware.java
+ * BeamBreakIOCanivore.java
  */
 
 /* 
@@ -18,15 +18,15 @@ package org.team5924.frc2026.subsystems.sensors;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class BeamBreakIOHardware implements BeamBreakIO {
+public class BeamBreakIOCanivore implements BeamBreakIO {
   private final DigitalInput beamBreak;
 
-  public BeamBreakIOHardware(int id) {
-    beamBreak = null; // new DigitalInput(id);
+  public BeamBreakIOCanivore(int id) {
+    beamBreak = new DigitalInput(id);
   }
 
   @Override
   public void updateInputs(BeamBreakIOInputs inputs) {
-    // inputs.broken = beamBreak.get();
+    inputs.broken = beamBreak.get();
   }
 }

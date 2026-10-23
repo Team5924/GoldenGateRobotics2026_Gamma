@@ -117,8 +117,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[5] = talonConfig.apply(ShooterHood.SOFTWARE_LIMIT_CONFIGS);
-    // statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
-    // statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
+    statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
+    statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
 
     // boolean isErrorPresent = false;
     // for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -296,9 +296,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
       return;
     }
 
-    // setpointRads = clampRads(rads);
-    double updatedPosition = rads * 4.11 / 0.76794;
-    talon.setControl(motionMagicCurrent.withPosition(updatedPosition));
+    setpointRads = clampRads(rads);
+    talon.setControl(motionMagicCurrent.withPosition(Units.radiansToRotations(setpointRads)));
   }
 
   /* Unused but nice to have */

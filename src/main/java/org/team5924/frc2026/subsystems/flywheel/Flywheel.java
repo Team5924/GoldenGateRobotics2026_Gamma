@@ -65,7 +65,6 @@ public class Flywheel extends SubsystemBase {
 
   @Getter private FlywheelState goalState = FlywheelState.OFF;
   private FlywheelState currentState = FlywheelState.OFF;
-  private boolean isAtSetpoint = false;
 
   private double autoInput = 0.0;
 
@@ -105,7 +104,7 @@ public class Flywheel extends SubsystemBase {
     Logger.recordOutput(
         "Flywheel/TargetVelocityRotationsPerSec", getTargetVelocityRotationsPerSec());
     Logger.recordOutput("Flywheel/CurrentVelocityRotationsPerSec", inputs.velocityRotationsPerSec);
-    Logger.recordOutput("Flywheel/IsAtSetpoint", isAtSetpoint);
+    Logger.recordOutput("Flywheel/IsAtSetpoint", isAtSetpoint());
 
     for (int i = 0; i < 4; ++i) {
       motorDisconnected[i].set(!inputs.motorConnected[i]);
@@ -165,11 +164,10 @@ public class Flywheel extends SubsystemBase {
   }
 
   private void handleCurrentState() {
-    isAtSetpoint = isAtSetpoint();
     boolean isFlywheelReady =
         switch (goalState) {
           case OFF -> false;
-          default -> isAtSetpoint;
+          default -> isAtSetpoint();
         };
     RobotState.getInstance().setFlywheelReady(isFlywheelReady);
 
@@ -186,7 +184,9 @@ public class Flywheel extends SubsystemBase {
           setAutoInput(LaunchCalculator.getInstance().getParameters().flywheelSpeed());
         setVelocity(autoInput);
       }
-      default -> setVelocity(getTargetVelocityRotationsPerSec());
+      default -> {
+        if (!isAtSetpoint()) setGoalState(goalState);
+      }
     }
   }
 

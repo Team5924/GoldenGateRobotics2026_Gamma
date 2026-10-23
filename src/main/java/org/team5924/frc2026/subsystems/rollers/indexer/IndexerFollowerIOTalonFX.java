@@ -23,7 +23,8 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
 
 public class IndexerFollowerIOTalonFX extends GenericRollerIOTalonFX implements IndexerIO {
   public IndexerFollowerIOTalonFX() {
-    super(Indexer.FOLLOWER_CAN_ID, Indexer.BUS, Indexer.CONFIG, Indexer.MOTOR_TO_MECHANISM);
+    super(
+        Indexer.FOLLOWER_CAN_ID, Indexer.BUS, Indexer.CONFIG, Indexer.FOLLOWER_MOTOR_TO_MECHANISM);
 
     talon.setControl(new Follower(Indexer.CAN_ID, MotorAlignmentValue.Opposed));
   }
